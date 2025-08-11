@@ -1,6 +1,9 @@
 {
 	"name": "ts-support",
 	"private": true,
+	"repository": {
+		"url": "git+https://github.com/padosoft/ts-support.git"
+	},
 	"scripts": {
 		"build": "turbo run build",
 		"lint": "biome check .",
