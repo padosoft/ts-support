@@ -10,7 +10,6 @@ export const tsup = (packageOptions?: Options) => {
 		return {
 			clean: true,
 			dts: true,
-			splitting: true,
 			treeshake: true,
 			minify: !options.watch,
 			format: ["cjs", "esm"],
