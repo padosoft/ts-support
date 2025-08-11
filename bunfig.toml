@@ -1,0 +1,2 @@
+[install.scopes]
+padosoft = { token = "$GESCAT_NPM_TOKEN", url = "https://npm.pkg.github.com/" }

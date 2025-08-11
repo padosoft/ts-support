@@ -1,0 +1,34 @@
+{
+  "name": "ts-support",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "gen": "turbo gen",
+    "ts:check": "turbo run ts:check",
+    "publish-packages": "turbo run build && changeset version && changeset publish"
+  },
+  "overrides": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.1.4",
+    "@changesets/cli": "^2.29.5",
+    "@turbo/gen": "^2.5.5",
+    "turbo": "^2.5.5",
+    "typescript": "^5.9.2"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "catalog": {
+      "zod": "^4.0.17"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.20"
+}
