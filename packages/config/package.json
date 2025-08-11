@@ -6,6 +6,9 @@
 		"access": "restricted",
 		"registry": "https://npm.pkg.github.com"
 	},
+	"repository": {
+		"url": "git+https://github.com/padosoft/ts-support.git"
+	},
 	"scripts": {
 		"ts:check": "tsc --noEmit"
 	},

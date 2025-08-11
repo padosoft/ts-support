@@ -24,6 +24,9 @@
 		"access": "restricted",
 		"registry": "https://npm.pkg.github.com"
 	},
+	"repository": {
+		"url": "git+https://github.com/padosoft/ts-support.git"
+	},
 	"scripts": {
 		"build": "tsup",
 		"ts:check": "tsc --noEmit"
