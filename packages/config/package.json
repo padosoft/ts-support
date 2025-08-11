@@ -8,5 +8,13 @@
 	"scripts": {
 		"ts:check": "tsc --noEmit"
 	},
+	"exports": {
+		"./tsup": "./compiler/tsup.ts",
+		"./typescript/base": "./typescript/base.json",
+		"./typescript/expo": "./typescript/expo.json",
+		"./typescript/hono": "./typescript/hono.json",
+		"./typescript/tsup": "./typescript/tsup.json",
+		"./tools/biome": "./tools/biome.json"
+	},
 	"dependencies": {}
 }
