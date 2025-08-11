@@ -2,8 +2,8 @@ import type * as z from "zod/v4/core";
 
 export type DeepPartial<T> = T extends object
 	? {
-		[P in keyof T]?: DeepPartial<T[P]>;
-	}
+			[P in keyof T]?: DeepPartial<T[P]>;
+		}
 	: T;
 
 export type ConvertMaybeZod<T> = T extends z.$ZodType ? z.infer<T> : T;
