@@ -26,3 +26,11 @@ export type Intersect<T> = (T extends unknown ? (x: T) => 0 : never) extends (
 ) => 0
 	? R
 	: never;
+
+export type MergeWithDefault<
+	T extends Record<string, unknown>,
+	Key extends string,
+	Value,
+> = Key extends keyof T ? T : T & { [K in Key]: Value };
+
+export type Satisfies<U, T extends U> = T;
