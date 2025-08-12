@@ -20,3 +20,9 @@ export type DeepConvertMaybeZod<T> = T extends z.$ZodType
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
+
+export type Intersect<T> = (T extends unknown ? (x: T) => 0 : never) extends (
+	x: infer R,
+) => 0
+	? R
+	: never;
