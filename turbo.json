@@ -3,6 +3,7 @@
 	"ui": "tui",
 	"tasks": {
 		"build": {
+			"cache": true,
 			"dependsOn": ["^build"],
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
 			"outputs": ["dist/**"]
