@@ -7,6 +7,10 @@ export const tsup = (packageOptions?: Options) => {
 			...packageOptions,
 		};
 
+		if (Array.isArray(options.entry)) {
+			options.entry.push("!dist");
+		}
+
 		return {
 			clean: true,
 			dts: true,

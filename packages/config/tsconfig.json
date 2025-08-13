@@ -1,4 +1,5 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"extends": "./typescript/base.json"
+	"extends": "./typescript/base.json",
+	"exclude": ["dist"]
 }
