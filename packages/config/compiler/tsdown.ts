@@ -1,6 +1,6 @@
-import { defineConfig, type Options } from "tsup";
+import { defineConfig, type Options, type UserConfigFn } from "tsdown";
 
-export const tsup = (packageOptions?: Options) => {
+export const tsdown = (packageOptions?: Options): UserConfigFn => {
 	return defineConfig((overrideOptions) => {
 		const options = {
 			...overrideOptions,
@@ -12,12 +12,10 @@ export const tsup = (packageOptions?: Options) => {
 		}
 
 		return {
-			clean: true,
 			dts: true,
 			splitting: false,
 			treeshake: true,
 			minify: !options.watch,
-			format: ["cjs", "esm"],
 			outDir: "dist",
 			...options,
 		};

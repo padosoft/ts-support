@@ -1,5 +1,9 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"extends": "./typescript/base.json",
+	"extends": "./typescript/compiler",
+	"compilerOptions": {
+		"moduleResolution": "nodenext",
+		"module": "nodenext"
+	},
 	"exclude": ["dist"]
 }

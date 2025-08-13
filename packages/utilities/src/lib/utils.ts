@@ -1,7 +1,7 @@
 export const fillArray = <T>(obj: T, n = 8): T[] =>
 	Array.from({ length: n }, () => ({ ...obj }));
 
-export const toPascalCase = (string: string) => {
+export const toPascalCase = (string: string): string => {
 	"worklet";
 	return `${string}`
 		.toLowerCase()
@@ -14,8 +14,8 @@ export const toPascalCase = (string: string) => {
 		.replace(new RegExp(/\w/), (s) => s.toUpperCase());
 };
 
-export const isColor = (str: string) =>
+export const isColor = (str: string): boolean =>
 	/^#([0-9A-Fa-f]{3}){1,2}$|^rgb/.test(str);
 
-export const sleep = (ms = 5000) =>
+export const sleep = (ms = 5000): Promise<void> =>
 	new Promise<void>((r) => setTimeout(() => r(), ms));

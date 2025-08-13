@@ -28,7 +28,7 @@
 		"url": "git+https://github.com/padosoft/ts-support.git"
 	},
 	"scripts": {
-		"build": "tsup",
+		"build": "tsdown",
 		"ts:check": "tsc --noEmit"
 	},
 	"devDependencies": {

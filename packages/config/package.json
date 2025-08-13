@@ -10,18 +10,18 @@
 		"url": "git+https://github.com/padosoft/ts-support.git"
 	},
 	"scripts": {
-		"build": "tsup",
+		"build": "tsdown",
 		"ts:check": "tsc --noEmit"
 	},
 	"exports": {
-		"./tsup": {
-			"import": "./dist/compiler/tsup.js",
-			"types": "./dist/tsup.d.ts"
+		"./tsdown": {
+			"import": "./dist/tsdown.js",
+			"types": "./dist/tsdown.d.ts"
 		},
 		"./typescript/base": "./typescript/base.json",
 		"./typescript/expo": "./typescript/expo.json",
 		"./typescript/hono": "./typescript/hono.json",
-		"./typescript/tsup": "./typescript/tsup.json",
+		"./typescript/compiler": "./typescript/compiler.json",
 		"./tools/biome": "./tools/biome.json"
 	},
 	"dependencies": {}
