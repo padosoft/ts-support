@@ -22,6 +22,20 @@
       "devDependencies": {
         "@padosoft/config": "workspace:^",
       },
+      "peerDependencies": {
+        "@opentelemetry/api": "",
+        "@opentelemetry/api-logs": "",
+        "@opentelemetry/exporter-logs-otlp-http": "^0.204.0",
+        "@opentelemetry/resources": "^2.1.0",
+        "@opentelemetry/sdk-logs": "^0.204.0",
+      },
+      "optionalPeers": [
+        "@opentelemetry/api",
+        "@opentelemetry/api-logs",
+        "@opentelemetry/exporter-logs-otlp-http",
+        "@opentelemetry/resources",
+        "@opentelemetry/sdk-logs",
+      ],
     },
     "packages/utilities": {
       "name": "@padosoft/utilities",

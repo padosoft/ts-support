@@ -1,0 +1,50 @@
+{
+	"name": "@padosoft/logger",
+	"version": "1.1.0",
+	"type": "module",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"access": "restricted",
+		"registry": "https://npm.pkg.github.com"
+	},
+	"repository": {
+		"url": "git+https://github.com/padosoft/ts-support.git"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"ts:check": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@padosoft/config": "workspace:^"
+	},
+	"dependencies": {},
+	"peerDependencies": {
+		"@opentelemetry/api": "",
+		"@opentelemetry/api-logs": "",
+		"@opentelemetry/exporter-logs-otlp-http": "^0.204.0",
+		"@opentelemetry/resources": "^2.1.0",
+		"@opentelemetry/sdk-logs": "^0.204.0"
+	},
+	"peerDependenciesMeta": {
+		"@opentelemetry/api": {
+			"optional": true
+		},
+		"@opentelemetry/api-logs": {
+			"optional": true
+		},
+		"@opentelemetry/resources": {
+			"optional": true
+		},
+		"@opentelemetry/exporter-logs-otlp-http": {
+			"optional": true
+		},
+		"@opentelemetry/sdk-logs": {
+			"optional": true
+		}
+	}
+}
