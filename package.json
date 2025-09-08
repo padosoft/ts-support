@@ -16,7 +16,7 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.1.4",
+		"@biomejs/biome": "2.2.2",
 		"@changesets/cli": "^2.29.5",
 		"@turbo/gen": "^2.5.5",
 		"tsdown": "^0.14.1",
