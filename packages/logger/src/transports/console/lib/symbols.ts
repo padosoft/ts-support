@@ -1,5 +1,5 @@
-import type { LogLevel } from "./levels";
-import { supportsUnicode } from "./utils";
+import type { LogLevel } from "@/lib/levels";
+import { supportsUnicode } from "@/lib/utils";
 
 export type Symbols = Partial<Record<LogLevel | (string & {}), string>>;
 

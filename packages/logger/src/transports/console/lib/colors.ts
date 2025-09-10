@@ -1,5 +1,5 @@
-import type { LogLevel } from "./levels";
-import { supportsColors } from "./utils";
+import type { LogLevel } from "@/lib/levels";
+import { supportsColors } from "@/lib/utils";
 
 export const SUPPORTS_COLORS: boolean = supportsColors();
 

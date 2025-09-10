@@ -1,8 +1,9 @@
-import { colors, getLevelColor } from "@/lib/colors";
 import type { LogLevel } from "@/lib/levels";
 import { createTransport } from "@/lib/mods";
-import { symbolize } from "@/lib/symbols";
+import { colors, getLevelColor } from "@/transports/console/lib/colors";
+import { symbolize } from "@/transports/console/lib/symbols";
 import type { Transport } from "@/types/mods";
+import { consoleMethods } from "./lib/utils";
 
 export interface ConsoleTransportOptions {
 	timestamp?: "iso" | "local" | ((date: Date) => string);
@@ -51,16 +52,3 @@ export const consoleTransport = (
 		},
 	});
 };
-
-type ConsoleMethods = keyof Pick<
-	Console,
-	"log" | "warn" | "error" | "info" | "debug"
->;
-
-export const consoleMethods: Partial<Record<LogLevel, ConsoleMethods>> = {
-	info: "info",
-	warn: "warn",
-	error: "error",
-	debug: "debug",
-	success: "log",
-} as const;
