@@ -23,11 +23,12 @@
         "@padosoft/config": "workspace:^",
       },
       "peerDependencies": {
-        "@opentelemetry/api": "",
-        "@opentelemetry/api-logs": "",
+        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api-logs": "^0.205.0",
         "@opentelemetry/exporter-logs-otlp-http": "^0.204.0",
         "@opentelemetry/resources": "^2.1.0",
         "@opentelemetry/sdk-logs": "^0.204.0",
+        "@opentelemetry/semantic-conventions": "^1.37.0",
       },
       "optionalPeers": [
         "@opentelemetry/api",
@@ -150,6 +151,8 @@
     "@nodelib/fs.stat": ["@nodelib/fs.stat@2.0.5", "", {}, "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A=="],
 
     "@nodelib/fs.walk": ["@nodelib/fs.walk@1.2.8", "", { "dependencies": { "@nodelib/fs.scandir": "2.1.5", "fastq": "^1.6.0" } }, "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg=="],
+
+    "@opentelemetry/semantic-conventions": ["@opentelemetry/semantic-conventions@1.37.0", "", {}, "sha512-JD6DerIKdJGmRp4jQyX5FlrQjA4tjOw1cvfsPAZXfOOEErMUHjPcPSICS+6WnM0nB0efSFARh0KAZss+bvExOA=="],
 
     "@oxc-project/runtime": ["@oxc-project/runtime@0.81.0", "", {}, "sha512-zm/LDVOq9FEmHiuM8zO4DWirv0VP2Tv2VsgaiHby9nvpq+FVrcqNYgv+TysLKOITQXWZj/roluTxFvpkHP0Iuw=="],
 

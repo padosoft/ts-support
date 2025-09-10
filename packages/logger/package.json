@@ -24,11 +24,12 @@
 	},
 	"dependencies": {},
 	"peerDependencies": {
-		"@opentelemetry/api": "",
-		"@opentelemetry/api-logs": "",
+		"@opentelemetry/api": "^1.9.0",
+		"@opentelemetry/api-logs": "^0.205.0",
 		"@opentelemetry/exporter-logs-otlp-http": "^0.204.0",
 		"@opentelemetry/resources": "^2.1.0",
-		"@opentelemetry/sdk-logs": "^0.204.0"
+		"@opentelemetry/sdk-logs": "^0.204.0",
+		"@opentelemetry/semantic-conventions": "^1.37.0"
 	},
 	"peerDependenciesMeta": {
 		"@opentelemetry/api": {
@@ -44,6 +45,9 @@
 			"optional": true
 		},
 		"@opentelemetry/sdk-logs": {
+			"optional": true
+		},
+		"@opentelemetry/semantic-conventions": {
 			"optional": true
 		}
 	}
