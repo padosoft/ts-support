@@ -14,14 +14,13 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"exports": {
-		"./tsdown": {
-			"import": "./dist/tsdown.js",
-			"types": "./dist/tsdown.d.ts"
-		},
+		"./plugins/hono-zod": "./dist/plugins/hono-zod.js",
+		"./tsdown": "./dist/tsdown.js",
+		"./package.json": "./package.json",
 		"./typescript/base": "./typescript/base.json",
+		"./typescript/compiler": "./typescript/compiler.json",
 		"./typescript/expo": "./typescript/expo.json",
 		"./typescript/hono": "./typescript/hono.json",
-		"./typescript/compiler": "./typescript/compiler.json",
 		"./tools/biome": "./tools/biome.json"
 	},
 	"dependencies": {}
