@@ -9,8 +9,10 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check . --write",
 		"gen": "turbo gen",
+		"test": "bun test",
 		"ts:check": "turbo run ts:check",
-		"prepublish": "turbo run build && changeset version"
+		"version-packages": "changeset version && bun i --ignore-scripts --lockfile-only",
+		"publish-packages": "bun run build && changeset version && changeset publish"
 	},
 	"overrides": {
 		"zod": "catalog:"
