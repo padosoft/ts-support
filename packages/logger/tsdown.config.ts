@@ -4,4 +4,5 @@ export default tsdown({
 	entry: ["src/**/*.ts"],
 	external: ["zod"],
 	exports: true,
+	unbundle: true,
 });
