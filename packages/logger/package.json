@@ -50,5 +50,29 @@
 		"@opentelemetry/semantic-conventions": {
 			"optional": true
 		}
+	},
+	"exports": {
+		".": "./dist/index.js",
+		"./adapters\\drizzle": "./dist/adapters\\drizzle.js",
+		"./adapters\\hono": "./dist/adapters\\hono.js",
+		"./core\\logger": "./dist/core\\logger.js",
+		"./lib\\colors": "./dist/lib\\colors.js",
+		"./lib\\index": "./dist/lib\\index.js",
+		"./lib\\levels": "./dist/lib\\levels.js",
+		"./lib\\mods": "./dist/lib\\mods.js",
+		"./lib\\symbols": "./dist/lib\\symbols.js",
+		"./lib\\utils": "./dist/lib\\utils.js",
+		"./plugins\\context": "./dist/plugins\\context.js",
+		"./plugins\\rate-limiter": "./dist/plugins\\rate-limiter.js",
+		"./shared": "./dist/shared.js",
+		"./transports\\console": "./dist/transports\\console.js",
+		"./transports\\otel\\index": "./dist/transports\\otel\\index.js",
+		"./transports\\otel\\types": "./dist/transports\\otel\\types.js",
+		"./transports\\otel\\utils": "./dist/transports\\otel\\utils.js",
+		"./types\\batching": "./dist/types\\batching.js",
+		"./types\\index": "./dist/types\\index.js",
+		"./types\\logger": "./dist/types\\logger.js",
+		"./types\\mods": "./dist/types\\mods.js",
+		"./package.json": "./package.json"
 	}
 }
