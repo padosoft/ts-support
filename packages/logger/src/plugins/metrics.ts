@@ -40,7 +40,7 @@ export const metricsPlugin = (
 			originalAddTransport = logger.addTransport.bind(logger);
 
 			const emit: typeof logger.emit = (level, data) => {
-				metrics[level]++;
+				metrics[level] = (metrics[level] ?? 0) + 1;
 				return originalEmit(level, data);
 			};
 
