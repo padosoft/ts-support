@@ -5,8 +5,8 @@ import type { Plugin, Transport } from "@/types/mods";
 
 export class Logger {
 	protected level: LogLevel;
-	protected transports: Transport[];
-	protected plugins: Plugin[];
+	public readonly transports: Transport[];
+	public readonly plugins: Plugin[];
 	protected batching?: BatchingOptions | undefined;
 	protected batchingState: BatchingState;
 
@@ -145,11 +145,19 @@ export class Logger {
 			await this.flush();
 		}
 
-		await Promise.all(this.transports.map((t) => t.teardown?.(this)));
-		await Promise.all(this.plugins.map((p) => p.teardown?.(this)));
+		await Promise.all(
+			this.transports.map((t) => {
+				this.transports.pop();
+				return t.teardown?.(this);
+			}),
+		);
+		await Promise.all(
+			this.plugins.map((p) => {
+				this.plugins.pop();
+				return p.teardown?.(this);
+			}),
+		);
 
-		this.transports = [];
-		this.plugins = [];
 		this.clearTimer();
 	}
 
