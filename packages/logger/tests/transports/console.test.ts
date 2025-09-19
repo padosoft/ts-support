@@ -40,6 +40,7 @@ describe("consoleTransport", () => {
 	it("batch should call send for each entry", async () => {
 		const spy = mock();
 		console.info = spy;
+		console.error = mock();
 
 		const t = consoleTransport();
 		const logger = new Logger({ transports: [t] });
