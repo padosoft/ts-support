@@ -120,8 +120,8 @@ export class Logger {
 		return this;
 	}
 
-	table(data: unknown): this {
-		console.table?.(data);
+	table(data: unknown, properties?: readonly string[]): this {
+		console.table?.(data, properties);
 		return this;
 	}
 
@@ -129,6 +129,17 @@ export class Logger {
 		console.clear?.();
 		return this;
 	}
+
+	group(...label: unknown[]): this {
+		console.group?.(label);
+		return this;
+	}
+
+	groupEnd(): this {
+		console.groupEnd?.();
+		return this;
+	}
+
 	clone(extra?: Partial<LoggerOptions>): Logger {
 		const merged: LoggerOptions = {
 			level: this.level,
@@ -139,6 +150,7 @@ export class Logger {
 
 		return new Logger(merged);
 	}
+
 	async close(): Promise<void> {
 		const shouldFlush = this.batching?.flushOnDispose ?? true;
 		if (shouldFlush) {
