@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 1.0.1
+
+### Patch Changes
+
+- [`a102554`](https://github.com/padosoft/ts-support/commit/a1025540fbeae0d5b2fd89b8dad2d8554cbbee26) Thanks [@47PADO47](https://github.com/47PADO47)! - add missing console methods
+
 ## 1.0.0
 
 ### Major Changes
