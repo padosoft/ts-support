@@ -1,19 +1,30 @@
 import type { LogLevel } from "@/lib/levels";
 import { createTransport } from "@/lib/mods";
-import { colors, getLevelColor } from "@/transports/console/lib/colors";
+import {
+	type ColorFn,
+	colors,
+	getLevelColor,
+} from "@/transports/console/lib/colors";
 import { symbolize } from "@/transports/console/lib/symbols";
 import type { Transport } from "@/types/mods";
 import { consoleMethods } from "./lib/utils";
 
 export interface ConsoleTransportOptions {
 	timestamp?: "iso" | "local" | ((date: Date) => string);
+	symbols?: boolean;
+	colors?: boolean;
 }
 
 export const consoleTransport = (
 	options: ConsoleTransportOptions = {
 		timestamp: "local",
+		colors: true,
+		symbols: true,
 	},
 ): Transport => {
+	const colorize = (color: ColorFn, s: string) =>
+		options.colors ? color(s) : s;
+
 	const timestamp = (date: Date): string =>
 		typeof options.timestamp === "function"
 			? options.timestamp(date)
@@ -22,15 +33,15 @@ export const consoleTransport = (
 				: date.toISOString();
 
 	const format = (level: LogLevel, args: unknown[]) => {
-		const symbol = symbolize(level);
+		const symbol = options.symbols ? symbolize(level) : null;
 		const color = getLevelColor(level);
 
 		const now = new Date();
 
 		const messages = [
-			colors.gray(timestamp(now)),
-			symbol ? color(symbol) : "",
-			`[${color(level.toUpperCase())}]`,
+			colorize(colors.gray, timestamp(now)),
+			symbol ? colorize(color, symbol) : "",
+			`[${colorize(color, level.toUpperCase())}]`,
 		];
 
 		const prefix = messages.filter((s) => s.length).join(" ");
