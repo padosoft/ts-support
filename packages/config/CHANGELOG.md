@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.1.2
+
+### Patch Changes
+
+- [`40564ee`](https://github.com/padosoft/ts-support/commit/40564ee614b8b065cb07ebb862044739b2ec9ed4) Thanks [@47PADO47](https://github.com/47PADO47)! - fix defaultCustomExports location update
+
 ## 1.1.1
 
 ### Patch Changes
