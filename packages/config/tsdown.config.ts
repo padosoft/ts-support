@@ -2,7 +2,8 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { UserConfigFn } from "tsdown";
-import { defaultCustomExports, tsdown } from "./compiler/tsdown.ts";
+import { tsdown } from "./compiler/tsdown.ts";
+import { defaultCustomExports } from "./compiler/utils/index.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
