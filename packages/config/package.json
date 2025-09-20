@@ -16,6 +16,8 @@
 	"exports": {
 		"./plugins/hono-zod": "./dist/plugins/hono-zod.js",
 		"./tsdown": "./dist/tsdown.js",
+		"./utils": "./dist/utils/index.js",
+		"./utils/exports": "./dist/utils/exports.js",
 		"./package.json": "./package.json",
 		"./typescript/base": "./typescript/base.json",
 		"./typescript/compiler": "./typescript/compiler.json",

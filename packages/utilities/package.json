@@ -7,11 +7,11 @@
 	"types": "./dist/index.d.ts",
 	"exports": {
 		".": "./dist/index.js",
-		"./lib/index": "./dist/lib/index.js",
+		"./lib": "./dist/lib/index.js",
 		"./lib/turbo": "./dist/lib/turbo.js",
 		"./lib/utils": "./dist/lib/utils.js",
 		"./lib/zod": "./dist/lib/zod.js",
-		"./types/index": "./dist/types/index.js",
+		"./types": "./dist/types/index.js",
 		"./types/utils": "./dist/types/utils.js",
 		"./package.json": "./package.json"
 	},
