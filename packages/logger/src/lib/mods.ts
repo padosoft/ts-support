@@ -2,7 +2,7 @@ import type { Mod, Plugin, Transport } from "@/types/mods";
 
 export const createPlugin = <P extends Omit<Plugin, keyof Mod<string>>>(
 	options: P,
-): Plugin => {
+): Plugin & P => {
 	return {
 		...options,
 		_tag: "plugin",
@@ -11,7 +11,7 @@ export const createPlugin = <P extends Omit<Plugin, keyof Mod<string>>>(
 
 export const createTransport = <T extends Omit<Transport, keyof Mod<string>>>(
 	options: T,
-): Transport => {
+): Transport & T => {
 	return {
 		...options,
 		_tag: "transport",
