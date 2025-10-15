@@ -12,6 +12,8 @@ export interface HttpTransportOptions {
 	/** Optional headers */
 	headers?: Record<string, string>;
 
+	transformBody?: (body: LogEntry[]) => string;
+
 	/** Custom fetch function (default: global fetch) */
 	fetchFn?: (batch: LogEntry[]) => Promise<void>;
 }
@@ -25,10 +27,14 @@ export const httpTransport = (options: HttpTransportOptions): Transport => {
 			throw new Error("httpTransport: no endpoint or fetchFn provided");
 		}
 
+		const body = options.transformBody
+			? options.transformBody(batch)
+			: JSON.stringify(batch);
+
 		return globalThis.fetch(options.endpoint, {
 			method,
 			headers,
-			body: JSON.stringify(batch),
+			body,
 		});
 	};
 
