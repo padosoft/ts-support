@@ -6,13 +6,34 @@
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
-		".": "./dist/index.js",
-		"./lib": "./dist/lib/index.js",
-		"./lib/turbo": "./dist/lib/turbo.js",
-		"./lib/utils": "./dist/lib/utils.js",
-		"./lib/zod": "./dist/lib/zod.js",
-		"./types": "./dist/types/index.js",
-		"./types/utils": "./dist/types/utils.js",
+		".": {
+			"default": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./lib": {
+			"default": "./dist/lib/index.js",
+			"types": "./dist/lib/index.d.ts"
+		},
+		"./lib/turbo": {
+			"default": "./dist/lib/turbo.js",
+			"types": "./dist/lib/turbo.d.ts"
+		},
+		"./lib/utils": {
+			"default": "./dist/lib/utils.js",
+			"types": "./dist/lib/utils.d.ts"
+		},
+		"./lib/zod": {
+			"default": "./dist/lib/zod.js",
+			"types": "./dist/lib/zod.d.ts"
+		},
+		"./types": {
+			"default": "./dist/types/index.js",
+			"types": "./dist/types/index.d.ts"
+		},
+		"./types/utils": {
+			"default": "./dist/types/utils.js",
+			"types": "./dist/types/utils.d.ts"
+		},
 		"./package.json": "./package.json"
 	},
 	"files": [
