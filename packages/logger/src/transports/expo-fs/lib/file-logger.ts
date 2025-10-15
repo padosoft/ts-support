@@ -25,7 +25,10 @@ export class FileLogger {
 
 		this.file = new FileSystem.File(this.path);
 		if (!this.file.exists) {
-			this.file.create();
+			this.file.create({
+				intermediates: true,
+				overwrite: true,
+			});
 		}
 
 		this.handle = this.file.open();
