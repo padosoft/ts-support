@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 1.1.0
+
+### Minor Changes
+
+- [`4847b53`](https://github.com/padosoft/ts-support/commit/4847b53d306e735c0efb375f697c99ee2b198e67) Thanks [@47PADO47](https://github.com/47PADO47)! - feat: expo-fs and discord transports
+
 ## 1.0.2
 
 ### Patch Changes
