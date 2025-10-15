@@ -135,6 +135,10 @@
 			"default": "./dist/transports/console/types.js",
 			"types": "./dist/transports/console/types.d.ts"
 		},
+		"./transports/discord": {
+			"default": "./dist/transports/discord/index.js",
+			"types": "./dist/transports/discord/index.d.ts"
+		},
 		"./transports/expo-fs": {
 			"default": "./dist/transports/expo-fs/index.js",
 			"types": "./dist/transports/expo-fs/index.d.ts"
