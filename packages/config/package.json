@@ -14,9 +14,9 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"exports": {
-		"./plugins/*": {
-			"default": "./dist/plugins/*.js",
-			"types": "./dist/plugins/*.d.ts"
+		"./plugins/hono-zod": {
+			"default": "./dist/plugins/hono-zod.js",
+			"types": "./dist/plugins/hono-zod.d.ts"
 		},
 		"./tsdown": {
 			"default": "./dist/tsdown.js",
@@ -31,7 +31,10 @@
 			"types": "./dist/utils/exports.d.ts"
 		},
 		"./package.json": "./package.json",
-		"./typescript/*": "./typescript/*.json",
+		"./typescript/base": "./typescript/base.json",
+		"./typescript/compiler": "./typescript/compiler.json",
+		"./typescript/expo": "./typescript/expo.json",
+		"./typescript/hono": "./typescript/hono.json",
 		"./tools/biome": "./tools/biome.json"
 	},
 	"dependencies": {}
