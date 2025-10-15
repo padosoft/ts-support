@@ -1,3 +1,4 @@
+import { makeTimestamp } from "@/lib/format";
 import type { LogLevel } from "@/lib/levels";
 import { createTransport } from "@/lib/mods";
 import {
@@ -6,11 +7,12 @@ import {
 	getLevelColor,
 } from "@/transports/console/lib/colors";
 import { symbolize } from "@/transports/console/lib/symbols";
+import type { TimestampType } from "@/types/format";
 import type { Transport } from "@/types/mods";
 import { consoleMethods } from "./lib/utils";
 
 export interface ConsoleTransportOptions {
-	timestamp?: "iso" | "local" | ((date: Date) => string);
+	timestamp?: TimestampType;
 	symbols?: boolean;
 	colors?: boolean;
 	level?: boolean;
@@ -28,13 +30,7 @@ export const consoleTransport = (
 		options.colors ? color(s) : s;
 
 	const selectedTimestamp = options.timestamp ?? "local";
-
-	const timestamp = (date: Date): string =>
-		typeof selectedTimestamp === "function"
-			? selectedTimestamp(date)
-			: selectedTimestamp === "local"
-				? date.toLocaleString()
-				: date.toISOString();
+	const timestamp = makeTimestamp(selectedTimestamp);
 
 	const format = (level: LogLevel, args: unknown[]) => {
 		const symbolsEnabled = options.symbols ?? true;
