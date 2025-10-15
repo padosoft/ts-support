@@ -13,6 +13,7 @@ export interface ConsoleTransportOptions {
 	timestamp?: "iso" | "local" | ((date: Date) => string);
 	symbols?: boolean;
 	colors?: boolean;
+	level?: boolean;
 }
 
 export const consoleTransport = (
@@ -20,6 +21,7 @@ export const consoleTransport = (
 		timestamp: "local",
 		colors: true,
 		symbols: true,
+		level: true,
 	},
 ): Transport => {
 	const colorize = (color: ColorFn, s: string) =>
@@ -35,16 +37,21 @@ export const consoleTransport = (
 				: date.toISOString();
 
 	const format = (level: LogLevel, args: unknown[]) => {
-		const symbol = options.symbols ? symbolize(level) : null;
-		const color = getLevelColor(level);
+		const symbolsEnabled = options.symbols ?? true;
+		const symbol = symbolsEnabled ? symbolize(level) : null;
 
+		const color = getLevelColor(level);
 		const now = new Date();
 
 		const messages = [
 			colorize(colors.gray, timestamp(now)),
 			symbol ? colorize(color, symbol) : "",
-			`[${colorize(color, level.toUpperCase())}]`,
 		];
+
+		const hasLevel = options.level ?? true;
+		if (hasLevel) {
+			messages.push(`[${colorize(color, level.toUpperCase())}]`);
+		}
 
 		const prefix = messages.filter((s) => s.length).join(" ");
 		return [prefix, ...args];
