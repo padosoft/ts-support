@@ -25,10 +25,12 @@ export const consoleTransport = (
 	const colorize = (color: ColorFn, s: string) =>
 		options.colors ? color(s) : s;
 
+	const selectedTimestamp = options.timestamp ?? "local";
+
 	const timestamp = (date: Date): string =>
-		typeof options.timestamp === "function"
-			? options.timestamp(date)
-			: options.timestamp === "local"
+		typeof selectedTimestamp === "function"
+			? selectedTimestamp(date)
+			: selectedTimestamp === "local"
 				? date.toLocaleString()
 				: date.toISOString();
 
