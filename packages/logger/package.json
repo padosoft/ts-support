@@ -83,6 +83,10 @@
 			"default": "./dist/lib/index.js",
 			"types": "./dist/lib/index.d.ts"
 		},
+		"./lib/format": {
+			"default": "./dist/lib/format.js",
+			"types": "./dist/lib/format.d.ts"
+		},
 		"./lib/levels": {
 			"default": "./dist/lib/levels.js",
 			"types": "./dist/lib/levels.d.ts"
@@ -135,6 +139,10 @@
 			"default": "./dist/transports/expo-fs/index.js",
 			"types": "./dist/transports/expo-fs/index.d.ts"
 		},
+		"./transports/expo-fs/lib/file-logger": {
+			"default": "./dist/transports/expo-fs/lib/file-logger.js",
+			"types": "./dist/transports/expo-fs/lib/file-logger.d.ts"
+		},
 		"./transports/file": {
 			"default": "./dist/transports/file.js",
 			"types": "./dist/transports/file.d.ts"
@@ -166,6 +174,10 @@
 		"./types/batching": {
 			"default": "./dist/types/batching.js",
 			"types": "./dist/types/batching.d.ts"
+		},
+		"./types/format": {
+			"default": "./dist/types/format.js",
+			"types": "./dist/types/format.d.ts"
 		},
 		"./types/logger": {
 			"default": "./dist/types/logger.js",
