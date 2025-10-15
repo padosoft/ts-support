@@ -1,10 +1,11 @@
-import { Paths } from "expo-file-system";
 import { makeTimestamp } from "@/lib/format";
 import type { LogLevel } from "@/lib/levels";
 import { createTransport } from "@/lib/mods";
 import type { TimestampType } from "@/types/format";
 import type { Transport } from "@/types/mods";
 import { FileLogger } from "./lib/file-logger";
+
+export let expoFileLogger: FileLogger | null = null;
 
 export interface ExpoFileSystemTransportOptions {
 	filename?: string;
@@ -20,10 +21,10 @@ export const expoFileSystemTransport = (
 	const selectedTimestamp = options.timestamp ?? "local";
 	const timestamp = makeTimestamp(selectedTimestamp);
 
-	const logger = new FileLogger({
-		path: `${Paths.cache}/${filename}`,
+	expoFileLogger = new FileLogger({
+		filename,
 	});
-	logger.open();
+	expoFileLogger.open();
 
 	const format = (level: LogLevel, args: unknown[]) => {
 		const now = new Date();
@@ -38,19 +39,19 @@ export const expoFileSystemTransport = (
 		name: "expo-fs",
 		send: (_logger, entry) => {
 			const out = format(entry.level, entry.data).join(" ");
-			logger.append(out);
+			expoFileLogger?.append(out);
 		},
 		batch(_logger, batch) {
 			const out = batch
 				.map((entry) => format(entry.level, entry.data).join(" "))
 				.join("\n");
-			logger.append(out);
+			expoFileLogger?.append(out);
 		},
 		[Symbol.dispose]() {
-			logger.close();
+			expoFileLogger?.close();
 		},
 		async [Symbol.asyncDispose]() {
-			logger.close();
+			expoFileLogger?.close();
 		},
 	});
 };

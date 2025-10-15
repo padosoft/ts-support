@@ -27,7 +27,8 @@
 		"@opentelemetry/resources": "^2.1.0",
 		"@opentelemetry/sdk-logs": "^0.206.0",
 		"@opentelemetry/semantic-conventions": "^1.37.0",
-		"expo-file-system": "^19.0.17"
+		"expo-file-system": "^19.0.17",
+		"expo-application": "^7.0.7"
 	},
 	"dependencies": {},
 	"peerDependencies": {
@@ -37,7 +38,8 @@
 		"@opentelemetry/resources": "*",
 		"@opentelemetry/sdk-logs": "*",
 		"@opentelemetry/semantic-conventions": "*",
-		"expo-file-system": "*"
+		"expo-file-system": "*",
+		"expo-application": "*"
 	},
 	"peerDependenciesMeta": {
 		"@opentelemetry/api": {
