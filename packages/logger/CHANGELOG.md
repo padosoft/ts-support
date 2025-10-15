@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 1.1.1
+
+### Patch Changes
+
+- [`2ebe2f2`](https://github.com/padosoft/ts-support/commit/2ebe2f2d2d4ab90c408ef8348a2b64fa85905fa9) Thanks [@47PADO47](https://github.com/47PADO47)! - fix expo-ts transport
+
 ## 1.1.0
 
 ### Minor Changes
