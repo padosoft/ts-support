@@ -1,5 +1,13 @@
 # @padosoft/logger
 
+## 1.0.2
+
+### Patch Changes
+
+- [`4b0c7c8`](https://github.com/padosoft/ts-support/commit/4b0c7c8af8167a30e5eb58e4b6ed65c762756583) Thanks [@47PADO47](https://github.com/47PADO47)! - console plugin fixes
+
+- [`76927c6`](https://github.com/padosoft/ts-support/commit/76927c6c92a530198a21da15bff0b27068fd3f64) Thanks [@47PADO47](https://github.com/47PADO47)! - add expo-fs transport
+
 ## 1.0.1
 
 ### Patch Changes
