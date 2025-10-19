@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 1.2.0
+
+### Minor Changes
+
+- [`0d30160`](https://github.com/padosoft/ts-support/commit/0d30160126b4aa882cf03c9133cb78e7e8de30ec) Thanks [@47PADO47](https://github.com/47PADO47)! - feat: add support for raw logs
+
 ## 1.1.1
 
 ### Patch Changes
