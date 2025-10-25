@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.1.4
+
+### Patch Changes
+
+- [`2acb73a`](https://github.com/padosoft/ts-support/commit/2acb73a9756df5e8b1c948c90859220af0a9e263) Thanks [@47PADO47](https://github.com/47PADO47)! - update tools config
+
 ## 1.1.3
 
 ### Patch Changes
