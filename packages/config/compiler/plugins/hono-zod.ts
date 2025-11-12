@@ -1,5 +1,3 @@
-// tsdown-plugin-replace-z-import.ts
-
 import type { Plugin } from "rolldown";
 
 const replaceZodOpenapiImportPlugin: Plugin = {
