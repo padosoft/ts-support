@@ -14,22 +14,10 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"exports": {
-		"./plugins/hono-zod": {
-			"default": "./dist/plugins/hono-zod.js",
-			"types": "./dist/plugins/hono-zod.d.ts"
-		},
-		"./tsdown": {
-			"default": "./dist/tsdown.js",
-			"types": "./dist/tsdown.d.ts"
-		},
-		"./utils": {
-			"default": "./dist/utils/index.js",
-			"types": "./dist/utils/index.d.ts"
-		},
-		"./utils/exports": {
-			"default": "./dist/utils/exports.js",
-			"types": "./dist/utils/exports.d.ts"
-		},
+		"./plugins/hono-zod": "./dist/plugins/hono-zod.mjs",
+		"./tsdown": "./dist/tsdown.mjs",
+		"./utils": "./dist/utils/index.mjs",
+		"./utils/exports": "./dist/utils/exports.mjs",
 		"./package.json": "./package.json",
 		"./typescript/base": "./typescript/base.json",
 		"./typescript/compiler": "./typescript/compiler.json",

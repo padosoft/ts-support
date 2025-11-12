@@ -2,9 +2,9 @@
 	"name": "@padosoft/logger",
 	"version": "1.2.0",
 	"type": "module",
-	"main": "./dist/index.js",
-	"module": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"main": "./dist/index.mjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.mts",
 	"files": [
 		"dist"
 	],
@@ -65,134 +65,38 @@
 		}
 	},
 	"exports": {
-		".": {
-			"default": "./dist/index.js",
-			"types": "./dist/index.d.ts"
-		},
-		"./adapters/drizzle": {
-			"default": "./dist/adapters/drizzle.js",
-			"types": "./dist/adapters/drizzle.d.ts"
-		},
-		"./adapters/hono": {
-			"default": "./dist/adapters/hono.js",
-			"types": "./dist/adapters/hono.d.ts"
-		},
-		"./core/logger": {
-			"default": "./dist/core/logger.js",
-			"types": "./dist/core/logger.d.ts"
-		},
-		"./lib": {
-			"default": "./dist/lib/index.js",
-			"types": "./dist/lib/index.d.ts"
-		},
-		"./lib/format": {
-			"default": "./dist/lib/format.js",
-			"types": "./dist/lib/format.d.ts"
-		},
-		"./lib/levels": {
-			"default": "./dist/lib/levels.js",
-			"types": "./dist/lib/levels.d.ts"
-		},
-		"./lib/mods": {
-			"default": "./dist/lib/mods.js",
-			"types": "./dist/lib/mods.d.ts"
-		},
-		"./lib/utils": {
-			"default": "./dist/lib/utils.js",
-			"types": "./dist/lib/utils.d.ts"
-		},
-		"./plugins/context": {
-			"default": "./dist/plugins/context.js",
-			"types": "./dist/plugins/context.d.ts"
-		},
-		"./plugins/metrics": {
-			"default": "./dist/plugins/metrics.js",
-			"types": "./dist/plugins/metrics.d.ts"
-		},
-		"./plugins/rate-limiter": {
-			"default": "./dist/plugins/rate-limiter.js",
-			"types": "./dist/plugins/rate-limiter.d.ts"
-		},
-		"./shared": {
-			"default": "./dist/shared.js",
-			"types": "./dist/shared.d.ts"
-		},
-		"./transports/console": {
-			"default": "./dist/transports/console/index.js",
-			"types": "./dist/transports/console/index.d.ts"
-		},
-		"./transports/console/lib/colors": {
-			"default": "./dist/transports/console/lib/colors.js",
-			"types": "./dist/transports/console/lib/colors.d.ts"
-		},
-		"./transports/console/lib/symbols": {
-			"default": "./dist/transports/console/lib/symbols.js",
-			"types": "./dist/transports/console/lib/symbols.d.ts"
-		},
-		"./transports/console/lib/utils": {
-			"default": "./dist/transports/console/lib/utils.js",
-			"types": "./dist/transports/console/lib/utils.d.ts"
-		},
-		"./transports/console/types": {
-			"default": "./dist/transports/console/types.js",
-			"types": "./dist/transports/console/types.d.ts"
-		},
-		"./transports/discord": {
-			"default": "./dist/transports/discord/index.js",
-			"types": "./dist/transports/discord/index.d.ts"
-		},
-		"./transports/expo-fs": {
-			"default": "./dist/transports/expo-fs/index.js",
-			"types": "./dist/transports/expo-fs/index.d.ts"
-		},
-		"./transports/expo-fs/lib/file-logger": {
-			"default": "./dist/transports/expo-fs/lib/file-logger.js",
-			"types": "./dist/transports/expo-fs/lib/file-logger.d.ts"
-		},
-		"./transports/file": {
-			"default": "./dist/transports/file.js",
-			"types": "./dist/transports/file.d.ts"
-		},
-		"./transports/http": {
-			"default": "./dist/transports/http.js",
-			"types": "./dist/transports/http.d.ts"
-		},
-		"./transports/otel": {
-			"default": "./dist/transports/otel/index.js",
-			"types": "./dist/transports/otel/index.d.ts"
-		},
-		"./transports/otel/types": {
-			"default": "./dist/transports/otel/types.js",
-			"types": "./dist/transports/otel/types.d.ts"
-		},
-		"./transports/otel/utils": {
-			"default": "./dist/transports/otel/utils.js",
-			"types": "./dist/transports/otel/utils.d.ts"
-		},
-		"./transports/ws": {
-			"default": "./dist/transports/ws.js",
-			"types": "./dist/transports/ws.d.ts"
-		},
-		"./types": {
-			"default": "./dist/types/index.js",
-			"types": "./dist/types/index.d.ts"
-		},
-		"./types/batching": {
-			"default": "./dist/types/batching.js",
-			"types": "./dist/types/batching.d.ts"
-		},
-		"./types/format": {
-			"default": "./dist/types/format.js",
-			"types": "./dist/types/format.d.ts"
-		},
-		"./types/logger": {
-			"default": "./dist/types/logger.js",
-			"types": "./dist/types/logger.d.ts"
-		},
-		"./types/mods": {
-			"default": "./dist/types/mods.js",
-			"types": "./dist/types/mods.d.ts"
-		},
+		".": "./dist/index.mjs",
+		"./adapters/drizzle": "./dist/adapters/drizzle.mjs",
+		"./adapters/hono": "./dist/adapters/hono.mjs",
+		"./core/logger": "./dist/core/logger.mjs",
+		"./lib": "./dist/lib/index.mjs",
+		"./lib/format": "./dist/lib/format.mjs",
+		"./lib/levels": "./dist/lib/levels.mjs",
+		"./lib/mods": "./dist/lib/mods.mjs",
+		"./lib/utils": "./dist/lib/utils.mjs",
+		"./plugins/context": "./dist/plugins/context.mjs",
+		"./plugins/metrics": "./dist/plugins/metrics.mjs",
+		"./plugins/rate-limiter": "./dist/plugins/rate-limiter.mjs",
+		"./shared": "./dist/shared.mjs",
+		"./transports/console": "./dist/transports/console/index.mjs",
+		"./transports/console/lib/colors": "./dist/transports/console/lib/colors.mjs",
+		"./transports/console/lib/symbols": "./dist/transports/console/lib/symbols.mjs",
+		"./transports/console/lib/utils": "./dist/transports/console/lib/utils.mjs",
+		"./transports/console/types": "./dist/transports/console/types.mjs",
+		"./transports/discord": "./dist/transports/discord/index.mjs",
+		"./transports/expo-fs": "./dist/transports/expo-fs/index.mjs",
+		"./transports/expo-fs/lib/file-logger": "./dist/transports/expo-fs/lib/file-logger.mjs",
+		"./transports/file": "./dist/transports/file.mjs",
+		"./transports/http": "./dist/transports/http.mjs",
+		"./transports/otel": "./dist/transports/otel/index.mjs",
+		"./transports/otel/types": "./dist/transports/otel/types.mjs",
+		"./transports/otel/utils": "./dist/transports/otel/utils.mjs",
+		"./transports/ws": "./dist/transports/ws.mjs",
+		"./types": "./dist/types/index.mjs",
+		"./types/batching": "./dist/types/batching.mjs",
+		"./types/format": "./dist/types/format.mjs",
+		"./types/logger": "./dist/types/logger.mjs",
+		"./types/mods": "./dist/types/mods.mjs",
 		"./package.json": "./package.json"
 	}
 }
