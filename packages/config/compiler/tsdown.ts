@@ -1,7 +1,7 @@
-import { defineConfig, type Options, type UserConfigFn } from "tsdown";
+import { defineConfig, type InlineConfig, type UserConfigFn } from "tsdown";
 import { defaultCustomExports } from "./utils/exports.ts";
 
-export const tsdown = (packageOptions?: Options): UserConfigFn => {
+export const tsdown = (packageOptions?: InlineConfig): UserConfigFn => {
 	return defineConfig((overrideOptions) => {
 		const options = {
 			...overrideOptions,
