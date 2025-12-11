@@ -6,6 +6,12 @@ export type DeepPartial<T> = T extends object
 		}
 	: T;
 
+export type FullPartial<T> = T extends object
+	? {
+			[P in keyof T]?: T[P] | undefined;
+		}
+	: T;
+
 export type ConvertMaybeZod<T> = T extends z.$ZodType ? z.infer<T> : T;
 export type DeepConvertMaybeZod<T> = T extends z.$ZodType
 	? z.infer<T>
