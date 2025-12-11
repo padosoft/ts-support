@@ -10,7 +10,10 @@
 		"./lib": "./dist/lib/index.mjs",
 		"./lib/turbo": "./dist/lib/turbo.mjs",
 		"./lib/utils": "./dist/lib/utils.mjs",
-		"./lib/zod": "./dist/lib/zod.mjs",
+		"./lib/zod": "./dist/lib/zod/index.mjs",
+		"./lib/zod/codecs": "./dist/lib/zod/codecs/index.mjs",
+		"./lib/zod/codecs/json": "./dist/lib/zod/codecs/json.mjs",
+		"./lib/zod/utils": "./dist/lib/zod/utils.mjs",
 		"./types": "./dist/types/index.mjs",
 		"./types/utils": "./dist/types/utils.mjs",
 		"./package.json": "./package.json"
