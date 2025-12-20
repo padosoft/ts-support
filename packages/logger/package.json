@@ -27,7 +27,7 @@
 		"@opentelemetry/resources": "^2.2.0",
 		"@opentelemetry/sdk-logs": "^0.208.0",
 		"@opentelemetry/semantic-conventions": "^1.38.0",
-		"expo-file-system": "^19.0.20",
+		"expo-file-system": "^19.0.21",
 		"expo-application": "^7.0.8"
 	},
 	"dependencies": {},
