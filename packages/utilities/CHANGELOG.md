@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.2.0
+
+### Minor Changes
+
+- [`9dec4cc`](https://github.com/padosoft/ts-support/commit/9dec4cc15a9c3b5952da7ed399afea197eee51cf) Thanks [@47PADO47](https://github.com/47PADO47)! - add new utils
+
 ## 1.1.1
 
 ### Patch Changes
