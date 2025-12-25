@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.1.5
+
+### Patch Changes
+
+- [`9dec4cc`](https://github.com/padosoft/ts-support/commit/9dec4cc15a9c3b5952da7ed399afea197eee51cf) Thanks [@47PADO47](https://github.com/47PADO47)! - update tsdown
+
 ## 1.1.4
 
 ### Patch Changes
