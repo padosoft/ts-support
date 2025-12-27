@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.2.1
+
+### Patch Changes
+
+- [`873297d`](https://github.com/padosoft/ts-support/commit/873297d85c8088ec344d8380e88cbc069da489d6) Thanks [@47PADO47](https://github.com/47PADO47)! - fix types exports
+
 ## 1.2.0
 
 ### Minor Changes
