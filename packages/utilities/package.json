@@ -6,16 +6,46 @@
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.mts",
 	"exports": {
-		".": "./dist/index.mjs",
-		"./lib": "./dist/lib/index.mjs",
-		"./lib/turbo": "./dist/lib/turbo.mjs",
-		"./lib/utils": "./dist/lib/utils.mjs",
-		"./lib/zod": "./dist/lib/zod/index.mjs",
-		"./lib/zod/codecs": "./dist/lib/zod/codecs/index.mjs",
-		"./lib/zod/codecs/json": "./dist/lib/zod/codecs/json.mjs",
-		"./lib/zod/utils": "./dist/lib/zod/utils.mjs",
-		"./types": "./dist/types/index.mjs",
-		"./types/utils": "./dist/types/utils.mjs",
+		".": {
+			"default": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
+		},
+		"./lib": {
+			"default": "./dist/lib/index.mjs",
+			"types": "./dist/lib/index.d.mts"
+		},
+		"./lib/turbo": {
+			"default": "./dist/lib/turbo.mjs",
+			"types": "./dist/lib/turbo.d.mts"
+		},
+		"./lib/utils": {
+			"default": "./dist/lib/utils.mjs",
+			"types": "./dist/lib/utils.d.mts"
+		},
+		"./lib/zod": {
+			"default": "./dist/lib/zod/index.mjs",
+			"types": "./dist/lib/zod/index.d.mts"
+		},
+		"./lib/zod/codecs": {
+			"default": "./dist/lib/zod/codecs/index.mjs",
+			"types": "./dist/lib/zod/codecs/index.d.mts"
+		},
+		"./lib/zod/codecs/json": {
+			"default": "./dist/lib/zod/codecs/json.mjs",
+			"types": "./dist/lib/zod/codecs/json.d.mts"
+		},
+		"./lib/zod/utils": {
+			"default": "./dist/lib/zod/utils.mjs",
+			"types": "./dist/lib/zod/utils.d.mts"
+		},
+		"./types": {
+			"default": "./dist/types/index.mjs",
+			"types": "./dist/types/index.d.mts"
+		},
+		"./types/utils": {
+			"default": "./dist/types/utils.mjs",
+			"types": "./dist/types/utils.d.mts"
+		},
 		"./package.json": "./package.json"
 	},
 	"files": [

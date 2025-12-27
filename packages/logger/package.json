@@ -65,38 +65,134 @@
 		}
 	},
 	"exports": {
-		".": "./dist/index.mjs",
-		"./adapters/drizzle": "./dist/adapters/drizzle.mjs",
-		"./adapters/hono": "./dist/adapters/hono.mjs",
-		"./core/logger": "./dist/core/logger.mjs",
-		"./lib": "./dist/lib/index.mjs",
-		"./lib/format": "./dist/lib/format.mjs",
-		"./lib/levels": "./dist/lib/levels.mjs",
-		"./lib/mods": "./dist/lib/mods.mjs",
-		"./lib/utils": "./dist/lib/utils.mjs",
-		"./plugins/context": "./dist/plugins/context.mjs",
-		"./plugins/metrics": "./dist/plugins/metrics.mjs",
-		"./plugins/rate-limiter": "./dist/plugins/rate-limiter.mjs",
-		"./shared": "./dist/shared.mjs",
-		"./transports/console": "./dist/transports/console/index.mjs",
-		"./transports/console/lib/colors": "./dist/transports/console/lib/colors.mjs",
-		"./transports/console/lib/symbols": "./dist/transports/console/lib/symbols.mjs",
-		"./transports/console/lib/utils": "./dist/transports/console/lib/utils.mjs",
-		"./transports/console/types": "./dist/transports/console/types.mjs",
-		"./transports/discord": "./dist/transports/discord/index.mjs",
-		"./transports/expo-fs": "./dist/transports/expo-fs/index.mjs",
-		"./transports/expo-fs/lib/file-logger": "./dist/transports/expo-fs/lib/file-logger.mjs",
-		"./transports/file": "./dist/transports/file.mjs",
-		"./transports/http": "./dist/transports/http.mjs",
-		"./transports/otel": "./dist/transports/otel/index.mjs",
-		"./transports/otel/types": "./dist/transports/otel/types.mjs",
-		"./transports/otel/utils": "./dist/transports/otel/utils.mjs",
-		"./transports/ws": "./dist/transports/ws.mjs",
-		"./types": "./dist/types/index.mjs",
-		"./types/batching": "./dist/types/batching.mjs",
-		"./types/format": "./dist/types/format.mjs",
-		"./types/logger": "./dist/types/logger.mjs",
-		"./types/mods": "./dist/types/mods.mjs",
+		".": {
+			"default": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
+		},
+		"./adapters/drizzle": {
+			"default": "./dist/adapters/drizzle.mjs",
+			"types": "./dist/adapters/drizzle.d.mts"
+		},
+		"./adapters/hono": {
+			"default": "./dist/adapters/hono.mjs",
+			"types": "./dist/adapters/hono.d.mts"
+		},
+		"./core/logger": {
+			"default": "./dist/core/logger.mjs",
+			"types": "./dist/core/logger.d.mts"
+		},
+		"./lib": {
+			"default": "./dist/lib/index.mjs",
+			"types": "./dist/lib/index.d.mts"
+		},
+		"./lib/format": {
+			"default": "./dist/lib/format.mjs",
+			"types": "./dist/lib/format.d.mts"
+		},
+		"./lib/levels": {
+			"default": "./dist/lib/levels.mjs",
+			"types": "./dist/lib/levels.d.mts"
+		},
+		"./lib/mods": {
+			"default": "./dist/lib/mods.mjs",
+			"types": "./dist/lib/mods.d.mts"
+		},
+		"./lib/utils": {
+			"default": "./dist/lib/utils.mjs",
+			"types": "./dist/lib/utils.d.mts"
+		},
+		"./plugins/context": {
+			"default": "./dist/plugins/context.mjs",
+			"types": "./dist/plugins/context.d.mts"
+		},
+		"./plugins/metrics": {
+			"default": "./dist/plugins/metrics.mjs",
+			"types": "./dist/plugins/metrics.d.mts"
+		},
+		"./plugins/rate-limiter": {
+			"default": "./dist/plugins/rate-limiter.mjs",
+			"types": "./dist/plugins/rate-limiter.d.mts"
+		},
+		"./shared": {
+			"default": "./dist/shared.mjs",
+			"types": "./dist/shared.d.mts"
+		},
+		"./transports/console": {
+			"default": "./dist/transports/console/index.mjs",
+			"types": "./dist/transports/console/index.d.mts"
+		},
+		"./transports/console/lib/colors": {
+			"default": "./dist/transports/console/lib/colors.mjs",
+			"types": "./dist/transports/console/lib/colors.d.mts"
+		},
+		"./transports/console/lib/symbols": {
+			"default": "./dist/transports/console/lib/symbols.mjs",
+			"types": "./dist/transports/console/lib/symbols.d.mts"
+		},
+		"./transports/console/lib/utils": {
+			"default": "./dist/transports/console/lib/utils.mjs",
+			"types": "./dist/transports/console/lib/utils.d.mts"
+		},
+		"./transports/console/types": {
+			"default": "./dist/transports/console/types.mjs",
+			"types": "./dist/transports/console/types.d.mts"
+		},
+		"./transports/discord": {
+			"default": "./dist/transports/discord/index.mjs",
+			"types": "./dist/transports/discord/index.d.mts"
+		},
+		"./transports/expo-fs": {
+			"default": "./dist/transports/expo-fs/index.mjs",
+			"types": "./dist/transports/expo-fs/index.d.mts"
+		},
+		"./transports/expo-fs/lib/file-logger": {
+			"default": "./dist/transports/expo-fs/lib/file-logger.mjs",
+			"types": "./dist/transports/expo-fs/lib/file-logger.d.mts"
+		},
+		"./transports/file": {
+			"default": "./dist/transports/file.mjs",
+			"types": "./dist/transports/file.d.mts"
+		},
+		"./transports/http": {
+			"default": "./dist/transports/http.mjs",
+			"types": "./dist/transports/http.d.mts"
+		},
+		"./transports/otel": {
+			"default": "./dist/transports/otel/index.mjs",
+			"types": "./dist/transports/otel/index.d.mts"
+		},
+		"./transports/otel/types": {
+			"default": "./dist/transports/otel/types.mjs",
+			"types": "./dist/transports/otel/types.d.mts"
+		},
+		"./transports/otel/utils": {
+			"default": "./dist/transports/otel/utils.mjs",
+			"types": "./dist/transports/otel/utils.d.mts"
+		},
+		"./transports/ws": {
+			"default": "./dist/transports/ws.mjs",
+			"types": "./dist/transports/ws.d.mts"
+		},
+		"./types": {
+			"default": "./dist/types/index.mjs",
+			"types": "./dist/types/index.d.mts"
+		},
+		"./types/batching": {
+			"default": "./dist/types/batching.mjs",
+			"types": "./dist/types/batching.d.mts"
+		},
+		"./types/format": {
+			"default": "./dist/types/format.mjs",
+			"types": "./dist/types/format.d.mts"
+		},
+		"./types/logger": {
+			"default": "./dist/types/logger.mjs",
+			"types": "./dist/types/logger.d.mts"
+		},
+		"./types/mods": {
+			"default": "./dist/types/mods.mjs",
+			"types": "./dist/types/mods.d.mts"
+		},
 		"./package.json": "./package.json"
 	}
 }
