@@ -1,5 +1,13 @@
 # @padosoft/logger
 
+## 1.2.2
+
+### Patch Changes
+
+- [`e4f1ba8`](https://github.com/padosoft/ts-support/commit/e4f1ba8acf343670ebfd5251774af6c3c98a08ff) Thanks [@47PADO47](https://github.com/47PADO47)! - add cleanOnStart option to expo-fs transport
+
+- [`e4f1ba8`](https://github.com/padosoft/ts-support/commit/e4f1ba8acf343670ebfd5251774af6c3c98a08ff) Thanks [@47PADO47](https://github.com/47PADO47)! - update deps
+
 ## 1.2.1
 
 ### Patch Changes
