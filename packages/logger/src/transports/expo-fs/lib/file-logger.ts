@@ -3,11 +3,13 @@ import { File, type FileHandle, Paths } from "expo-file-system";
 
 export interface FileLoggerOptions {
 	filename: string;
+	cleanOnStart?: boolean;
 }
 
 export class FileLogger {
 	private file: File | null = null;
 	private handle: FileHandle | null = null;
+	private readonly cleanOnStart: boolean = false;
 	public readonly path: string;
 
 	constructor(options: FileLoggerOptions) {
@@ -18,18 +20,21 @@ export class FileLogger {
 		);
 
 		this.path = path;
+		this.cleanOnStart = options.cleanOnStart ?? false;
 	}
 
 	open(): void {
 		if (this.handle) return;
 
-		this.file = new FileSystem.File(this.path);
-		if (!this.file.exists) {
-			this.file.create({
-				intermediates: true,
-				overwrite: true,
-			});
+		this.file = new File(this.path);
+		if (this.cleanOnStart) {
+			this.file.delete();
 		}
+
+		this.file.create({
+			intermediates: true,
+			overwrite: true,
+		});
 
 		this.handle = this.file.open();
 	}

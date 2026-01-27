@@ -11,6 +11,7 @@ export interface ExpoFileSystemTransportOptions {
 	filename?: string;
 	timestamp?: TimestampType;
 	raw?: boolean;
+	cleanOnStart?: boolean;
 }
 
 export const expoFileSystemTransport = (
