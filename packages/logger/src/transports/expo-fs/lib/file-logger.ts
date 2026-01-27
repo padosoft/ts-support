@@ -1,19 +1,19 @@
-import * as Application from "expo-application";
-import * as FileSystem from "expo-file-system";
+import { applicationName } from "expo-application";
+import { File, type FileHandle, Paths } from "expo-file-system";
 
 export interface FileLoggerOptions {
 	filename: string;
 }
 
 export class FileLogger {
-	private file: FileSystem.File | null = null;
-	private handle: FileSystem.FileHandle | null = null;
+	private file: File | null = null;
+	private handle: FileHandle | null = null;
 	public readonly path: string;
 
 	constructor(options: FileLoggerOptions) {
-		const path = FileSystem.Paths.join(
-			FileSystem.Paths.cache,
-			Application.applicationName || "padosoft",
+		const path = Paths.join(
+			Paths.cache,
+			applicationName || "padosoft",
 			options.filename,
 		);
 
