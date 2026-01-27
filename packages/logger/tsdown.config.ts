@@ -5,4 +5,5 @@ export default tsdown({
 	external: ["zod"],
 	exports: true,
 	unbundle: true,
+	inlineOnly: [],
 });
