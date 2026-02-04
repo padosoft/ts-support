@@ -1,5 +1,6 @@
 import { applicationName } from "expo-application";
 import { File, type FileHandle, Paths } from "expo-file-system";
+import { LOG_FILE_SEPARATOR } from "./constants";
 
 export interface FileLoggerOptions {
 	filename: string;
@@ -42,7 +43,7 @@ export class FileLogger {
 	append(line: string): void {
 		if (!this.handle) throw new Error("Log file not open");
 
-		const bytes = new TextEncoder().encode(`${line}\n`);
+		const bytes = new TextEncoder().encode(`${line}${LOG_FILE_SEPARATOR}`);
 		this.handle.writeBytes(bytes);
 	}
 
@@ -69,6 +70,8 @@ export class FileLogger {
 
 		const content = await this.file?.text();
 		if (!content) return [];
-		return content.split("\n").filter((line) => line.trim().length > 0);
+		return content
+			.split(LOG_FILE_SEPARATOR)
+			.filter((line) => line.trim().length > 0);
 	}
 }

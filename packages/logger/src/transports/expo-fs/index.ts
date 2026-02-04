@@ -3,6 +3,7 @@ import { createTransport } from "@/lib/mods";
 import type { LogEntry } from "@/types";
 import type { TimestampType } from "@/types/format";
 import type { Transport } from "@/types/mods";
+import { LOG_FILE_SEPARATOR } from "./lib/constants";
 import { FileLogger } from "./lib/file-logger";
 
 export let expoFileLogger: FileLogger | null = null;
@@ -68,7 +69,7 @@ export const expoFileSystemTransport = (
 			expoFileLogger?.append(out);
 		},
 		batch(_logger, batch) {
-			const out = batch.map((entry) => format(entry)).join("\n");
+			const out = batch.map((entry) => format(entry)).join(LOG_FILE_SEPARATOR);
 			expoFileLogger?.append(out);
 		},
 		[Symbol.dispose]() {
