@@ -20,10 +20,10 @@
 	"devDependencies": {
 		"@padosoft/config": "workspace:^",
 		"@opentelemetry/api": "^1.9.0",
-		"@opentelemetry/api-logs": "^0.211.0",
-		"@opentelemetry/exporter-logs-otlp-http": "^0.211.0",
-		"@opentelemetry/resources": "^2.5.0",
-		"@opentelemetry/sdk-logs": "^0.211.0",
+		"@opentelemetry/api-logs": "^0.212.0",
+		"@opentelemetry/exporter-logs-otlp-http": "^0.212.0",
+		"@opentelemetry/resources": "^2.5.1",
+		"@opentelemetry/sdk-logs": "^0.212.0",
 		"@opentelemetry/semantic-conventions": "^1.39.0",
 		"expo-file-system": "^19.0.21",
 		"expo-application": "^7.0.8"
