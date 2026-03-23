@@ -1,5 +1,17 @@
 # @padosoft/config
 
+## 1.2.0
+
+### Minor Changes
+
+- [`ab3d36e`](https://github.com/padosoft/ts-support/commit/ab3d36e1cd5002925e63f59683fc66e7c8f8c1f7) Thanks [@47PADO47](https://github.com/47PADO47)! - update to typescript@6
+
+- [`ab3d36e`](https://github.com/padosoft/ts-support/commit/ab3d36e1cd5002925e63f59683fc66e7c8f8c1f7) Thanks [@47PADO47](https://github.com/47PADO47)! - update tsdown
+
+### Patch Changes
+
+- [`ab3d36e`](https://github.com/padosoft/ts-support/commit/ab3d36e1cd5002925e63f59683fc66e7c8f8c1f7) Thanks [@47PADO47](https://github.com/47PADO47)! - update deps
+
 ## 1.1.7
 
 ### Patch Changes

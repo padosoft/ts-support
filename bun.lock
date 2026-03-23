@@ -17,11 +17,11 @@
     },
     "packages/config": {
       "name": "@padosoft/config",
-      "version": "1.1.7",
+      "version": "1.2.0",
     },
     "packages/logger": {
       "name": "@padosoft/logger",
-      "version": "1.2.2",
+      "version": "1.3.0",
       "devDependencies": {
         "@opentelemetry/api": "^1.9.0",
         "@opentelemetry/api-logs": "^0.213.0",
@@ -40,7 +40,7 @@
         "@opentelemetry/resources": "*",
         "@opentelemetry/sdk-logs": "*",
         "@opentelemetry/semantic-conventions": "*",
-        "expo-application": "55.0.10",
+        "expo-application": "*",
         "expo-file-system": "*",
       },
       "optionalPeers": [
@@ -55,7 +55,7 @@
     },
     "packages/utilities": {
       "name": "@padosoft/utilities",
-      "version": "1.2.2",
+      "version": "1.3.0",
       "devDependencies": {
         "@padosoft/config": "workspace:^",
       },
