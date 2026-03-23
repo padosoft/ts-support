@@ -13,7 +13,9 @@ const assetsExts = ["json"];
 const config: UserConfigFn = tsdown({
 	entry: ["*/**/*.ts"],
 	unbundle: true,
-	external: ["tsdown", "rolldown"],
+	deps: {
+		neverBundle: ["tsdown", "rolldown"],
+	},
 	exports: {
 		customExports: async (exports, context) => {
 			const assetExports: Record<string, string> = {

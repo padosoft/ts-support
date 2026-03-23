@@ -1,7 +1,8 @@
 import type { ExportsOptions } from "tsdown";
 
-export const defaultCustomExports: NonNullable<
-	ExportsOptions["customExports"]
+export const defaultCustomExports: Extract<
+	NonNullable<ExportsOptions["customExports"]>,
+	(...args: never) => unknown
 > = (exports) => {
 	const fixed: typeof exports = {};
 

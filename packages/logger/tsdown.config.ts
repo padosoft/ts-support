@@ -2,8 +2,10 @@ import { tsdown } from "@padosoft/config/tsdown";
 
 export default tsdown({
 	entry: ["src/**/*.ts"],
-	external: ["zod", /^@opentelemetry\/.*/],
-	inlineOnly: [],
+	deps: {
+		neverBundle: ["zod", /^@opentelemetry\/.*/],
+		onlyBundle: [],
+	},
 	exports: true,
 	unbundle: true,
 });
