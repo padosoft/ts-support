@@ -20,13 +20,13 @@
 	"devDependencies": {
 		"@padosoft/config": "workspace:^",
 		"@opentelemetry/api": "^1.9.0",
-		"@opentelemetry/api-logs": "^0.212.0",
-		"@opentelemetry/exporter-logs-otlp-http": "^0.212.0",
-		"@opentelemetry/resources": "^2.5.1",
-		"@opentelemetry/sdk-logs": "^0.212.0",
-		"@opentelemetry/semantic-conventions": "^1.39.0",
-		"expo-file-system": "^19.0.21",
-		"expo-application": "^7.0.8"
+		"@opentelemetry/api-logs": "^0.213.0",
+		"@opentelemetry/exporter-logs-otlp-http": "^0.213.0",
+		"@opentelemetry/resources": "^2.6.0",
+		"@opentelemetry/sdk-logs": "^0.213.0",
+		"@opentelemetry/semantic-conventions": "^1.40.0",
+		"expo-file-system": "^55.0.11",
+		"expo-application": "^55.0.10"
 	},
 	"dependencies": {},
 	"peerDependencies": {
@@ -142,6 +142,10 @@
 		"./transports/expo-fs": {
 			"default": "./dist/transports/expo-fs/index.mjs",
 			"types": "./dist/transports/expo-fs/index.d.mts"
+		},
+		"./transports/expo-fs/lib/constants": {
+			"default": "./dist/transports/expo-fs/lib/constants.mjs",
+			"types": "./dist/transports/expo-fs/lib/constants.d.mts"
 		},
 		"./transports/expo-fs/lib/file-logger": {
 			"default": "./dist/transports/expo-fs/lib/file-logger.mjs",
