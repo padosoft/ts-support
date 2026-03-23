@@ -19,11 +19,10 @@
 	"editor.defaultFormatter": "biomejs.biome",
 	"editor.formatOnSave": true,
 	"tailwindCSS.classAttributes": ["class", "className", "headerClassName"],
-	"typescript.experimental.expandableHover": true,
-	"typescript.preferences.autoImportSpecifierExcludeRegexes": [
+	"js/ts.preferences.autoImportSpecifierExcludeRegexes": [
 		"^react-native-reanimated/lib/*",
 		"^expo-router/build/*"
 	],
-	"typescript.preferences.preferTypeOnlyAutoImports": true,
-	"typescript.tsdk": "node_modules\\typescript\\lib"
+	"js/ts.preferences.preferTypeOnlyAutoImports": true,
+	"js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }
