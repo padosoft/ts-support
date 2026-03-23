@@ -7,6 +7,7 @@
 		"allowImportingTsExtensions": true,
 		"noEmit": true,
 		"isolatedDeclarations": true,
-		"allowJs": false
+		"allowJs": false,
+		"types": ["@types/node", "@types/bun"]
 	}
 }
