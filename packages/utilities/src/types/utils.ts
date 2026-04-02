@@ -40,3 +40,5 @@ export type MergeWithDefault<
 > = Key extends keyof T ? T : T & { [K in Key]: Value };
 
 export type Satisfies<U, T extends U> = T;
+
+export type LiteralUnion<T extends U, U = string> = T | (U & {});
