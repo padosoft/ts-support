@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.2.1
+
+### Patch Changes
+
+- [`d01b29f`](https://github.com/padosoft/ts-support/commit/d01b29fb568b4b513a89c806c7f19f056fd7797f) Thanks [@47PADO47](https://github.com/47PADO47)! - update deps
+
 ## 1.2.0
 
 ### Minor Changes
