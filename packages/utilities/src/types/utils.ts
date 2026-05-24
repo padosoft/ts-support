@@ -29,3 +29,8 @@ export type MergeWithDefault<
 export type Satisfies<U, T extends U> = T;
 
 export type LiteralUnion<T extends U, U = string> = T | (U & {});
+
+export type Mutable<T> = { -readonly [P in keyof T]: T[P] };
+export type DeepMutable<T> = T extends object
+	? { [P in keyof T]: DeepMutable<T[P]> }
+	: T;
