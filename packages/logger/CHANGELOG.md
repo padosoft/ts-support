@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 1.3.2
+
+### Patch Changes
+
+- [`b017a2c`](https://github.com/padosoft/ts-support/commit/b017a2cd9669260f2dd28eec06579a902175aece) Thanks [@47PADO47](https://github.com/47PADO47)! - bump deps
+
 ## 1.3.1
 
 ### Patch Changes
