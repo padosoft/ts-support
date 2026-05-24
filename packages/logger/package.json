@@ -20,13 +20,13 @@
 	"devDependencies": {
 		"@padosoft/config": "workspace:^",
 		"@opentelemetry/api": "^1.9.1",
-		"@opentelemetry/api-logs": "^0.217.0",
-		"@opentelemetry/exporter-logs-otlp-http": "^0.217.0",
+		"@opentelemetry/api-logs": "^0.218.0",
+		"@opentelemetry/exporter-logs-otlp-http": "^0.218.0",
 		"@opentelemetry/resources": "^2.7.1",
-		"@opentelemetry/sdk-logs": "^0.217.0",
-		"@opentelemetry/semantic-conventions": "^1.40.0",
-		"expo-file-system": "^55.0.19",
-		"expo-application": "^55.0.14"
+		"@opentelemetry/sdk-logs": "^0.218.0",
+		"@opentelemetry/semantic-conventions": "^1.41.1",
+		"expo-file-system": "^55.0.22",
+		"expo-application": "^55.0.15"
 	},
 	"dependencies": {},
 	"peerDependencies": {
@@ -37,7 +37,7 @@
 		"@opentelemetry/sdk-logs": "*",
 		"@opentelemetry/semantic-conventions": "*",
 		"expo-file-system": "*",
-		"expo-application": "55.0.14"
+		"expo-application": "*"
 	},
 	"peerDependenciesMeta": {
 		"@opentelemetry/api": {
