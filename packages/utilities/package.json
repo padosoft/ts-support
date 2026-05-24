@@ -44,6 +44,10 @@
 			"default": "./dist/types/utils.mjs",
 			"types": "./dist/types/utils.d.mts"
 		},
+		"./types/zod": {
+			"default": "./dist/types/zod.mjs",
+			"types": "./dist/types/zod.d.mts"
+		},
 		"./package.json": "./package.json"
 	},
 	"files": [
