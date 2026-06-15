@@ -3,8 +3,8 @@
 	"type": "module",
 	"version": "1.2.2",
 	"publishConfig": {
-		"access": "restricted",
-		"registry": "https://npm.pkg.github.com"
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	},
 	"repository": {
 		"url": "git+https://github.com/padosoft/ts-support.git"

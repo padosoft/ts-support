@@ -7,8 +7,8 @@
 		"dist"
 	],
 	"publishConfig": {
-		"access": "restricted",
-		"registry": "https://npm.pkg.github.com"
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	},
 	"repository": {
 		"url": "git+https://github.com/padosoft/ts-support.git"
