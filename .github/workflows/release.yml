@@ -10,10 +10,19 @@ on:
       - ".changeset/*"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+env:
+    NPM_CONFIG_PROVENANCE: true
+    TURBO_TELEMETRY_DISABLED: 1
+    DO_NOT_TRACK: 1
 
 jobs:
   release:
+    if: github.repository == 'padosoft/ts-support'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v6
         with:
