@@ -1,4 +1,4 @@
-import { tsdown } from "@padosoft/config/tsdown";
+import { tsdown } from "@padosoft/config/compiler/tsdown";
 
 export default tsdown({
 	entry: ["src/**/*.ts"],
