@@ -35,6 +35,7 @@
 		"https://raw.githubusercontent.com/": true,
 		"https://biomejs.dev": true,
 		"https://turbo.build": true,
-		"https://nitro.margelo.com": true
-	},
+		"https://nitro.margelo.com": true,
+		"https://unpkg.com": true
+	}
 }
