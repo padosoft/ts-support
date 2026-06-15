@@ -14,28 +14,28 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"exports": {
-		"./plugins/hono-zod": {
-			"default": "./dist/plugins/hono-zod.mjs",
-			"types": "./dist/plugins/hono-zod.d.mts"
+		"./compiler/plugins/hono-zod": {
+			"default": "./dist/compiler/plugins/hono-zod.mjs",
+			"types": "./dist/compiler/plugins/hono-zod.d.mts"
 		},
-		"./tsdown": {
-			"default": "./dist/tsdown.mjs",
-			"types": "./dist/tsdown.d.mts"
+		"./compiler/tsdown": {
+			"default": "./dist/compiler/tsdown.mjs",
+			"types": "./dist/compiler/tsdown.d.mts"
 		},
-		"./utils": {
-			"default": "./dist/utils/index.mjs",
-			"types": "./dist/utils/index.d.mts"
+		"./compiler/utils": {
+			"default": "./dist/compiler/utils/index.mjs",
+			"types": "./dist/compiler/utils/index.d.mts"
 		},
-		"./utils/exports": {
-			"default": "./dist/utils/exports.mjs",
-			"types": "./dist/utils/exports.d.mts"
+		"./compiler/utils/exports": {
+			"default": "./dist/compiler/utils/exports.mjs",
+			"types": "./dist/compiler/utils/exports.d.mts"
 		},
 		"./package.json": "./package.json",
-		"./typescript/base": "./typescript/base.json",
-		"./typescript/compiler": "./typescript/compiler.json",
-		"./typescript/expo": "./typescript/expo.json",
-		"./typescript/hono": "./typescript/hono.json",
-		"./tools/biome": "./tools/biome.json"
+		"./typescript/base": "./src/typescript/base.json",
+		"./typescript/compiler": "./src/typescript/compiler.json",
+		"./typescript/expo": "./src/typescript/expo.json",
+		"./typescript/hono": "./src/typescript/hono.json",
+		"./tools/biome": "./src/tools/biome.json"
 	},
 	"dependencies": {}
 }
