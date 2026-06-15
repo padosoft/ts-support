@@ -2,8 +2,8 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { UserConfigFn } from "tsdown";
-import { tsdown } from "./compiler/tsdown.ts";
-import { defaultCustomExports } from "./compiler/utils/index.ts";
+import { tsdown } from "./src/compiler/tsdown.ts";
+import { defaultCustomExports } from "./src/compiler/utils/index.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,8 +11,7 @@ const assetsDirs = ["typescript", "tools"];
 const assetsExts = ["json"];
 
 const config: UserConfigFn = tsdown({
-	entry: ["*/**/*.ts"],
-	unbundle: true,
+	entry: ["src/**/*.ts"],
 	deps: {
 		neverBundle: ["tsdown", "rolldown"],
 	},
@@ -23,7 +22,7 @@ const config: UserConfigFn = tsdown({
 			};
 
 			for (const dir of assetsDirs) {
-				const absDir = path.join(__dirname, dir);
+				const absDir = path.join(__dirname, "src", dir);
 				const files = await readdir(absDir);
 
 				for (const file of files) {
@@ -34,7 +33,7 @@ const config: UserConfigFn = tsdown({
 
 					const base = path.basename(file, `.${ext}`);
 					const relPath = `./${dir}/${base}`;
-					const fullRelPath = `./${dir}/${file}`;
+					const fullRelPath = `./src/${dir}/${file}`;
 
 					assetExports[relPath] = fullRelPath;
 				}
