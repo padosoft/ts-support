@@ -30,6 +30,22 @@
 			"default": "./dist/compiler/utils/exports.mjs",
 			"types": "./dist/compiler/utils/exports.d.mts"
 		},
+		"./types/css": {
+			"default": "./dist/types/css.mjs",
+			"types": "./dist/types/css.d.mts"
+		},
+		"./types/expo-router": {
+			"default": "./dist/types/expo-router.mjs",
+			"types": "./dist/types/expo-router.d.mts"
+		},
+		"./types/i18next": {
+			"default": "./dist/types/i18next.mjs",
+			"types": "./dist/types/i18next.d.mts"
+		},
+		"./types/nativewind": {
+			"default": "./dist/types/nativewind.mjs",
+			"types": "./dist/types/nativewind.d.mts"
+		},
 		"./package.json": "./package.json",
 		"./typescript/base": "./src/typescript/base.json",
 		"./typescript/compiler": "./src/typescript/compiler.json",

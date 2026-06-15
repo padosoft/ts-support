@@ -7,7 +7,7 @@
 	],
 	"compilerOptions": {
 		"moduleResolution": "bundler",
-		"types": ["nativewind/types"],
+		"types": ["nativewind/types", "@padosoft/config/types/css"],
 		"checkJs": true
 	}
 }
