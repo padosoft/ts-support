@@ -16,6 +16,10 @@
 			"default": "./dist/lib/turbo.mjs",
 			"types": "./dist/lib/turbo.d.mts"
 		},
+		"./lib/query": {
+			"default": "./dist/lib/query.mjs",
+			"types": "./dist/lib/query.d.mts"
+		},
 		"./lib/utils": {
 			"default": "./dist/lib/utils.mjs",
 			"types": "./dist/lib/utils.d.mts"
