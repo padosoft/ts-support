@@ -20,6 +20,10 @@
 			"default": "./dist/lib/query.mjs",
 			"types": "./dist/lib/query.d.mts"
 		},
+		"./lib/query-proxy": {
+			"default": "./dist/lib/query-proxy.mjs",
+			"types": "./dist/lib/query-proxy.d.mts"
+		},
 		"./lib/utils": {
 			"default": "./dist/lib/utils.mjs",
 			"types": "./dist/lib/utils.d.mts"
