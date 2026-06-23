@@ -12,7 +12,7 @@ import type {
 	CustomMiddlewareCallbackParams,
 	CustomMiddlewareFunction,
 	CustomMiddlewareKeys,
-	DefaultPaths,
+	OpenApiPaths,
 	OnResponseErrorMiddlewareFunction,
 	ReturnTypeFromClientMethod,
 	StoredMiddleware,
@@ -50,7 +50,7 @@ function safeStringify(value: unknown): string {
 	}
 }
 
-export function isOpenApiFetchClient<Paths extends DefaultPaths>(
+export function isOpenApiFetchClient<Paths extends OpenApiPaths>(
 	v: unknown,
 ): v is Client<Paths, MediaType> {
 	return (
@@ -61,7 +61,7 @@ export function isOpenApiFetchClient<Paths extends DefaultPaths>(
 	);
 }
 
-export class BaseApiService<Paths extends DefaultPaths> {
+export class OpenApiClient<Paths extends OpenApiPaths> {
 	protected client: Client<Paths, MediaType>;
 	protected middlewares: Map<string, StoredMiddleware<typeof this>> = new Map();
 	protected static INTERNAL_MIDDLEWARES: LiteralUnion<
@@ -74,7 +74,7 @@ export class BaseApiService<Paths extends DefaultPaths> {
 	 * @param options Client options
 	 * @returns api client
 	 */
-	static createClient<Paths extends DefaultPaths>(options?: ClientOptions) {
+	static createClient<Paths extends OpenApiPaths>(options?: ClientOptions) {
 		if (options?.baseUrl && !options.baseUrl.endsWith("/")) {
 			options.baseUrl = `${options.baseUrl}/`;
 		}
@@ -95,7 +95,7 @@ export class BaseApiService<Paths extends DefaultPaths> {
 		if (isOpenApiFetchClient<Paths>(optionsOrClient)) {
 			this.client = optionsOrClient;
 		} else {
-			this.client = BaseApiService.createClient<Paths>(optionsOrClient);
+			this.client = OpenApiClient.createClient<Paths>(optionsOrClient);
 		}
 	}
 
@@ -129,7 +129,7 @@ export class BaseApiService<Paths extends DefaultPaths> {
 	) {
 		this.middlewares.set(middleware.name, middleware as StoredMiddleware<this>);
 
-		if (!BaseApiService.INTERNAL_MIDDLEWARES.includes(middleware.type)) {
+		if (!OpenApiClient.INTERNAL_MIDDLEWARES.includes(middleware.type)) {
 			return this;
 		}
 
@@ -149,7 +149,7 @@ export class BaseApiService<Paths extends DefaultPaths> {
 
 		this.middlewares.delete(name);
 
-		if (!BaseApiService.INTERNAL_MIDDLEWARES.includes(middleware.type)) {
+		if (!OpenApiClient.INTERNAL_MIDDLEWARES.includes(middleware.type)) {
 			return this;
 		}
 

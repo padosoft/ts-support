@@ -1,7 +1,7 @@
 import type { Middleware } from "openapi-fetch";
 import type { HttpMethod } from "openapi-typescript-helpers";
 
-export interface DefaultPaths
+export interface OpenApiPaths
 	extends Record<string, Partial<Record<HttpMethod, unknown>>> {}
 
 export interface BaseClientMethodReturn {
