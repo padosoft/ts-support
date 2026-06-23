@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.3.1
+
+### Patch Changes
+
+- [`040fdab`](https://github.com/padosoft/ts-support/commit/040fdab4e3d12026c7c28dcb724adf47756811e7) Thanks [@47PADO47](https://github.com/47PADO47)! - fix package.json files
+
 ## 1.3.0
 
 ### Minor Changes
