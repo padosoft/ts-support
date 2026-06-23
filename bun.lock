@@ -53,6 +53,21 @@
         "expo-file-system",
       ],
     },
+    "packages/react": {
+      "name": "@padosoft/react",
+      "version": "0.1.0",
+      "dependencies": {
+        "@padosoft/utilities": "workspace:^",
+      },
+      "devDependencies": {
+        "@padosoft/config": "workspace:^",
+        "@types/react": "^19.0.0",
+        "react": "^19.0.0",
+      },
+      "peerDependencies": {
+        "react": ">=18",
+      },
+    },
     "packages/utilities": {
       "name": "@padosoft/utilities",
       "version": "1.3.2",
@@ -528,6 +543,8 @@
     "@padosoft/config": ["@padosoft/config@workspace:packages/config"],
 
     "@padosoft/logger": ["@padosoft/logger@workspace:packages/logger"],
+
+    "@padosoft/react": ["@padosoft/react@workspace:packages/react"],
 
     "@padosoft/utilities": ["@padosoft/utilities@workspace:packages/utilities"],
 
