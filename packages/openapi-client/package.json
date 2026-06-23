@@ -1,6 +1,6 @@
 {
 	"name": "@padosoft/openapi-client",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
@@ -21,7 +21,7 @@
 		"@padosoft/config": "workspace:^"
 	},
 	"dependencies": {
-		"@padosoft/utilities": "^1.3.2",
+		"@padosoft/utilities": "^1.4.0",
 		"openapi-fetch": "^0.17.0",
 		"openapi-typescript-helpers": "^0.1.0"
 	},
