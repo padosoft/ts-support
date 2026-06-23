@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { existsSync } from "node:fs";
 import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
