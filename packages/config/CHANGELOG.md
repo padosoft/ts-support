@@ -1,5 +1,13 @@
 # @padosoft/config
 
+## 1.3.0
+
+### Minor Changes
+
+- [`3a27e7c`](https://github.com/padosoft/ts-support/commit/3a27e7cef1b942f5b09cf4322cf0daa38c7668df) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `init editor` CLI command to scaffold `.vscode/settings.json` and `.zed/settings.json` from canonical Biome-focused editor settings.
+
+  Usage: `bunx @padosoft/config init editor [--force]`
+
 ## 1.2.2
 
 ### Patch Changes
