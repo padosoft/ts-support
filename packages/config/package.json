@@ -1,5 +1,7 @@
 {
 	"name": "@padosoft/config",
+	"description": "Shared TypeScript, Biome, and tsdown configurations for padosoft packages and apps",
+	"keywords": ["typescript", "tsconfig", "biome", "tsdown", "config", "padosoft"],
 	"type": "module",
 	"version": "1.2.2",
 	"publishConfig": {

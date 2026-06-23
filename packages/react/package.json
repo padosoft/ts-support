@@ -1,5 +1,7 @@
 {
 	"name": "@padosoft/react",
+	"description": "React hooks and HOC utilities for padosoft projects, including useConfig and component composition helpers",
+	"keywords": ["react", "hooks", "hoc", "typescript", "padosoft"],
 	"version": "1.0.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",

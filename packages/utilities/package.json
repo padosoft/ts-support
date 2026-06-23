@@ -1,5 +1,7 @@
 {
 	"name": "@padosoft/utilities",
+	"description": "Zero-dependency TypeScript utilities: typed query helpers, Configuration store, Zod utilities, and general-purpose type helpers",
+	"keywords": ["utilities", "typescript", "zod", "react-query", "configuration", "types", "padosoft"],
 	"version": "1.4.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",

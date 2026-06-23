@@ -1,5 +1,7 @@
 {
 	"name": "@padosoft/openapi-client",
+	"description": "Typed base client for openapi-fetch with middleware support, error handling, and a clean extension model",
+	"keywords": ["openapi", "openapi-fetch", "typescript", "rest", "http-client", "padosoft"],
 	"version": "1.0.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",

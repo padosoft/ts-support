@@ -1,5 +1,7 @@
 {
 	"name": "@padosoft/zod-to-openapi-client",
+	"description": "Converts zod-to-openapi route collections into typed Paths compatible with openapi-fetch and @padosoft/openapi-client",
+	"keywords": ["zod", "openapi", "openapi-fetch", "zod-to-openapi", "typescript", "padosoft"],
 	"version": "1.0.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
