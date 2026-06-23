@@ -33,13 +33,13 @@
 			"default": "./dist/index.mjs",
 			"types": "./dist/index.d.mts"
 		},
-		"./hoc": {
-			"default": "./dist/hoc.mjs",
-			"types": "./dist/hoc.d.mts"
-		},
 		"./config": {
 			"default": "./dist/config.mjs",
 			"types": "./dist/config.d.mts"
+		},
+		"./hoc": {
+			"default": "./dist/hoc.mjs",
+			"types": "./dist/hoc.d.mts"
 		},
 		"./package.json": "./package.json"
 	}
