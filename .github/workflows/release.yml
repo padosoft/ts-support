@@ -59,13 +59,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+          pkg_exists_on_github() {
+            local pkg_name="$1"
+            local pkg_version="$2"
+            npm view "${pkg_name}@${pkg_version}" --registry https://npm.pkg.github.com/ version 2>/dev/null | grep -qF "${pkg_version}"
+          }
+
           if [ "${{ inputs.force_github_packages }}" = "true" ]; then
             echo "Force mode: publishing all packages to GitHub Packages"
             for dir in packages/*/; do
               if [ -f "${dir}package.json" ]; then
                 pkg_name=$(jq -r '.name' "${dir}package.json")
-                echo "Publishing $pkg_name from $dir to GitHub Packages"
-                npm publish "$dir" --registry https://npm.pkg.github.com/ --access public
+                pkg_version=$(jq -r '.version' "${dir}package.json")
+                echo "Checking $pkg_name@$pkg_version on GitHub Packages..."
+                if pkg_exists_on_github "$pkg_name" "$pkg_version"; then
+                  echo "Skipping $pkg_name@$pkg_version — already published"
+                else
+                  echo "Publishing $pkg_name from $dir to GitHub Packages"
+                  npm publish "$dir" --registry https://npm.pkg.github.com/ --access public || echo "Warning: failed to publish $pkg_name, skipping"
+                fi
               fi
             done
           else
@@ -75,8 +87,14 @@ jobs:
                 if [ -f "${dir}package.json" ]; then
                   name=$(jq -r '.name' "${dir}package.json")
                   if [ "$name" = "$pkg_name" ]; then
-                    echo "Publishing $pkg_name from $dir to GitHub Packages"
-                    npm publish "$dir" --registry https://npm.pkg.github.com/ --access public
+                    pkg_version=$(jq -r '.version' "${dir}package.json")
+                    echo "Checking $pkg_name@$pkg_version on GitHub Packages..."
+                    if pkg_exists_on_github "$pkg_name" "$pkg_version"; then
+                      echo "Skipping $pkg_name@$pkg_version — already published"
+                    else
+                      echo "Publishing $pkg_name from $dir to GitHub Packages"
+                      npm publish "$dir" --registry https://npm.pkg.github.com/ --access public || echo "Warning: failed to publish $pkg_name, skipping"
+                    fi
                   fi
                 fi
               done
