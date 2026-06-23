@@ -2,6 +2,15 @@ name: Release packages
 
 on:
   workflow_dispatch:
+    inputs:
+      force_github_packages:
+        description: 'Force publish all packages to GitHub Packages (skips changesets check)'
+        type: boolean
+        default: false
+      skip_changesets:
+        description: 'Skip the changesets step (create PR / publish to NPM)'
+        type: boolean
+        default: false
   push:
     branches:
       - main
@@ -33,6 +42,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
+        if: inputs.skip_changesets != true
         uses: changesets/action@v1
         with:
           version: bun version-packages
@@ -43,23 +53,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub Packages
-        if: steps.changesets.outputs.published == 'true'
+        if: steps.changesets.outputs.published == 'true' || inputs.force_github_packages == true
         env:
+          NPM_CONFIG_PROVENANCE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
-          published='${{ steps.changesets.outputs.publishedPackages }}'
-          echo "$published" | jq -r '.[].name' | while IFS= read -r pkg_name; do
+          if [ "${{ inputs.force_github_packages }}" = "true" ]; then
+            echo "Force mode: publishing all packages to GitHub Packages"
             for dir in packages/*/; do
               if [ -f "${dir}package.json" ]; then
-                name=$(jq -r '.name' "${dir}package.json")
-                if [ "$name" = "$pkg_name" ]; then
-                  echo "Publishing $pkg_name from $dir to GitHub Packages"
-                  npm publish "$dir" --registry https://npm.pkg.github.com/ --access public
-                fi
+                pkg_name=$(jq -r '.name' "${dir}package.json")
+                echo "Publishing $pkg_name from $dir to GitHub Packages"
+                npm publish "$dir" --registry https://npm.pkg.github.com/ --access public
               fi
             done
-          done
+          else
+            published='${{ steps.changesets.outputs.publishedPackages }}'
+            echo "$published" | jq -r '.[].name' | while IFS= read -r pkg_name; do
+              for dir in packages/*/; do
+                if [ -f "${dir}package.json" ]; then
+                  name=$(jq -r '.name' "${dir}package.json")
+                  if [ "$name" = "$pkg_name" ]; then
+                    echo "Publishing $pkg_name from $dir to GitHub Packages"
+                    npm publish "$dir" --registry https://npm.pkg.github.com/ --access public
+                  fi
+                fi
+              done
+            done
+          fi
 
       - name: Publish release tags
         run: git push --follow-tags --set-upstream origin HEAD
