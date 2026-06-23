@@ -1,5 +1,5 @@
 ---
-"@padosoft/react": minor
+"@padosoft/react": major
 ---
 
 New package `@padosoft/react` with generic React utilities:

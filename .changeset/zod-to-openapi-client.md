@@ -1,5 +1,5 @@
 ---
-"@padosoft/zod-to-openapi-client": minor
+"@padosoft/zod-to-openapi-client": major
 ---
 
 New package: `@padosoft/zod-to-openapi-client`.
