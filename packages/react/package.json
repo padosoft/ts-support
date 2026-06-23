@@ -1,0 +1,46 @@
+{
+	"name": "@padosoft/react",
+	"version": "0.1.0",
+	"type": "module",
+	"types": "./dist/index.d.mts",
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"repository": {
+		"url": "git+https://github.com/padosoft/ts-support.git"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"ts:check": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@padosoft/config": "workspace:^",
+		"react": "^19.0.0",
+		"@types/react": "^19.0.0"
+	},
+	"dependencies": {
+		"@padosoft/utilities": "workspace:^"
+	},
+	"peerDependencies": {
+		"react": ">=18"
+	},
+	"exports": {
+		".": {
+			"default": "./dist/index.mjs",
+			"types": "./dist/index.d.mts"
+		},
+		"./hoc": {
+			"default": "./dist/hoc.mjs",
+			"types": "./dist/hoc.d.mts"
+		},
+		"./config": {
+			"default": "./dist/config.mjs",
+			"types": "./dist/config.d.mts"
+		},
+		"./package.json": "./package.json"
+	}
+}
