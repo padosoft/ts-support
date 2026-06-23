@@ -22,6 +22,10 @@
 		"build": "tsdown",
 		"ts:check": "tsc --noEmit"
 	},
+	"files": [
+		"dist",
+		"src"
+	],
 	"bin": {
 		"padosoft-config": "./dist/cli/index.mjs"
 	},
