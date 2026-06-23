@@ -27,21 +27,23 @@ export class Configuration<TConfig extends object> {
 		return result;
 	}
 
-	addOverride<K extends keyof TConfig>(override: ConfigOverride<TConfig, K>) {
+	addOverride<K extends keyof TConfig>(override: ConfigOverride<TConfig, K>): void {
 		this.overrides.push(override as ConfigOverride<TConfig>);
 	}
 
-	set(config: TConfig) {
+	set(config: TConfig): void {
 		this.config = this.applyOverrides(config);
 		for (const listener of this.listeners) listener();
 	}
 
-	subscribe = (listener: () => void): (() => void) => {
+	subscribe(listener: () => void): (() => void) {
 		this.listeners.add(listener);
 		return () => this.listeners.delete(listener);
 	};
 
-	getSnapshot = (): TConfig => this.config;
+	getSnapshot(): TConfig {
+		return this.config
+	};
 
 	get(): TConfig;
 	get<K extends keyof TConfig>(key: K): TConfig[K];
