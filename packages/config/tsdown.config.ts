@@ -16,6 +16,7 @@ const config: UserConfigFn = tsdown({
 		neverBundle: ["tsdown", "rolldown"],
 	},
 	exports: {
+		bin: { "padosoft-config": "./src/cli/index.ts" },
 		customExports: async (exports, context) => {
 			const assetExports: Record<string, string> = {
 				...exports,

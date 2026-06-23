@@ -18,6 +18,9 @@
     "packages/config": {
       "name": "@padosoft/config",
       "version": "1.2.2",
+      "bin": {
+        "padosoft-config": "./dist/cli/index.mjs",
+      },
     },
     "packages/logger": {
       "name": "@padosoft/logger",

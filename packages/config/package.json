@@ -1,21 +1,14 @@
 {
 	"name": "@padosoft/config",
-	"description": "Shared TypeScript, Biome, and tsdown configurations for padosoft packages and apps",
-	"keywords": ["typescript", "tsconfig", "biome", "tsdown", "config", "padosoft"],
-	"type": "module",
 	"version": "1.2.2",
-	"publishConfig": {
-		"access": "public",
-		"registry": "https://registry.npmjs.org/"
-	},
 	"repository": {
 		"url": "git+https://github.com/padosoft/ts-support.git"
 	},
-	"scripts": {
-		"build": "tsdown",
-		"ts:check": "tsc --noEmit"
-	},
 	"exports": {
+		"./cli": {
+			"default": "./dist/cli/index.mjs",
+			"types": "./dist/cli/index.d.mts"
+		},
 		"./compiler/plugins/hono-zod": {
 			"default": "./dist/compiler/plugins/hono-zod.mjs",
 			"types": "./dist/compiler/plugins/hono-zod.d.mts"
@@ -55,5 +48,25 @@
 		"./typescript/hono": "./src/typescript/hono.json",
 		"./tools/biome": "./src/tools/biome.json"
 	},
-	"dependencies": {}
+	"bin": {
+		"padosoft-config": "./dist/cli/index.mjs"
+	},
+	"description": "Shared TypeScript, Biome, and tsdown configurations for padosoft packages and apps",
+	"keywords": [
+		"typescript",
+		"tsconfig",
+		"biome",
+		"tsdown",
+		"config",
+		"padosoft"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"ts:check": "tsc --noEmit"
+	},
+	"type": "module"
 }
