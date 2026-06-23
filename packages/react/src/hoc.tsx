@@ -46,7 +46,11 @@ export function getComponentName<P>(
  */
 export const withWrap = (
 	Component: React.ComponentType<React.PropsWithChildren>,
-) => {
+): React.ComponentType<{
+	children?: React.ReactNode | undefined;
+}> & {
+	wrap: <P extends object>(C: React.ComponentType<P>) => React.ComponentType<P>;
+} => {
 	return Object.assign(Component, {
 		wrap: <P extends object>(
 			C: React.ComponentType<P>,
@@ -74,7 +78,10 @@ export const withWrap = (
  */
 export const withCreate = <P extends object>(
 	Component: React.ComponentType<P>,
-) => {
+): React.ComponentType<P> & {
+	create: (...args: CreateComponentArgs<P>) => React.JSX.Element;
+	asComponent: (...args: CreateComponentArgs<P>) => () => React.JSX.Element;
+} => {
 	const create = (...args: CreateComponentArgs<P>) => {
 		const props = (args[0] ?? {}) as P;
 		return <Component {...props} />;
@@ -103,7 +110,9 @@ export const wrapProviders = (
 	): React.ComponentType<P> => {
 		const Wrapped = (props: P) => {
 			return providers.reduceRight(
-				(children, Provider) => <Provider>{children}</Provider>,
+				(children, Provider) => (
+					<Provider key={getComponentName(Provider)}>{children}</Provider>
+				),
 				<Component {...props} />,
 			);
 		};
