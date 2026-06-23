@@ -1,5 +1,15 @@
 # @padosoft/utilities
 
+## 1.4.0
+
+### Minor Changes
+
+- [#18](https://github.com/padosoft/ts-support/pull/18) [`d2d2d99`](https://github.com/padosoft/ts-support/commit/d2d2d9936618c54b6d3a918241efda208ae3bf46) Thanks [@47PADO47](https://github.com/47PADO47)! - Add generic `Configuration<TConfig>` class and `defineConfigOverride` utility.
+
+  `Configuration<TConfig>` is a typed singleton store with override support, `useSyncExternalStore`-compatible `subscribe`/`getSnapshot`, and a `get()` overload. `defineConfigOverride` pairs a config key with a transform function for composable, type-safe overrides.
+
+- [#16](https://github.com/padosoft/ts-support/pull/16) [`eb9587d`](https://github.com/padosoft/ts-support/commit/eb9587d1ba7dbe867b37886fe240b43d105dc75b) Thanks [@47PADO47](https://github.com/47PADO47)! - add createQueryProxy — path-derived query keys for any typed object
+
 ## 1.3.2
 
 ### Patch Changes
