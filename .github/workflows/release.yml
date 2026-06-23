@@ -23,13 +23,14 @@ jobs:
       contents: write
       pull-requests: write
       id-token: write
+      packages: write
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - uses: ./.github/actions/ci-setup
-          
+
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
         uses: changesets/action@v1
@@ -40,6 +41,25 @@ jobs:
           title: "chore(release): version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: Publish to GitHub Packages
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+          published='${{ steps.changesets.outputs.publishedPackages }}'
+          echo "$published" | jq -r '.[].name' | while IFS= read -r pkg_name; do
+            for dir in packages/*/; do
+              if [ -f "${dir}package.json" ]; then
+                name=$(jq -r '.name' "${dir}package.json")
+                if [ "$name" = "$pkg_name" ]; then
+                  echo "Publishing $pkg_name from $dir to GitHub Packages"
+                  npm publish "$dir" --registry https://npm.pkg.github.com/ --access public
+                fi
+              fi
+            done
+          done
+
       - name: Publish release tags
         run: git push --follow-tags --set-upstream origin HEAD
