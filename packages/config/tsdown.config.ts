@@ -27,7 +27,6 @@ const config: UserConfigFn = tsdown({
 
 				for (const file of files) {
 					const ext = path.extname(file).slice(1);
-					console.log(path.extname(file), ext);
 
 					if (!assetsExts.includes(ext)) continue;
 
