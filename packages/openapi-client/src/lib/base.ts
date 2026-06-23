@@ -12,8 +12,8 @@ import type {
 	CustomMiddlewareCallbackParams,
 	CustomMiddlewareFunction,
 	CustomMiddlewareKeys,
-	OpenApiPaths,
 	OnResponseErrorMiddlewareFunction,
+	OpenApiPaths,
 	ReturnTypeFromClientMethod,
 	StoredMiddleware,
 } from "../types/base";
@@ -74,7 +74,9 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 	 * @param options Client options
 	 * @returns api client
 	 */
-	static createClient<Paths extends OpenApiPaths>(options?: ClientOptions) {
+	static createClient<Paths extends OpenApiPaths>(
+		options?: ClientOptions,
+	): Client<Paths> {
 		if (options?.baseUrl && !options.baseUrl.endsWith("/")) {
 			options.baseUrl = `${options.baseUrl}/`;
 		}
@@ -84,7 +86,9 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 
 	static createMiddleware<K extends ClientMiddlewareType, N extends string>(
 		options: CreateClientMiddlewareOptions<K, N>,
-	) {
+	): Omit<CreateClientMiddlewareOptions<K, N>, "name"> & {
+		name: N | (N extends undefined ? K : N);
+	} {
 		return {
 			name: (options.name || options.type) as N extends undefined ? K : N,
 			...options,
@@ -101,6 +105,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 
 	protected createApiError(status: number, details: unknown): Error {
 		const { cause, rest } = extractCause(details);
+
 		const error = new Error(
 			`API Error ${status}: ${safeStringify(rest)}`,
 			cause !== undefined ? { cause } : undefined,
@@ -126,7 +131,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 
 	use<K extends ClientMiddlewareType>(
 		middleware: ClientMiddleware<K, string, this>,
-	) {
+	): this {
 		this.middlewares.set(middleware.name, middleware as StoredMiddleware<this>);
 
 		if (!OpenApiClient.INTERNAL_MIDDLEWARES.includes(middleware.type)) {
@@ -143,7 +148,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		return this;
 	}
 
-	eject(name: string) {
+	eject(name: string): this {
 		const middleware = this.middlewares.get(name);
 		if (!middleware) return this;
 
@@ -165,7 +170,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		middleware:
 			| CustomMiddlewareFunction<"onError", this>
 			| ClientMiddleware<"onError", string, this>,
-	) {
+	): this {
 		if ("middleware" in middleware) {
 			return this.use(middleware);
 		}
@@ -181,7 +186,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		middleware:
 			| CustomMiddlewareFunction<"onRequest", this>
 			| ClientMiddleware<"onRequest", string, this>,
-	) {
+	): this {
 		if ("middleware" in middleware) {
 			return this.use(middleware);
 		}
@@ -197,7 +202,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		middleware:
 			| CustomMiddlewareFunction<"onResponse", this>
 			| ClientMiddleware<"onResponse", string, this>,
-	) {
+	): this {
 		if ("middleware" in middleware) {
 			return this.use(middleware);
 		}
@@ -223,7 +228,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 			>;
 			return await middleware.middleware(p);
 		},
-	) {
+	): Promise<void> {
 		for (const middleware of this.middlewares.values()) {
 			if (middleware.type !== type) continue;
 
@@ -245,7 +250,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		middleware:
 			| OnResponseErrorMiddlewareFunction<this>
 			| ClientMiddleware<"onResponseError", string, this>,
-	) {
+	): this {
 		if ("middleware" in middleware) {
 			return this.use(middleware);
 		}
