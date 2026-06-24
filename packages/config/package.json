@@ -26,14 +26,7 @@
 		"dist",
 		"src"
 	],
-	"bin": {
-		"padosoft-config": "./dist/cli/index.mjs"
-	},
 	"exports": {
-		"./cli": {
-			"default": "./dist/cli/index.mjs",
-			"types": "./dist/cli/index.d.mts"
-		},
 		"./compiler/plugins/hono-zod": {
 			"default": "./dist/compiler/plugins/hono-zod.mjs",
 			"types": "./dist/compiler/plugins/hono-zod.d.mts"
