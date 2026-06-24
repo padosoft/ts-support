@@ -3,7 +3,11 @@ import { z } from "zod";
 export const withZodDefaults = <T extends z.ZodRawShape, K extends keyof T>(
 	schema: z.ZodObject<T>,
 	defaults: Partial<Record<K, z.infer<T[K]>>>,
-) =>
+): z.ZodObject<
+	Required<Record<K, z.ZodDefault<T[K]>>> extends infer T_1
+		? { -readonly [P in keyof T_1]: T_1[P] }
+		: never
+> =>
 	z.object(
 		Object.fromEntries(
 			Object.entries(schema.shape).map(([key, value]) => {
