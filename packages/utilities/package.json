@@ -1,7 +1,15 @@
 {
 	"name": "@padosoft/utilities",
 	"description": "Zero-dependency TypeScript utilities: typed query helpers, Configuration store, Zod utilities, and general-purpose type helpers",
-	"keywords": ["utilities", "typescript", "zod", "react-query", "configuration", "types", "padosoft"],
+	"keywords": [
+		"utilities",
+		"typescript",
+		"zod",
+		"react-query",
+		"configuration",
+		"types",
+		"padosoft"
+	],
 	"version": "1.4.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
@@ -17,6 +25,14 @@
 		"./lib/configuration": {
 			"default": "./dist/lib/configuration.mjs",
 			"types": "./dist/lib/configuration.d.mts"
+		},
+		"./lib/formatters": {
+			"default": "./dist/lib/formatters.mjs",
+			"types": "./dist/lib/formatters.d.mts"
+		},
+		"./lib/promise": {
+			"default": "./dist/lib/promise.mjs",
+			"types": "./dist/lib/promise.d.mts"
 		},
 		"./lib/query": {
 			"default": "./dist/lib/query.mjs",
@@ -45,6 +61,10 @@
 		"./lib/zod/codecs/json": {
 			"default": "./dist/lib/zod/codecs/json.mjs",
 			"types": "./dist/lib/zod/codecs/json.d.mts"
+		},
+		"./lib/zod/defaults": {
+			"default": "./dist/lib/zod/defaults.mjs",
+			"types": "./dist/lib/zod/defaults.d.mts"
 		},
 		"./lib/zod/utils": {
 			"default": "./dist/lib/zod/utils.mjs",
