@@ -20,11 +20,18 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"devDependencies": {
-		"@padosoft/config": "workspace:^"
+		"@padosoft/config": "workspace:^",
+		"@padosoft/openapi-client": "workspace:^"
 	},
 	"peerDependencies": {
 		"@asteasolutions/zod-to-openapi": ">=7",
+		"@padosoft/openapi-client": ">=1.0.0",
 		"@padosoft/utilities": ">=1.4.0"
+	},
+	"peerDependenciesMeta": {
+		"@padosoft/openapi-client": {
+			"optional": true
+		}
 	},
 	"exports": {
 		".": {
