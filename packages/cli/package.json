@@ -29,11 +29,11 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"devDependencies": {
-		"@padosoft/config": "npm:@padosoft/config@latest",
 		"@types/node": "^22.15.32",
 		"@types/sade": "^1.8.0"
 	},
 	"dependencies": {
+		"@padosoft/config": "npm:@padosoft/config@latest",
 		"sade": "^1.8.1"
 	},
 	"exports": {
