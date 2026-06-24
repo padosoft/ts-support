@@ -12,12 +12,10 @@ const assetsExts = ["json"];
 
 const config: UserConfigFn = tsdown({
 	entry: ["src/**/*.ts"],
-	banner: ({ fileName }) => (fileName.startsWith("cli/") ? "#!/usr/bin/env node" : ""),
 	deps: {
 		neverBundle: ["tsdown", "rolldown"],
 	},
 	exports: {
-		bin: { "padosoft-config": "./src/cli/index.ts" },
 		customExports: async (exports, context) => {
 			const assetExports: Record<string, string> = {
 				...exports,
