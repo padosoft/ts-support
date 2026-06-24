@@ -14,9 +14,11 @@ export interface ConvertParameters<T, Endpoint extends Endpoints<T>> {
 	}
 		? Request extends RouteConfig["request"]
 			? {
-					[Key in keyof ParametersNameFetchClientToSpec]?: NonNullable<Request>[ParametersNameFetchClientToSpec[Key]] extends infer ParameterConfig
-						? ConvertMaybeZod<ParameterConfig>
-						: NoParameters;
+					[Key in keyof ParametersNameFetchClientToSpec]?:
+						| (NonNullable<Request>[ParametersNameFetchClientToSpec[Key]] extends infer ParameterConfig
+								? ConvertMaybeZod<ParameterConfig>
+								: NoParameters)
+						| undefined;
 				}
 			: NoParameters
 		: NoParameters);
