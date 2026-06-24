@@ -1,0 +1,43 @@
+{
+	"name": "@padosoft/cli",
+	"description": "CLI for scaffolding packages, components, hooks, and changesets in @padosoft monorepos",
+	"keywords": [
+		"cli",
+		"scaffold",
+		"changeset",
+		"react-native",
+		"typescript",
+		"padosoft"
+	],
+	"version": "1.0.0",
+	"type": "module",
+	"bin": {
+		"padosoft": "./dist/index.mjs"
+	},
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"repository": {
+		"url": "git+https://github.com/padosoft/ts-support.git"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"ts:check": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@types/node": "^22.15.32",
+		"@types/sade": "^1.8.0"
+	},
+	"dependencies": {
+		"@padosoft/config": "npm:@padosoft/config@latest",
+		"sade": "^1.8.1"
+	},
+	"exports": {
+		".": "./dist/index.mjs",
+		"./package.json": "./package.json"
+	}
+}
