@@ -1,6 +1,34 @@
 import { existsSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+
+export const writeIfNeeded = async (
+	content: string,
+	dest: string,
+	force: boolean,
+): Promise<void> => {
+	if (existsSync(dest) && !force) {
+		console.log(`  skip    ${dest}`);
+		return;
+	}
+	await mkdir(dirname(dest), { recursive: true });
+	await writeFile(dest, content, "utf8");
+	console.log(`  write   ${dest}`);
+};
+
+export const copyIfNeeded = async (
+	src: string,
+	dest: string,
+	force: boolean,
+): Promise<void> => {
+	if (existsSync(dest) && !force) {
+		console.log(`  skip    ${dest}`);
+		return;
+	}
+	await mkdir(dirname(dest), { recursive: true });
+	await copyFile(src, dest);
+	console.log(`  write   ${dest}`);
+};
 
 export const writeFileWithDirs = async (
 	filePath: string,
@@ -17,6 +45,18 @@ export const assertNotExists = (filePath: string): void => {
 		process.exit(1);
 	}
 };
+
+export const readJsonFile = async <T>(filePath: string): Promise<T | null> => {
+	try {
+		const raw = await readFile(filePath, "utf8");
+		return JSON.parse(raw) as T;
+	} catch {
+		return null;
+	}
+};
+
+export const resolveDirs = (paths: string[]): string[] =>
+	paths.length > 0 ? paths.map((p) => resolve(p)) : [process.cwd()];
 
 export const kebabCase = (str: string): string =>
 	str
