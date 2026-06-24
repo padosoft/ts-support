@@ -162,3 +162,57 @@ import { listApps, listPacakges, fileNameValidator } from "@padosoft/utilities/l
 ```
 
 Helpers for Turborepo generators: list apps/packages in the monorepo and validate user-provided file names.
+
+## Zod defaults
+
+```ts
+import { withZodDefaults } from "@padosoft/utilities/lib/zod/defaults";
+```
+
+Merges a partial `defaults` map into a Zod object schema so that missing fields use the given default values at parse time. Works with zod v4.
+
+```ts
+const schema = z.object({
+  theme: z.string(),
+  debug: z.boolean(),
+  retries: z.number(),
+});
+
+const withDefaults = withZodDefaults(schema, {
+  theme: "light",
+  retries: 3,
+});
+
+withDefaults.parse({});
+// → { theme: "light", debug: <still required>, retries: 3 }
+```
+
+## Promise utilities
+
+```ts
+import { inspectSettledPromiseResults } from "@padosoft/utilities/lib/sync";
+```
+
+Splits a `Promise.allSettled` result array into `fulfilled` values and `rejected` reasons:
+
+```ts
+const results = await Promise.allSettled([fetchUser(1), fetchUser(2), fetchUser(3)]);
+const { fulfilled, rejected } = inspectSettledPromiseResults(results);
+// fulfilled: User[]   rejected: unknown[]
+```
+
+## Formatters
+
+```ts
+import { createCurrencyFormatter } from "@padosoft/utilities/lib/formatters";
+```
+
+Creates an `Intl.NumberFormat` instance for currency display. Locale defaults to the runtime's default locale:
+
+```ts
+const eur = createCurrencyFormatter("EUR", "it-IT");
+eur.format(1234.5); // → "1.234,50 €"
+
+const usd = createCurrencyFormatter("USD");
+usd.format(1234.5); // → "$1,234.50" (using runtime locale)
+```

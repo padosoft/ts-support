@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import sade from "sade";
 import { newPackage } from "./commands/new-package";
-import { syncBiome, syncEditor, syncTsconfig } from "./commands/sync";
+import { initBiome, initTsconfig, syncEditor } from "./commands/sync";
 
 const cli = sade("padosoft");
 
@@ -29,20 +29,24 @@ cli
 	.example("sync editor ~/repos/app-a ~/repos/app-b --force")
 	.action(syncEditor);
 
-cli
-	.command("sync biome [paths...]")
-	.describe("Write biome.json extending @padosoft/config to one or more repos")
-	.option("--force, -f", "Overwrite existing files", false)
-	.example("sync biome ~/repos/app-a ~/repos/app-b")
-	.action(syncBiome);
+// ── init ─────────────────────────────────────────────────────────────────────
+// One-time bootstrapping of config files in a repo.
 
 cli
-	.command("sync tsconfig [paths...]")
-	.describe("Write tsconfig.json extending @padosoft/config preset to one or more repos")
+	.command("init biome [paths...]")
+	.describe("Write biome.json extending @padosoft/config in one or more repos")
+	.option("--force, -f", "Overwrite existing files", false)
+	.example("init biome")
+	.example("init biome ~/repos/app-a ~/repos/app-b")
+	.action(initBiome);
+
+cli
+	.command("init tsconfig [paths...]")
+	.describe("Write tsconfig.json extending @padosoft/config preset in one or more repos")
 	.option("--preset, -p", "Preset: base | compiler | expo | hono", "base")
 	.option("--force, -f", "Overwrite existing files", false)
-	.example("sync tsconfig --preset compiler")
-	.example("sync tsconfig ~/repos/app-a ~/repos/app-b --preset expo")
-	.action(syncTsconfig);
+	.example("init tsconfig --preset compiler")
+	.example("init tsconfig ~/repos/app-a ~/repos/app-b --preset expo")
+	.action(initTsconfig);
 
 cli.parse(process.argv);

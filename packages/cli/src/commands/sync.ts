@@ -97,13 +97,13 @@ export const syncEditor = async (
 	}
 };
 
-interface SyncBiomeOptions {
+interface InitBiomeOptions {
 	force?: boolean;
 }
 
-export const syncBiome = async (
+export const initBiome = async (
 	paths: string[],
-	opts: SyncBiomeOptions,
+	opts: InitBiomeOptions,
 ): Promise<void> => {
 	const dirs = paths.length > 0 ? paths.map((p) => resolve(p)) : [process.cwd()];
 	const force = opts.force ?? false;
@@ -113,14 +113,14 @@ export const syncBiome = async (
 	}
 };
 
-interface SyncTsconfigOptions {
+interface InitTsconfigOptions {
 	preset?: string;
 	force?: boolean;
 }
 
-export const syncTsconfig = async (
+export const initTsconfig = async (
 	paths: string[],
-	opts: SyncTsconfigOptions,
+	opts: InitTsconfigOptions,
 ): Promise<void> => {
 	const dirs = paths.length > 0 ? paths.map((p) => resolve(p)) : [process.cwd()];
 	const preset = opts.preset ?? "base";

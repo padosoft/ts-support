@@ -81,12 +81,12 @@ padosoft sync editor ~/repos/app-a ~/repos/app-b --force
 
 ---
 
-### `sync biome`
+### `init biome`
 
-Writes a `biome.json` that extends `@padosoft/config/tools/biome` into one or more directories.
+Writes a `biome.json` that extends `@padosoft/config/tools/biome` into one or more directories. This is a one-time bootstrapping operation — run it once when setting up a new repo.
 
 ```
-padosoft sync biome [paths...] [--force]
+padosoft init biome [paths...] [--force]
 ```
 
 | Option | Alias | Default | Description |
@@ -97,10 +97,10 @@ padosoft sync biome [paths...] [--force]
 
 ```bash
 # Add biome.json to the current repo
-padosoft sync biome
+padosoft init biome
 
-# Sync biome config into two repos
-padosoft sync biome ~/repos/app-a ~/repos/app-b
+# Bootstrap biome config in two repos at once
+padosoft init biome ~/repos/app-a ~/repos/app-b
 ```
 
 Generated `biome.json`:
@@ -114,12 +114,12 @@ Generated `biome.json`:
 
 ---
 
-### `sync tsconfig`
+### `init tsconfig`
 
-Writes a `tsconfig.json` that extends a `@padosoft/config` TypeScript preset into one or more directories.
+Writes a `tsconfig.json` that extends a `@padosoft/config` TypeScript preset into one or more directories. Run once when bootstrapping a new repo.
 
 ```
-padosoft sync tsconfig [paths...] [--preset base|compiler|expo|hono] [--force]
+padosoft init tsconfig [paths...] [--preset base|compiler|expo|hono] [--force]
 ```
 
 | Option | Alias | Default | Description |
@@ -140,10 +140,10 @@ padosoft sync tsconfig [paths...] [--preset base|compiler|expo|hono] [--force]
 
 ```bash
 # Add tsconfig.json with the compiler preset to the current dir
-padosoft sync tsconfig --preset compiler
+padosoft init tsconfig --preset compiler
 
-# Sync expo preset into two app repos
-padosoft sync tsconfig ~/repos/app-a ~/repos/app-b --preset expo
+# Bootstrap expo preset in two app repos
+padosoft init tsconfig ~/repos/app-a ~/repos/app-b --preset expo
 ```
 
 Generated `tsconfig.json` (e.g. `--preset compiler`):
@@ -156,9 +156,9 @@ Generated `tsconfig.json` (e.g. `--preset compiler`):
 
 ---
 
-## Multi-repo pattern
+## Multi-repo patterns
 
-All `sync` commands accept multiple target paths, making it easy to keep several repositories in sync in a single command:
+`sync editor` is designed to be re-run whenever `@padosoft/config` updates its editor settings, keeping all repos in sync:
 
 ```bash
 padosoft sync editor \
@@ -166,17 +166,16 @@ padosoft sync editor \
   ~/repos/mobile \
   ~/repos/web \
   --force
-
-padosoft sync biome \
-  ~/repos/backend \
-  ~/repos/mobile \
-  ~/repos/web
-
-padosoft sync tsconfig ~/repos/backend --preset hono
-padosoft sync tsconfig ~/repos/mobile ~/repos/web --preset expo
 ```
 
-Files that already exist are skipped unless `--force` is passed. The CLI prints each path it processes so you can see exactly what was written or skipped:
+`init biome` and `init tsconfig` are one-shot: run them once when creating or onboarding a repo, then let the project own those files:
+
+```bash
+padosoft init biome ~/repos/new-service
+padosoft init tsconfig ~/repos/new-service --preset hono
+```
+
+Files that already exist are skipped unless `--force` is passed. The CLI prints each path it processes:
 
 ```
 → /home/user/repos/app-a
