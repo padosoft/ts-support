@@ -30,6 +30,14 @@
 			"default": "./dist/lib/turbo.mjs",
 			"types": "./dist/lib/turbo.d.mts"
 		},
+		"./lib/formatters": {
+			"default": "./dist/lib/formatters.mjs",
+			"types": "./dist/lib/formatters.d.mts"
+		},
+		"./lib/sync": {
+			"default": "./dist/lib/sync.mjs",
+			"types": "./dist/lib/sync.d.mts"
+		},
 		"./lib/utils": {
 			"default": "./dist/lib/utils.mjs",
 			"types": "./dist/lib/utils.d.mts"
@@ -45,6 +53,10 @@
 		"./lib/zod/codecs/json": {
 			"default": "./dist/lib/zod/codecs/json.mjs",
 			"types": "./dist/lib/zod/codecs/json.d.mts"
+		},
+		"./lib/zod/defaults": {
+			"default": "./dist/lib/zod/defaults.mjs",
+			"types": "./dist/lib/zod/defaults.d.mts"
 		},
 		"./lib/zod/utils": {
 			"default": "./dist/lib/zod/utils.mjs",
