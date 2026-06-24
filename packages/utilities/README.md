@@ -190,7 +190,7 @@ withDefaults.parse({});
 ## Promise utilities
 
 ```ts
-import { inspectSettledPromiseResults } from "@padosoft/utilities/lib/sync";
+import { inspectSettledPromiseResults } from "@padosoft/utilities/lib/promise";
 ```
 
 Splits a `Promise.allSettled` result array into `fulfilled` values and `rejected` reasons:
