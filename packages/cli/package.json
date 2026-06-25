@@ -9,7 +9,7 @@
 		"typescript",
 		"padosoft"
 	],
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"type": "module",
 	"bin": {
 		"padosoft": "./dist/index.mjs"
