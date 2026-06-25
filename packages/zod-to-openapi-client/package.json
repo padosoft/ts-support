@@ -1,7 +1,14 @@
 {
 	"name": "@padosoft/zod-to-openapi-client",
 	"description": "Converts zod-to-openapi route collections into typed Paths compatible with openapi-fetch and @padosoft/openapi-client",
-	"keywords": ["zod", "openapi", "openapi-fetch", "zod-to-openapi", "typescript", "padosoft"],
+	"keywords": [
+		"zod",
+		"openapi",
+		"openapi-fetch",
+		"zod-to-openapi",
+		"typescript",
+		"padosoft"
+	],
 	"version": "1.0.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
@@ -37,6 +44,50 @@
 		".": {
 			"default": "./dist/index.mjs",
 			"types": "./dist/index.d.mts"
+		},
+		"./converter": {
+			"default": "./dist/converter/index.mjs",
+			"types": "./dist/converter/index.d.mts"
+		},
+		"./converter/body": {
+			"default": "./dist/converter/body.mjs",
+			"types": "./dist/converter/body.d.mts"
+		},
+		"./converter/parameters": {
+			"default": "./dist/converter/parameters.mjs",
+			"types": "./dist/converter/parameters.d.mts"
+		},
+		"./converter/responses": {
+			"default": "./dist/converter/responses.mjs",
+			"types": "./dist/converter/responses.d.mts"
+		},
+		"./module": {
+			"default": "./dist/module.mjs",
+			"types": "./dist/module.d.mts"
+		},
+		"./steps/convert-endpoints": {
+			"default": "./dist/steps/convert-endpoints.mjs",
+			"types": "./dist/steps/convert-endpoints.d.mts"
+		},
+		"./steps/setup-endpoints": {
+			"default": "./dist/steps/setup-endpoints.mjs",
+			"types": "./dist/steps/setup-endpoints.d.mts"
+		},
+		"./steps/setup-params": {
+			"default": "./dist/steps/setup-params.mjs",
+			"types": "./dist/steps/setup-params.d.mts"
+		},
+		"./utilities/constants": {
+			"default": "./dist/utilities/constants.mjs",
+			"types": "./dist/utilities/constants.d.mts"
+		},
+		"./utilities/endpoint": {
+			"default": "./dist/utilities/endpoint.mjs",
+			"types": "./dist/utilities/endpoint.d.mts"
+		},
+		"./utilities/search": {
+			"default": "./dist/utilities/search.mjs",
+			"types": "./dist/utilities/search.d.mts"
 		},
 		"./package.json": "./package.json"
 	}
