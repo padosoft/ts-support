@@ -11,9 +11,6 @@
 	],
 	"version": "1.1.0",
 	"type": "module",
-	"bin": {
-		"padosoft": "./dist/index.mjs"
-	},
 	"files": [
 		"dist"
 	],
@@ -33,7 +30,7 @@
 		"@types/sade": "^1.8.0"
 	},
 	"dependencies": {
-		"@padosoft/config": "npm:@padosoft/config@latest",
+		"@padosoft/config": "workspace:^",
 		"sade": "^1.8.1"
 	},
 	"exports": {
