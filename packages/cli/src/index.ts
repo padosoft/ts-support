@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import sade from "sade";
 import { initBiome } from "./commands/init-biome";
 import { initTsconfig } from "./commands/init-tsconfig";
@@ -24,7 +25,9 @@ cli
 
 cli
 	.command("sync editor [paths...]")
-	.describe("Copy .vscode + .zed settings from @padosoft/config to one or more repos")
+	.describe(
+		"Copy .vscode + .zed settings from @padosoft/config to one or more repos",
+	)
 	.option("--force, -f", "Overwrite existing files", false)
 	.example("sync editor")
 	.example("sync editor ~/repos/app-a ~/repos/app-b --force")
@@ -34,7 +37,9 @@ cli
 
 cli
 	.command("init biome [paths...]")
-	.describe("Write biome.json extending @padosoft/config (schema version read from installed @biomejs/biome)")
+	.describe(
+		"Write biome.json extending @padosoft/config (schema version read from installed @biomejs/biome)",
+	)
 	.option("--force, -f", "Overwrite existing files", false)
 	.example("init biome")
 	.example("init biome ~/repos/app-a ~/repos/app-b")
