@@ -5,12 +5,7 @@ export default tsdown({
 	deps: {
 		neverBundle: [],
 	},
-	banner: ({ fileName }) => {
-		if (fileName !== "src/index.ts") return "";
-
-		return "#!/usr/bin/env node";
-	},
 	exports: {
-		bin: { padosoft: "./src/index.ts" },
+		bin: true,
 	},
 });
