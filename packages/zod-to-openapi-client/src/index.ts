@@ -38,6 +38,6 @@ export type CreateClientPaths<
 		ConvertEndpoints<TCollections, TDefaultErrorResponse>
 >;
 
-export type { GetEndpoint, GetSpecEndpoint } from "./utilities/search";
-export type { Endpoints, EndpointsMethods, EndpointsPaths } from "./utilities/endpoint";
-export type { HttpMethod } from "./utilities/constants";
+export type * from "./utilities/constants";
+export type * from "./utilities/endpoint";
+export type * from "./utilities/search";
