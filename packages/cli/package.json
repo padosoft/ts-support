@@ -38,6 +38,6 @@
 		"./package.json": "./package.json"
 	},
 	"bin": {
-		"cli": "./dist/index.mjs"
+		"cli": "dist/index.mjs"
 	}
 }
