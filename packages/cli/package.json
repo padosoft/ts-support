@@ -36,5 +36,8 @@
 	"exports": {
 		".": "./dist/index.mjs",
 		"./package.json": "./package.json"
+	},
+	"bin": {
+		"cli": "./dist/index.mjs"
 	}
 }
