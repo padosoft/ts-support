@@ -17,7 +17,7 @@
     },
     "packages/cli": {
       "name": "@padosoft/cli",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "bin": {
         "padosoft": "./dist/index.mjs",
       },
@@ -97,7 +97,7 @@
     },
     "packages/utilities": {
       "name": "@padosoft/utilities",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "devDependencies": {
         "@padosoft/config": "workspace:^",
       },
@@ -107,7 +107,7 @@
     },
     "packages/zod-to-openapi-client": {
       "name": "@padosoft/zod-to-openapi-client",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "devDependencies": {
         "@padosoft/config": "workspace:^",
         "@padosoft/openapi-client": "workspace:^",
@@ -115,7 +115,7 @@
       "peerDependencies": {
         "@asteasolutions/zod-to-openapi": ">=7",
         "@padosoft/openapi-client": ">=1.0.0",
-        "@padosoft/utilities": ">=1.4.0",
+        "@padosoft/utilities": ">=1.4.1",
       },
       "optionalPeers": [
         "@padosoft/openapi-client",

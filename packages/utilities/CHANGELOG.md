@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.4.1
+
+### Patch Changes
+
+- [#25](https://github.com/padosoft/ts-support/pull/25) [`997d4a0`](https://github.com/padosoft/ts-support/commit/997d4a0c316e44dc154c358f2a1b8af2bf5350ff) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `withZodDefaults`, `inspectSettledPromiseResults`, and `createCurrencyFormatter` utilities extracted from gescat-mobile-app.
+
 ## 1.4.0
 
 ### Minor Changes
