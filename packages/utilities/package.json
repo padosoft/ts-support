@@ -22,6 +22,10 @@
 			"default": "./dist/lib/index.mjs",
 			"types": "./dist/lib/index.d.mts"
 		},
+		"./lib/chalk": {
+			"default": "./dist/lib/chalk.mjs",
+			"types": "./dist/lib/chalk.d.mts"
+		},
 		"./lib/configuration": {
 			"default": "./dist/lib/configuration.mjs",
 			"types": "./dist/lib/configuration.d.mts"
