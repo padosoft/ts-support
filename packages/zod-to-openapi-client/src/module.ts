@@ -1,5 +1,7 @@
 import type { ResponseConfig } from "@asteasolutions/zod-to-openapi";
 import { OpenApiClient } from "@padosoft/openapi-client";
+import type { QueryProxy } from "@padosoft/utilities/lib/query-proxy";
+import { createQueryProxy } from "@padosoft/utilities/lib/query-proxy";
 import type { CreateClientPaths } from "./index";
 
 /**
@@ -67,4 +69,28 @@ export type RoutesInput<T> = T extends readonly unknown[]
 export abstract class OpenApiClientModule<
 	TRoutes extends object,
 	TDefaultErrorResponse extends ResponseConfig = ResponseConfig,
-> extends OpenApiClient<CreateClientPaths<RoutesInput<TRoutes>, TDefaultErrorResponse>> {}
+> extends OpenApiClient<CreateClientPaths<RoutesInput<TRoutes>, TDefaultErrorResponse>> {
+	private queryProxy?: QueryProxy<this>;
+
+	/**
+	 * Returns a query proxy that augments every async method with `.$key()` and
+	 * `.$query()` helpers for React Query / TanStack Query.
+	 *
+	 * The proxy is memoized — the same object is returned on every access.
+	 *
+	 * @example
+	 * ```ts
+	 * const auth = new AuthV1Module(client);
+	 *
+	 * // Key — derived automatically from the access path + call arguments:
+	 * auth.$query.login.$key(body)   // → ["login", body]
+	 *
+	 * // Spread directly into useQuery:
+	 * useQuery({ ...auth.$query.login.$query(body) });
+	 * ```
+	 */
+	get $query(): QueryProxy<this> {
+		this.queryProxy ??= createQueryProxy(this);
+		return this.queryProxy;
+	}
+}
