@@ -10,4 +10,4 @@ const create = (format: Format[]): Chalk =>
 			format.length ? styleText(format, text) : text,
 	}) as Chalk;
 
-export const chalk = create([]);
+export const chalk: Chalk = create([]);
