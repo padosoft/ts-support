@@ -1,5 +1,15 @@
 # @padosoft/utilities
 
+## 1.5.0
+
+### Minor Changes
+
+- [#32](https://github.com/padosoft/ts-support/pull/32) [`b8068c4`](https://github.com/padosoft/ts-support/commit/b8068c410a773cf4c732d9f812be6d347c81de49) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `chalk` utility built on `node:util` `styleText`.
+
+  - `@padosoft/utilities`: new `./lib/chalk` subpath export — a chainable, proxy-based `chalk` instance backed by Node's native `styleText` (auto-respects `NO_COLOR`/`FORCE_COLOR`)
+  - `@padosoft/logger`: console transport colors now use `chalk` instead of raw ANSI escape codes
+  - `@padosoft/cli`: CLI output (skip/write/create/error) is now colorized via `chalk`
+
 ## 1.4.1
 
 ### Patch Changes

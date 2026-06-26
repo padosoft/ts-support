@@ -1,5 +1,25 @@
 # @padosoft/zod-to-openapi-client
 
+## 2.0.0
+
+### Minor Changes
+
+- [#30](https://github.com/padosoft/ts-support/pull/30) [`577b10c`](https://github.com/padosoft/ts-support/commit/577b10cdaad7e77bad3ce3832cbfac090566eabc) Thanks [@47PADO47](https://github.com/47PADO47)! - `$query` getter on `OpenApiClientModule` — every module subclass now exposes a memoized query proxy for React Query / TanStack Query integration with no extra setup.
+
+  ```ts
+  const auth = new AuthV1Module(client);
+
+  auth.$query.login.$key(body); // → ["login", body]
+  auth.$query.login.$query(body); // → { queryKey, queryFn }
+  ```
+
+  The proxy is derived from `createQueryProxy` in `@padosoft/utilities/lib/query-proxy` (peer dependency).
+
+### Patch Changes
+
+- Updated dependencies [[`b8068c4`](https://github.com/padosoft/ts-support/commit/b8068c410a773cf4c732d9f812be6d347c81de49)]:
+  - @padosoft/utilities@1.5.0
+
 ## 1.1.0
 
 ### Minor Changes
