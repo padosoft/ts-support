@@ -26,7 +26,6 @@
 		"ts:check": "tsc --noEmit"
 	},
 	"devDependencies": {
-		"@types/node": "^22.15.32",
 		"@types/sade": "^1.8.0"
 	},
 	"dependencies": {
