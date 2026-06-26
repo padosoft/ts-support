@@ -6,6 +6,6 @@ export default tsdown({
 		neverBundle: [],
 	},
 	exports: {
-		bin: true,
+		bin: false,
 	},
 });
