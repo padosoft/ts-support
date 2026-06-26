@@ -1,8 +1,18 @@
 {
 	"name": "@padosoft/logger",
 	"description": "Modular, transport-agnostic logger with plugins, batching, and adapters for Hono, Drizzle, Expo, and OpenTelemetry",
-	"keywords": ["logger", "logging", "opentelemetry", "otel", "hono", "expo", "drizzle", "typescript", "padosoft"],
-	"version": "1.3.2",
+	"keywords": [
+		"logger",
+		"logging",
+		"opentelemetry",
+		"otel",
+		"hono",
+		"expo",
+		"drizzle",
+		"typescript",
+		"padosoft"
+	],
+	"version": "1.4.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
