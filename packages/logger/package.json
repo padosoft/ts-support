@@ -30,7 +30,9 @@
 		"expo-file-system": "^56.0.8",
 		"expo-application": "^56.0.3"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"@padosoft/utilities": "workspace:^"
+	},
 	"peerDependencies": {
 		"@opentelemetry/api": "*",
 		"@opentelemetry/api-logs": "*",

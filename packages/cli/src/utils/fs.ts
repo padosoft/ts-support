@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { chalk } from "@padosoft/utilities/lib/chalk";
 
 export const writeIfNeeded = async (
 	content: string,
@@ -8,12 +9,12 @@ export const writeIfNeeded = async (
 	force: boolean,
 ): Promise<void> => {
 	if (existsSync(dest) && !force) {
-		console.log(`  skip    ${dest}`);
+		console.log(`  ${chalk.dim("skip")}    ${dest}`);
 		return;
 	}
 	await mkdir(dirname(dest), { recursive: true });
 	await writeFile(dest, content, "utf8");
-	console.log(`  write   ${dest}`);
+	console.log(`  ${chalk.green("write")}   ${dest}`);
 };
 
 export const copyIfNeeded = async (
@@ -22,12 +23,12 @@ export const copyIfNeeded = async (
 	force: boolean,
 ): Promise<void> => {
 	if (existsSync(dest) && !force) {
-		console.log(`  skip    ${dest}`);
+		console.log(`  ${chalk.dim("skip")}    ${dest}`);
 		return;
 	}
 	await mkdir(dirname(dest), { recursive: true });
 	await copyFile(src, dest);
-	console.log(`  write   ${dest}`);
+	console.log(`  ${chalk.green("write")}   ${dest}`);
 };
 
 export const writeFileWithDirs = async (
@@ -36,12 +37,12 @@ export const writeFileWithDirs = async (
 ): Promise<void> => {
 	await mkdir(dirname(filePath), { recursive: true });
 	await writeFile(filePath, content, "utf8");
-	console.log(`  create  ${filePath}`);
+	console.log(`  ${chalk.green("create")}  ${filePath}`);
 };
 
 export const assertNotExists = (filePath: string): void => {
 	if (existsSync(filePath)) {
-		console.error(`  error   ${filePath} already exists`);
+		console.error(`  ${chalk.red("error")}   ${filePath} already exists`);
 		process.exit(1);
 	}
 };

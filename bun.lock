@@ -19,10 +19,11 @@
       "name": "@padosoft/cli",
       "version": "1.1.0",
       "bin": {
-        "cli": "./dist/index.mjs",
+        "cli": "dist/index.mjs",
       },
       "dependencies": {
         "@padosoft/config": "workspace:^",
+        "@padosoft/utilities": "workspace:^",
         "sade": "^1.8.1",
       },
       "devDependencies": {
@@ -37,6 +38,9 @@
     "packages/logger": {
       "name": "@padosoft/logger",
       "version": "1.3.2",
+      "dependencies": {
+        "@padosoft/utilities": "workspace:^",
+      },
       "devDependencies": {
         "@opentelemetry/api": "^1.9.1",
         "@opentelemetry/api-logs": "^0.219.0",

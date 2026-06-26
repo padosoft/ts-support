@@ -1,21 +1,19 @@
+import { chalk } from "@padosoft/utilities/lib/chalk";
 import type { LogLevel } from "@/lib/levels";
 import { supportsColors } from "@/lib/utils";
 
 export const SUPPORTS_COLORS: boolean = supportsColors();
 
-export const colorize = (code: number, str: string): string =>
-	SUPPORTS_COLORS ? `\x1b[${code}m${str}\x1b[0m` : str;
-
 export const getLevelColor = (level: LogLevel): ColorFn =>
 	colorMap[level] ?? colors.gray;
 
 export const colors = {
-	gray: (s: string): string => colorize(90, s),
-	red: (s: string): string => colorize(31, s),
-	green: (s: string): string => colorize(32, s),
-	yellow: (s: string): string => colorize(33, s),
-	blue: (s: string): string => colorize(34, s),
-	purple: (s: string): string => colorize(34, s),
+	gray: (s: string): string => chalk.dim(s),
+	red: (s: string): string => chalk.red(s),
+	green: (s: string): string => chalk.green(s),
+	yellow: (s: string): string => chalk.yellow(s),
+	blue: (s: string): string => chalk.blue(s),
+	purple: (s: string): string => chalk.magenta(s),
 } as const;
 
 export type Colors = typeof colors;

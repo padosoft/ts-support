@@ -1,4 +1,5 @@
 import { join, resolve } from "node:path";
+import { chalk } from "@padosoft/utilities/lib/chalk";
 import { assertNotExists, kebabCase, writeFileWithDirs } from "../utils/fs";
 import { TSDOWN_CONTENT } from "./init-tsdown";
 
@@ -63,12 +64,12 @@ export const newPackage = async (opts: NewPackageOptions): Promise<void> => {
 	const scope = opts.scope ?? "@padosoft";
 
 	if (!name) {
-		console.error("  error   --name is required");
+		console.error(`  ${chalk.red("error")}   --name is required`);
 		process.exit(1);
 	}
 
 	if (type !== "ts" && type !== "rn") {
-		console.error('  error   --type must be "ts" or "rn"');
+		console.error(`  ${chalk.red("error")}   --type must be "ts" or "rn"`);
 		process.exit(1);
 	}
 
@@ -76,12 +77,12 @@ export const newPackage = async (opts: NewPackageOptions): Promise<void> => {
 
 	assertNotExists(pkgDir);
 
-	console.log(`\nScaffolding ${scope}/${name} (${type}) in packages/${name}/\n`);
+	console.log(`\nScaffolding ${chalk.cyan(`${scope}/${name}`)} (${type}) in packages/${name}/\n`);
 
 	await writeFileWithDirs(join(pkgDir, "package.json"), PACKAGE_JSON(scope, name, type));
 	await writeFileWithDirs(join(pkgDir, "tsconfig.json"), TSCONFIG(type));
 	await writeFileWithDirs(join(pkgDir, "tsdown.config.ts"), TSDOWN_CONTENT[type]);
 	await writeFileWithDirs(join(pkgDir, "src/index.ts"), INDEX_TS(`${scope}/${name}`));
 
-	console.log("\nDone. Run `bun install` to update the lockfile.");
+	console.log(`\n${chalk.green("Done.")} Run \`bun install\` to update the lockfile.`);
 };

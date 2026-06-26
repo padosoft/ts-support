@@ -31,6 +31,7 @@
 	},
 	"dependencies": {
 		"@padosoft/config": "workspace:^",
+		"@padosoft/utilities": "workspace:^",
 		"sade": "^1.8.1"
 	},
 	"exports": {
