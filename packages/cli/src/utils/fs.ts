@@ -47,14 +47,13 @@ export const assertNotExists = (filePath: string): void => {
 	}
 };
 
-export const readJsonFile = async <T>(filePath: string): Promise<T | null> => {
-	try {
-		const raw = await readFile(filePath, "utf8");
-		return JSON.parse(raw) as T;
-	} catch {
-		return null;
-	}
-};
+export async function readJSON<T>(filePath: string): Promise<T> {
+	return JSON.parse(await readFile(filePath, "utf8")) as T;
+}
+
+export async function writeJSON(filePath: string, data: unknown): Promise<void> {
+	await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+}
 
 export const resolveDirs = (paths: string[]): string[] =>
 	paths.length > 0 ? paths.map((p) => resolve(p)) : [process.cwd()];

@@ -1,15 +1,19 @@
 import { join } from "node:path";
-import { readJsonFile, resolveDirs, writeIfNeeded } from "../utils/fs";
+import { readJSON, resolveDirs, writeIfNeeded } from "../utils/fs";
 
 interface InitBiomeOptions {
 	force?: boolean;
 }
 
 const getBiomeVersion = async (dir: string): Promise<string> => {
-	const pkg = await readJsonFile<{ version: string }>(
-		join(dir, "node_modules/@biomejs/biome/package.json"),
-	);
-	return pkg?.version ?? "2.5.1";
+	try {
+		const pkg = await readJSON<{ version: string }>(
+			join(dir, "node_modules/@biomejs/biome/package.json"),
+		);
+		return pkg.version;
+	} catch {
+		return "2.5.1";
+	}
 };
 
 export const initBiome = async (
