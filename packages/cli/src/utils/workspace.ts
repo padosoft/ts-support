@@ -1,5 +1,4 @@
 import { spawn } from "node:child_process";
-import { readFile, writeFile } from "node:fs/promises";
 
 export type DepMap = Record<string, string>;
 
@@ -7,14 +6,6 @@ export function sortDeps(deps: DepMap): DepMap {
 	return Object.fromEntries(
 		Object.entries(deps).sort(([a], [b]) => a.localeCompare(b)),
 	);
-}
-
-export async function readJSON<T>(filePath: string): Promise<T> {
-	return JSON.parse(await readFile(filePath, "utf8")) as T;
-}
-
-export async function writeJSON(filePath: string, data: unknown): Promise<void> {
-	await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
 export function runCommand(cmd: string, args: string[]): Promise<void> {

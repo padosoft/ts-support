@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
-import { writeJSON } from "../utils/workspace";
+import { writeJSON } from "../utils/fs";
 
 interface I18nExtractOptions {
 	format?: string;

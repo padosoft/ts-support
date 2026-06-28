@@ -1,13 +1,7 @@
 import { join } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
-import {
-	type DepMap,
-	formatFile,
-	getTaggedVersion,
-	mapLimit,
-	readJSON,
-	writeJSON,
-} from "../utils/workspace";
+import { readJSON, writeJSON } from "../utils/fs";
+import { type DepMap, formatFile, getTaggedVersion, mapLimit } from "../utils/workspace";
 
 interface ExpoUpdateOptions {
 	tag?: string;

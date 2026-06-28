@@ -1,16 +1,15 @@
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
+import { readJSON, writeJSON } from "../utils/fs";
 import {
 	type DepMap,
 	formatFile,
 	getTaggedVersion,
 	mapLimit,
 	parsePackageSpec,
-	readJSON,
 	runCommand,
 	sortDeps,
-	writeJSON,
 } from "../utils/workspace";
 
 interface DepAddOptions {
