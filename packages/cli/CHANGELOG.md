@@ -1,5 +1,17 @@
 # @padosoft/cli
 
+## 1.3.0
+
+### Minor Changes
+
+- [#33](https://github.com/padosoft/ts-support/pull/33) [`d5ebec8`](https://github.com/padosoft/ts-support/commit/d5ebec8c27f3d9afa16f3a3ee15eb29945c8babd) Thanks [@47PADO47](https://github.com/47PADO47)! - Add three monorepo management commands: `dep add`, `expo update`, and `i18n extract`.
+
+  - `dep add [packages...]` — adds packages to the workspace catalog and wires `catalog:` refs to all `apps/` and/or `packages/` members; supports `--tag`, `--scope`, `--dry-run`, `--install`
+  - `expo update` — batch-updates all Expo packages (`expo`, `expo-*`, `@expo/*`) in the current workspace to a specified npm dist-tag (default: `canary`); handles `dependencies`, `devDependencies`, `overrides`, `workspaces.catalog`, and `patchedDependencies` keys
+  - `i18n extract [paths...]` — extracts flat dot-notation translation keys from any locale file via dynamic import; supports `--format array|object`, `--file`, and `--table`
+
+  Add `utils/workspace.ts` with shared utilities: `readJSON`, `writeJSON`, `runCommand`, `formatFile`, `parsePackageSpec`, `getTaggedVersion`, `sortDeps`, `mapLimit`.
+
 ## 1.2.0
 
 ### Minor Changes
