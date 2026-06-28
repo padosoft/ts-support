@@ -47,15 +47,6 @@ export const assertNotExists = (filePath: string): void => {
 	}
 };
 
-export const readJsonFile = async <T>(filePath: string): Promise<T | null> => {
-	try {
-		const raw = await readFile(filePath, "utf8");
-		return JSON.parse(raw) as T;
-	} catch {
-		return null;
-	}
-};
-
 export async function readJSON<T>(filePath: string): Promise<T> {
 	return JSON.parse(await readFile(filePath, "utf8")) as T;
 }
