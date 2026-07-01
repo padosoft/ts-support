@@ -12,7 +12,7 @@
 		"test": "bun test",
 		"ts:check": "turbo run ts:check",
 		"version-packages": "changeset version && bun i --ignore-scripts --lockfile-only",
-		"publish-packages": "bun run build && changeset version && changeset publish"
+		"publish-packages": "bun run build && bash scripts/publish.sh"
 	},
 	"overrides": {
 		"zod": "catalog:"
