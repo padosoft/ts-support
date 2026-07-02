@@ -43,6 +43,10 @@
 			"default": "./dist/hoc.mjs",
 			"types": "./dist/hoc.d.mts"
 		},
+		"./memo": {
+			"default": "./dist/memo.mjs",
+			"types": "./dist/memo.d.mts"
+		},
 		"./package.json": "./package.json"
 	}
 }
