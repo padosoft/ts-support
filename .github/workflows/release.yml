@@ -76,7 +76,12 @@ jobs:
                 else
                   echo "Publishing $pkg_name@$pkg_version to GitHub Packages via bun pm pack..."
                   pushd "$dir" > /dev/null
-                  tarball=$(bun pm pack 2>&1 | grep -E '\.tgz$' | tail -1)
+                  tarball="$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz$' | tail -1 || true)"
+                  if [ -z "$tarball" ] || [ ! -f "$tarball" ]; then
+                    echo "Warning: failed to pack $pkg_name@$pkg_version, skipping"
+                    popd > /dev/null
+                    continue
+                  fi
                   npm publish "$tarball" --registry https://npm.pkg.github.com/ --access public \
                     || echo "Warning: failed to publish $pkg_name, skipping"
                   rm -f "$tarball"
@@ -93,7 +98,12 @@ jobs:
                   if [ "$name" = "$pkg_name" ]; then
                     echo "Publishing $pkg_name to GitHub Packages via bun pm pack..."
                     pushd "$dir" > /dev/null
-                    tarball=$(bun pm pack 2>&1 | grep -E '\.tgz$' | tail -1)
+                    tarball="$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz$' | tail -1 || true)"
+                    if [ -z "$tarball" ] || [ ! -f "$tarball" ]; then
+                      echo "Failed to determine tarball path from bun pm pack output for $pkg_name" >&2
+                      popd > /dev/null
+                      exit 1
+                    fi
                     npm publish "$tarball" --registry https://npm.pkg.github.com/ --access public
                     rm -f "$tarball"
                     popd > /dev/null
