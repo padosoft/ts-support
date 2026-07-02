@@ -20,7 +20,11 @@ for dir in packages/*/; do
 
   echo "Packing ${name}@${version} via bun pm pack..."
   pushd "$dir" > /dev/null
-  tarball=$(bun pm pack 2>&1 | grep -E '\.tgz$' | tail -1)
+  tarball="$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz$' | tail -1 || true)"
+  if [ -z "$tarball" ] || [ ! -f "$tarball" ]; then
+    echo "Failed to determine tarball path from bun pm pack output for ${name}@${version}" >&2
+    exit 1
+  fi
   echo "Publishing ${tarball}..."
   npm publish "$tarball" --access public
   rm -f "$tarball"
