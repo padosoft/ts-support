@@ -2,6 +2,8 @@ import { makeTimestamp } from "@/lib/format";
 import type { LogLevel } from "@/lib/levels";
 import { createTransport } from "@/lib/mods";
 import {
+	CSS_COLORS,
+	isBrowser,
 	type ColorFn,
 	colors,
 	getLevelColor,
@@ -32,7 +34,7 @@ export const consoleTransport = (
 	const selectedTimestamp = options.timestamp ?? "local";
 	const timestamp = makeTimestamp(selectedTimestamp);
 
-	const format = (level: LogLevel, args: unknown[]) => {
+	const format = (level: LogLevel, args: unknown[]): unknown[] => {
 		const symbolsEnabled = options.symbols ?? true;
 		const symbol = symbolsEnabled ? symbolize(level) : null;
 
@@ -53,10 +55,37 @@ export const consoleTransport = (
 		return [prefix, ...args];
 	};
 
+	const formatBrowser = (level: LogLevel, args: unknown[]): unknown[] => {
+		const symbolsEnabled = options.symbols ?? true;
+		const colorsEnabled = options.colors ?? true;
+		const hasLevel = options.level ?? true;
+		const now = new Date();
+
+		const levelCss = colorsEnabled ? CSS_COLORS[level] : "";
+		const timestampCss = colorsEnabled ? "color: #808080" : "";
+		const reset = "";
+
+		const fmtParts: string[] = [`%c${timestamp(now)}%c`];
+		const cssArgs: string[] = [timestampCss, reset];
+
+		const sym = symbolsEnabled ? symbolize(level) : "";
+		const levelLabel = hasLevel ? `[${level.toUpperCase()}]` : "";
+		const levelPart = [sym, levelLabel].filter(Boolean).join(" ");
+
+		if (levelPart) {
+			fmtParts.push(` %c${levelPart}%c`);
+			cssArgs.push(levelCss, reset);
+		}
+
+		return [fmtParts.join(""), ...cssArgs, ...args];
+	};
+
 	return createTransport({
 		name: "console",
 		send: (_logger, entry) => {
-			const out = format(entry.level, entry.data);
+			const out = isBrowser
+				? formatBrowser(entry.level, entry.data)
+				: format(entry.level, entry.data);
 			const method = consoleMethods[entry.level] || "log";
 
 			const func = console[method];

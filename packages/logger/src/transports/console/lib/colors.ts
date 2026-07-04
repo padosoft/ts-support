@@ -1,6 +1,11 @@
 import { chalk } from "@padosoft/utilities/lib/chalk";
+import {
+	isBrowser,
+	supportsColors,
+} from "@padosoft/utilities/lib/runtime";
 import type { LogLevel } from "@/lib/levels";
-import { supportsColors } from "@/lib/utils";
+
+export { isBrowser };
 
 export const SUPPORTS_COLORS: boolean = supportsColors();
 
@@ -29,3 +34,13 @@ export const colorMap: Partial<Record<LogLevel, ColorFn>> = {
 	info: colors.blue,
 	trace: colors.gray,
 } as const;
+
+export const CSS_COLORS: Record<LogLevel, string> = {
+	error: "color: #e74c3c; font-weight: bold",
+	fatal: "color: #e74c3c; font-weight: bold",
+	warn: "color: #f39c12; font-weight: bold",
+	success: "color: #27ae60",
+	info: "color: #3498db",
+	debug: "color: #9b59b6",
+	trace: "color: #808080",
+};
