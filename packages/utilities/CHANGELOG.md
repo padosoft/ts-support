@@ -1,5 +1,15 @@
 # @padosoft/utilities
 
+## 1.6.0
+
+### Minor Changes
+
+- [`0c293e9`](https://github.com/padosoft/ts-support/commit/0c293e99dbc8158dd373f6bd7ea95669d4dff8cc) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `runtime` module to utilities with cross-runtime detection helpers (`isBrowser`, `isNode`, `supportsTTY`, `supportsColors`, `supportsUnicode`, `supportsAnsi`, etc.).
+
+  Replace `node:util` dependency in `chalk` with a self-contained ANSI implementation — the package now bundles cleanly in React Native (Metro) and browser bundlers.
+
+  Update `consoleTransport` to use CSS-based coloring (`%c` format) in browser environments, falling back to ANSI escape codes in Node and React Native.
+
 ## 1.5.1
 
 ### Patch Changes
