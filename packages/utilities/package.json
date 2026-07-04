@@ -46,6 +46,10 @@
 			"default": "./dist/lib/query-proxy.mjs",
 			"types": "./dist/lib/query-proxy.d.mts"
 		},
+		"./lib/runtime": {
+			"default": "./dist/lib/runtime.mjs",
+			"types": "./dist/lib/runtime.d.mts"
+		},
 		"./lib/turbo": {
 			"default": "./dist/lib/turbo.mjs",
 			"types": "./dist/lib/turbo.d.mts"
