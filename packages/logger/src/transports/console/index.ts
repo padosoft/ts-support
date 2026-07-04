@@ -1,10 +1,10 @@
+import { isBrowser } from "@padosoft/utilities";
 import { makeTimestamp } from "@/lib/format";
 import type { LogLevel } from "@/lib/levels";
 import { createTransport } from "@/lib/mods";
 import {
-	CSS_COLORS,
-	isBrowser,
 	type ColorFn,
+	CSS_COLORS,
 	colors,
 	getLevelColor,
 } from "@/transports/console/lib/colors";

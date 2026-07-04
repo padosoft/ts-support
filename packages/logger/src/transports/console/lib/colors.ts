@@ -1,11 +1,6 @@
 import { chalk } from "@padosoft/utilities/lib/chalk";
-import {
-	isBrowser,
-	supportsColors,
-} from "@padosoft/utilities/lib/runtime";
+import { supportsColors } from "@padosoft/utilities/lib/runtime";
 import type { LogLevel } from "@/lib/levels";
-
-export { isBrowser };
 
 export const SUPPORTS_COLORS: boolean = supportsColors();
 
