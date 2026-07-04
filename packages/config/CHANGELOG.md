@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.3.2
+
+### Patch Changes
+
+- [#36](https://github.com/padosoft/ts-support/pull/36) [`340c2e5`](https://github.com/padosoft/ts-support/commit/340c2e549fd97a36918e53d612217533e4c626d6) Thanks [@47PADO47](https://github.com/47PADO47)! - Re-publish with properly resolved workspace dependencies (`workspace:^` → real semver) now that the CI pipeline uses `bun pm pack`.
+
 ## 1.3.1
 
 ### Patch Changes

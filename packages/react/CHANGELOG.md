@@ -1,5 +1,20 @@
 # @padosoft/react
 
+## 1.1.0
+
+### Minor Changes
+
+- [#36](https://github.com/padosoft/ts-support/pull/36) [`340c2e5`](https://github.com/padosoft/ts-support/commit/340c2e549fd97a36918e53d612217533e4c626d6) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `genericMemo` typed wrapper around `React.memo` with better generic inference.
+
+- [#35](https://github.com/padosoft/ts-support/pull/35) [`84ef39a`](https://github.com/padosoft/ts-support/commit/84ef39a7c554105962e234c34acd01a0cbff9830) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `genericMemo` — a typed wrapper around `React.memo()` that infers component props automatically and accepts an optional `propsAreEqual` comparator.
+
+### Patch Changes
+
+- [#36](https://github.com/padosoft/ts-support/pull/36) [`340c2e5`](https://github.com/padosoft/ts-support/commit/340c2e549fd97a36918e53d612217533e4c626d6) Thanks [@47PADO47](https://github.com/47PADO47)! - Re-publish with properly resolved workspace dependencies (`workspace:^` → real semver) now that the CI pipeline uses `bun pm pack`.
+
+- Updated dependencies [[`340c2e5`](https://github.com/padosoft/ts-support/commit/340c2e549fd97a36918e53d612217533e4c626d6)]:
+  - @padosoft/utilities@1.5.1
+
 ## 1.0.0
 
 ### Major Changes
