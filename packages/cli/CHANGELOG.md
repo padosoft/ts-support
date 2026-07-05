@@ -1,5 +1,13 @@
 # @padosoft/cli
 
+## 1.3.1
+
+### Patch Changes
+
+- [`8b57182`](https://github.com/padosoft/ts-support/commit/8b5718298d0f8a6c2350eb23ecb6e1732c1b1a87) Thanks [@47PADO47](https://github.com/47PADO47)! - Fix sade variadic arg collection for all `[packages...]` / `[paths...]` commands.
+
+  Sade only shifts one positional into the action for variadic optional args — the rest land in `opts._`. Without the fix, `dep add` with no args crashed with a TypeError, passing `pkg@latest` iterated over individual characters (producing `@@latest` errors), and multiple packages were silently dropped. The same bug affected `sync editor`, `init biome`, `init tsconfig`, `init tsdown`, and `i18n extract`.
+
 ## 1.3.0
 
 ### Minor Changes
