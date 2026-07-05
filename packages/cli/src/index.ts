@@ -12,6 +12,12 @@ import { syncEditor } from "./commands/sync-editor";
 
 const cli = sade("padosoft");
 
+// Sade only shifts ONE positional arg for [arg...] variadic — the rest go into opts._.
+// This helper reconstructs the full array.
+function collectArgs(first: string | undefined, opts: { _?: string[] }): string[] {
+	return first !== undefined ? [first, ...(opts._ ?? [])] : (opts._ ?? []);
+}
+
 // ── new ──────────────────────────────────────────────────────────────────────
 
 cli
@@ -34,7 +40,7 @@ cli
 	.option("--force, -f", "Overwrite existing files", false)
 	.example("sync editor")
 	.example("sync editor ~/repos/app-a ~/repos/app-b --force")
-	.action(syncEditor);
+	.action((first: string | undefined, opts) => syncEditor(collectArgs(first, opts), opts));
 
 // ── init ─────────────────────────────────────────────────────────────────────
 
@@ -46,7 +52,7 @@ cli
 	.option("--force, -f", "Overwrite existing files", false)
 	.example("init biome")
 	.example("init biome ~/repos/app-a ~/repos/app-b")
-	.action(initBiome);
+	.action((first: string | undefined, opts) => initBiome(collectArgs(first, opts), opts));
 
 cli
 	.command("init tsconfig [paths...]")
@@ -55,7 +61,7 @@ cli
 	.option("--force, -f", "Overwrite existing files", false)
 	.example("init tsconfig --preset compiler")
 	.example("init tsconfig ~/repos/app-a ~/repos/app-b --preset expo")
-	.action(initTsconfig);
+	.action((first: string | undefined, opts) => initTsconfig(collectArgs(first, opts), opts));
 
 cli
 	.command("init tsdown [paths...]")
@@ -65,7 +71,7 @@ cli
 	.example("init tsdown")
 	.example("init tsdown --type rn")
 	.example("init tsdown ~/repos/app-a --type ts --force")
-	.action(initTsdown);
+	.action((first: string | undefined, opts) => initTsdown(collectArgs(first, opts), opts));
 
 // ── dep ──────────────────────────────────────────────────────────────────────
 
@@ -87,7 +93,7 @@ cli
 	.option("--install, -i", "Run bun install after updating", false)
 	.example("dep add expo@beta react-native@0.82.0")
 	.example("dep add expo-camera --tag latest --scope app --install")
-	.action(depAdd);
+	.action((first: string | undefined, opts) => depAdd(collectArgs(first, opts), opts));
 
 // ── expo ─────────────────────────────────────────────────────────────────────
 
@@ -120,6 +126,6 @@ cli
 	.example(
 		"i18n extract packages/i18n/src/locales/en --format object --file keys.json",
 	)
-	.action(i18nExtract);
+	.action((first: string | undefined, opts) => i18nExtract(collectArgs(first, opts), opts));
 
 cli.parse(process.argv);
