@@ -36,13 +36,13 @@ export class Configuration<TConfig extends object> {
 		for (const listener of this.listeners) listener();
 	}
 
-	subscribe(listener: () => void): (() => void) {
+	subscribe = (listener: () => void): (() => void) => {
 		this.listeners.add(listener);
 		return () => this.listeners.delete(listener);
 	};
 
-	getSnapshot(): TConfig {
-		return this.config
+	getSnapshot = (): TConfig => {
+		return this.config;
 	};
 
 	get(): TConfig;
