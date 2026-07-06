@@ -20,13 +20,20 @@ type QueryLeaf<TArgs extends unknown[], TResult> = {
  * - Synchronous functions → passed through unchanged
  * - Nested objects → recursively transformed
  * - Primitives → passed through unchanged
+ *
+ * The proxy meta-properties `$query` and `$key` are excluded from nested
+ * objects to prevent infinite `.$query.$query.$query` chaining.
  */
 export type QueryProxy<T> = T extends (...args: infer A) => Promise<infer R>
 	? QueryLeaf<A, R>
 	: T extends (...args: infer A) => infer R
 		? (...args: A) => R
 		: T extends object
-			? { readonly [K in keyof T]: QueryProxy<T[K]> }
+			? {
+					readonly [K in keyof T as K extends "$query" | "$key" | "all"
+						? never
+						: K]: QueryProxy<T[K]>;
+				} & { readonly all: readonly unknown[] }
 			: T;
 
 // ---- Factory ----
@@ -88,6 +95,10 @@ function buildProxy(
 				return (obj as Record<string | symbol, unknown>)[prop];
 			}
 
+			// Prevent $query / $key from being re-proxied (would cause infinite
+			// chaining: .$query.$query.$query…). These are meta-entry-points on
+			// the source object and must not be visible through the proxy itself.
+			if (prop === "$query" || prop === "$key") return undefined;
 			const value = (obj as Record<string, unknown>)[prop];
 			const propPath = [...path, prop];
 
