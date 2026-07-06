@@ -18,7 +18,9 @@ type QueryLeaf<TArgs extends unknown[], TResult> = {
  * Recursively transforms a typed object:
  * - Promise-returning methods → `QueryLeaf` (augmented with `$key` + `$query`)
  * - Synchronous functions → passed through unchanged
- * - Nested objects → recursively transformed
+ * - Nested objects → recursively transformed, with an added `all` key that
+ *   returns the query-key prefix for the current namespace (useful for bulk
+ *   invalidation: `queryClient.invalidateQueries({ queryKey: q.v1.loyalty.all })`)
  * - Primitives → passed through unchanged
  *
  * The proxy meta-properties `$query` and `$key` are excluded from nested
@@ -105,20 +107,17 @@ function buildProxy(
 			if (typeof value === "function") {
 				// Bind to the current target so `this` is correct inside the method.
 				const fn = (value as (...args: unknown[]) => unknown).bind(obj);
-				return Object.assign(
-					(...args: unknown[]) => fn(...args),
-					{
-						$key: (...args: unknown[]): readonly unknown[] => [
-							...baseKey,
-							...propPath,
-							...args,
-						],
-						$query: (...args: unknown[]): QueryDescriptor<unknown> => ({
-							queryKey: [...baseKey, ...propPath, ...args],
-							queryFn: () => fn(...args) as Promise<unknown>,
-						}),
-					},
-				);
+				return Object.assign((...args: unknown[]) => fn(...args), {
+					$key: (...args: unknown[]): readonly unknown[] => [
+						...baseKey,
+						...propPath,
+						...args,
+					],
+					$query: (...args: unknown[]): QueryDescriptor<unknown> => ({
+						queryKey: [...baseKey, ...propPath, ...args],
+						queryFn: () => fn(...args) as Promise<unknown>,
+					}),
+				});
 			}
 
 			if (value !== null && typeof value === "object") {
