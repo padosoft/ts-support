@@ -29,7 +29,7 @@ type QueryLeaf<TArgs extends unknown[], TResult> = {
 
 export type QueryProxy<
 	T,
-	TPath extends readonly string[] = readonly string[],
+	TPath extends readonly string[] = readonly [],
 > = T extends (...args: infer A) => Promise<infer R>
 	? QueryLeaf<A, R>
 	: T extends (...args: infer A) => infer R
@@ -38,7 +38,7 @@ export type QueryProxy<
 			? {
 					readonly [K in keyof T as K extends "$query" | "$key" | "all"
 						? never
-						: K]: QueryProxy<T[K]>;
+						: K]: QueryProxy<T[K], [...TPath, K & string]>;
 				} & { readonly all: TPath }
 			: T;
 
