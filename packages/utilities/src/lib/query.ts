@@ -4,7 +4,7 @@
  */
 export type QueryDescriptor<TResult> = {
 	queryKey: readonly unknown[];
-	queryFn: () => Promise<TResult>;
+	queryFn: () => TResult | Promise<TResult>;
 };
 
 /**
