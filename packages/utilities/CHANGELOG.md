@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.7.0
+
+### Minor Changes
+
+- [`1150528`](https://github.com/padosoft/ts-support/commit/115052813066412d05798c718ebd957031d5127a) Thanks [@47PADO47](https://github.com/47PADO47)! - Fix `Configuration` `this` binding lost when passed to `useSyncExternalStore`, add optional overrides parameter to constructor, add `ReactiveConfiguration` subclass with built-in `useConfig` hook method and new overrides methods.
+
 ## 1.6.0
 
 ### Minor Changes
