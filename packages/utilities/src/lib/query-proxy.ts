@@ -83,22 +83,24 @@ export type QueryProxy<
 export function createQueryProxy<T extends object>(
 	target: T,
 	options?: { baseKey?: readonly unknown[] },
-): QueryProxy<T> {
-	return buildProxy(target, [], options?.baseKey ?? []) as QueryProxy<T>;
+): QueryProxy<T, readonly []> {
+	return buildProxy(target, [] as const, options?.baseKey ?? []);
 }
 
 // ---- Internal ----
 
-function buildProxy(
-	target: object,
-	path: readonly string[],
+function buildProxy<T extends object, TPath extends readonly string[]>(
+	target: T,
+	path: TPath,
 	baseKey: readonly unknown[],
-): object {
+): QueryProxy<T, TPath> {
+	// The Proxy implementation can't be verified structurally by TypeScript —
+	// this is the single necessary cast for the entire proxy machinery.
 	return new Proxy(target, {
 		get(obj, prop) {
 			// Pass symbols through untouched (used internally by JS runtime).
 			if (typeof prop === "symbol") {
-				return (obj as Record<string | symbol, unknown>)[prop];
+				return (obj as Record<symbol, unknown>)[prop];
 			}
 
 			// Prevent $query / $key from being re-proxied (would cause infinite
@@ -135,5 +137,5 @@ function buildProxy(
 
 			return value;
 		},
-	});
+	}) as QueryProxy<T, TPath>;
 }
