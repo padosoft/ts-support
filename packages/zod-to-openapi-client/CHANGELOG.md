@@ -1,5 +1,12 @@
 # @padosoft/zod-to-openapi-client
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`1150528`](https://github.com/padosoft/ts-support/commit/115052813066412d05798c718ebd957031d5127a)]:
+  - @padosoft/utilities@1.7.0
+
 ## 3.0.0
 
 ### Patch Changes
