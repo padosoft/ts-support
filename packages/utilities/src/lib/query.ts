@@ -88,28 +88,26 @@ export function defineQuery<TParams, TResult>(config: {
 export function defineQueryGroup<
 	TBase extends readonly unknown[],
 	TDefs extends Record<string, QueryDefinition<unknown, unknown>>,
->(config: {
-	baseKey: TBase;
-	queries: TDefs;
-}): { base(): TBase } & TDefs {
-	const result: Record<string, unknown> = {
-		base: () => config.baseKey,
-	};
-
-	for (const [name, def] of Object.entries(config.queries)) {
-		result[name] = {
-			key: (params: unknown) => [...config.baseKey, ...def.key(params)],
-			query: (params: unknown) => {
+>(config: { baseKey: TBase; queries: TDefs }): { base(): TBase } & TDefs {
+	function wrapDef<TParams, TResult>(
+		def: QueryDefinition<TParams, TResult>,
+	): QueryDefinition<TParams, TResult> {
+		return {
+			key: (params) => [...config.baseKey, ...def.key(params)],
+			query: (params) => {
 				const inner = def.query(params);
 				return {
 					queryKey: [...config.baseKey, ...inner.queryKey],
 					queryFn: inner.queryFn,
 				};
 			},
-		} satisfies QueryDefinition<unknown, unknown>;
+		};
 	}
 
-	// Single boundary cast: Record<string,unknown> → { base() } & TDefs.
-	// The runtime shape matches exactly — each entry is a QueryDefinition with the base key prepended.
-	return result as { base(): TBase } & TDefs;
+	// Object.fromEntries loses the per-key generics — single boundary cast here.
+	const wrapped = Object.fromEntries(
+		Object.entries(config.queries).map(([k, v]) => [k, wrapDef(v)]),
+	) as TDefs;
+
+	return { base: () => config.baseKey, ...wrapped };
 }
