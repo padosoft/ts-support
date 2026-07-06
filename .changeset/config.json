@@ -10,6 +10,7 @@
 	"access": "restricted",
 	"baseBranch": "main",
 	"updateInternalDependencies": "patch",
+	"onlyUpdatePeerDependentsWhenOutOfRange": true,
 	"ignore": [],
 	"changedFilePatterns": ["packages/**"]
 }
