@@ -94,8 +94,6 @@ function buildProxy<T extends object, TPath extends readonly string[]>(
 	path: TPath,
 	baseKey: readonly unknown[],
 ): QueryProxy<T, TPath> {
-	// The Proxy implementation can't be verified structurally by TypeScript —
-	// this is the single necessary cast for the entire proxy machinery.
 	return new Proxy(target, {
 		get(obj, prop) {
 			// Pass symbols through untouched (used internally by JS runtime).
