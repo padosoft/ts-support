@@ -35,12 +35,22 @@ export function defineConfigOverride<
  * configuration.set({ ...newConfig });   // update + notify subscribers
  */
 export class Configuration<TConfig extends object> {
-	protected overrides: ConfigOverride<TConfig>[] = [];
+	protected overrides: ConfigOverride<TConfig>[];
 	protected config: TConfig;
 	private listeners = new Set<() => void>();
 
-	constructor(defaultConfig: TConfig) {
-		this.config = defaultConfig;
+	/**
+	 * @param defaultConfig - Initial configuration values.
+	 * @param overrides - Optional list of overrides applied in order on top of
+	 *   `defaultConfig`. Each override receives the current (partially overridden)
+	 *   config and returns the new value for its key.
+	 */
+	constructor(
+		defaultConfig: TConfig,
+		overrides: ConfigOverride<TConfig>[] = [],
+	) {
+		this.overrides = overrides;
+		this.config = this.applyOverrides(defaultConfig);
 	}
 
 	protected applyOverrides(config: TConfig): TConfig {
