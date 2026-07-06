@@ -51,10 +51,31 @@ export class Configuration<TConfig extends object> {
 		return result;
 	}
 
-	addOverride<K extends keyof TConfig>(override: ConfigOverride<TConfig, K>): void {
-		this.overrides.push(override as ConfigOverride<TConfig>);
+	/** Appends an override and re-applies all overrides immediately. */
+	addOverride<K extends keyof TConfig>(
+		override: ConfigOverride<TConfig, K>,
+	): void {
+		this.overrides.push(override);
+		this.config = this.applyOverrides(this.config);
 	}
 
+	addOverrides(overrides: ConfigOverride<TConfig>[]): void {
+		this.overrides.push(...overrides);
+		this.config = this.applyOverrides(this.config);
+	}
+
+	/** Removes an override and re-applies all overrides immediately. */
+	removeOverride<K extends keyof TConfig>(
+		override: ConfigOverride<TConfig, K>,
+	): void {
+		const index = this.overrides.indexOf(override);
+		if (index === -1) return;
+
+		this.overrides.splice(index, 1);
+		this.config = this.applyOverrides(this.config);
+	}
+
+	/** Replaces the config, re-applies overrides, and notifies all subscribers. */
 	set(config: TConfig): void {
 		this.config = this.applyOverrides(config);
 		for (const listener of this.listeners) listener();
