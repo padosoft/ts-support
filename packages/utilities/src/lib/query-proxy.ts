@@ -26,7 +26,11 @@ type QueryLeaf<TArgs extends unknown[], TResult> = {
  * The proxy meta-properties `$query` and `$key` are excluded from nested
  * objects to prevent infinite `.$query.$query.$query` chaining.
  */
-export type QueryProxy<T> = T extends (...args: infer A) => Promise<infer R>
+
+export type QueryProxy<
+	T,
+	TPath extends readonly string[] = readonly string[],
+> = T extends (...args: infer A) => Promise<infer R>
 	? QueryLeaf<A, R>
 	: T extends (...args: infer A) => infer R
 		? (...args: A) => R
@@ -35,7 +39,7 @@ export type QueryProxy<T> = T extends (...args: infer A) => Promise<infer R>
 					readonly [K in keyof T as K extends "$query" | "$key" | "all"
 						? never
 						: K]: QueryProxy<T[K]>;
-				} & { readonly all: readonly unknown[] }
+				} & { readonly all: TPath }
 			: T;
 
 // ---- Factory ----
@@ -101,6 +105,11 @@ function buildProxy(
 			// chaining: .$query.$query.$query…). These are meta-entry-points on
 			// the source object and must not be visible through the proxy itself.
 			if (prop === "$query" || prop === "$key") return undefined;
+
+			// Namespace prefix key — use for bulk invalidation:
+			//   queryClient.invalidateQueries({ queryKey: q.v1.loyalty.all })
+			if (prop === "all") return Object.freeze([...baseKey, ...path]);
+
 			const value = (obj as Record<string, unknown>)[prop];
 			const propPath = [...path, prop];
 
