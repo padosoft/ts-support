@@ -42,8 +42,8 @@ export type QueryDefinition<TParams, TResult> = {
  * ```
  */
 export function defineQuery<TParams, TResult>(config: {
-	queryKey: (params: TParams) => readonly unknown[];
 	queryFn: (params: TParams) => Promise<TResult>;
+	queryKey: (params: NoInfer<TParams>) => readonly unknown[];
 }): QueryDefinition<TParams, TResult> {
 	return {
 		key: config.queryKey,
