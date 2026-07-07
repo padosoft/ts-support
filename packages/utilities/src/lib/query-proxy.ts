@@ -85,20 +85,20 @@ export type QueryProxy<
  * @param target - Any typed object with async methods.
  * @param options.baseKey - Optional prefix prepended to every generated key.
  */
-export function createQueryProxy<T extends object>(
-	target: T,
-	options?: { baseKey?: readonly unknown[] },
-): QueryProxy<T, readonly []> {
-	return buildProxy(target, [] as const, options?.baseKey ?? []);
+export function createQueryProxy<
+	T extends object,
+	TBaseKey extends readonly string[] = readonly [],
+>(target: T, options?: { baseKey?: TBaseKey }): QueryProxy<T, TBaseKey> {
+	return buildProxy(target, options?.baseKey, []);
 }
 
-// ---- Internal ----
-
-function buildProxy<T extends object, TPath extends readonly string[]>(
-	target: T,
-	path: TPath,
-	baseKey: readonly unknown[],
-): QueryProxy<T, TPath> {
+// The Proxy implementation cannot be verified structurally by TypeScript —
+// the single cast lives at the createQueryProxy return below.
+function buildProxy<
+	T extends object,
+	TBaseKey extends readonly string[] = readonly [],
+	TPath extends readonly string[] = readonly [],
+>(target: T, baseKey?: TBaseKey, path?: TPath): QueryProxy<T, TBaseKey, TPath> {
 	return new Proxy(target, {
 		get(obj, prop) {
 			// Pass symbols through untouched (used internally by JS runtime).
@@ -142,10 +142,10 @@ function buildProxy<T extends object, TPath extends readonly string[]>(
 			}
 
 			if (value !== null && typeof value === "object") {
-				return buildProxy(value, propPath, baseKey);
+				return buildProxy(value, [], propPath);
 			}
 
 			return value;
 		},
-	}) as QueryProxy<T, TPath>;
+	}) as QueryProxy<T, TBaseKey, TPath>;
 }
