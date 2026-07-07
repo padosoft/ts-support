@@ -33,32 +33,43 @@ export type RoutesInput<T> = T extends readonly unknown[]
  * @typeParam TDefaultErrorResponse - `ResponseConfig` shape for the `"default"`
  *   error slot on every endpoint. Defaults to the base `ResponseConfig`.
  *   Override with your typed error schema for end-to-end error typing.
+ * @typeParam TModuleKey - The query key prefix for this module, e.g.
+ *   `readonly ['v1', 'auth']`. Drives the type of `.$query.all` and all
+ *   generated keys. Defaults to `readonly []` (no prefix). Pass the value
+ *   as the second constructor argument — typically done once in the leaf
+ *   class (or in a shared base like `V1BaseModule`) so call sites stay clean.
  *
  * @example
  * ```ts
- * // With a project-specific typed error response
- * interface MyErrorResponse extends ResponseConfig {
- *   content: { "application/json": { schema: MyErrorSchema } };
- *   description: "Error";
+ * // V1BaseModule — shared base that wires up the version prefix automatically.
+ * abstract class V1BaseModule<
+ *   TRoutes extends object,
+ *   TKey extends string,
+ * > extends OpenApiClientModule<TRoutes, MyErrorResponse, readonly ['v1', TKey]> {
+ *   constructor(optionsOrClient: ClientArg, key: TKey) {
+ *     super(optionsOrClient, ['v1', key]);
+ *   }
  * }
  *
- * class AuthModule extends OpenApiClientModule<
- *   [typeof authRoutes, typeof sessionRoutes],
- *   MyErrorResponse
- * > {
- *   protected override createApiError(status: number, details: unknown): Error {
- *     return new MyApiError(status, details);
+ * // Concrete module — only passes its own key string.
+ * class AuthV1Module extends V1BaseModule<[typeof authRoutes], 'auth'> {
+ *   constructor(optionsOrClient: ClientArg) {
+ *     super(optionsOrClient, 'auth');
  *   }
  *
  *   login(body: LoginBody) {
  *     return this.wrapFetchCall(this.client.POST("/auth/login", { body }));
  *   }
  * }
+ *
+ * const auth = new AuthV1Module(client);
+ * auth.$query.all            // → readonly ['v1', 'auth']
+ * auth.$query.login.$key(b)  // → readonly ['v1', 'auth', 'login', b]
  * ```
  *
  * @example
  * ```ts
- * // Without a custom error schema — uses base ResponseConfig
+ * // Without a module key — no prefix, backward-compatible default.
  * class CatalogModule extends OpenApiClientModule<[typeof catalogRoutes]> {
  *   getProducts() {
  *     return this.wrapFetchCall(this.client.GET("/catalog/products"));
@@ -69,8 +80,25 @@ export type RoutesInput<T> = T extends readonly unknown[]
 export abstract class OpenApiClientModule<
 	TRoutes extends object,
 	TDefaultErrorResponse extends ResponseConfig = ResponseConfig,
-> extends OpenApiClient<CreateClientPaths<RoutesInput<TRoutes>, TDefaultErrorResponse>> {
-	private queryProxy?: QueryProxy<this>;
+	TModuleKey extends readonly string[] = readonly [],
+> extends OpenApiClient<
+	CreateClientPaths<RoutesInput<TRoutes>, TDefaultErrorResponse>
+> {
+	protected queryProxy?: QueryProxy<this, TModuleKey>;
+	protected readonly baseKey: TModuleKey;
+
+	constructor(
+		[...params]: ConstructorParameters<
+			typeof OpenApiClient<
+				CreateClientPaths<RoutesInput<TRoutes>, TDefaultErrorResponse>
+			>
+		>,
+		baseKey?: TModuleKey,
+	) {
+		super(...params);
+
+		this.baseKey = baseKey ?? ([] as unknown as TModuleKey);
+	}
 
 	/**
 	 * Returns a query proxy that augments every async method with `.$key()` and
@@ -82,15 +110,17 @@ export abstract class OpenApiClientModule<
 	 * ```ts
 	 * const auth = new AuthV1Module(client);
 	 *
-	 * // Key — derived automatically from the access path + call arguments:
-	 * auth.$query.login.$key(body)   // → ["login", body]
+	 * auth.$query.login.$key(body)   // → ['v1', 'auth', 'login', body]
+	 * auth.$query.all                // → ['v1', 'auth']
 	 *
-	 * // Spread directly into useQuery:
 	 * useQuery({ ...auth.$query.login.$query(body) });
 	 * ```
 	 */
-	get $query(): QueryProxy<this> {
-		this.queryProxy ??= createQueryProxy(this);
+	get $query(): QueryProxy<this, TModuleKey> {
+		if (!this.queryProxy) {
+			this.queryProxy = createQueryProxy(this, this.baseKey);
+		}
+
 		return this.queryProxy;
 	}
 }
