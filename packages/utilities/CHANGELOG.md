@@ -1,5 +1,14 @@
 # @padosoft/utilities
 
+## 1.7.1
+
+### Patch Changes
+
+- [`3f6547f`](https://github.com/padosoft/ts-support/commit/3f6547faa0936f68282a8720392b1531b8900755) Thanks [@47PADO47](https://github.com/47PADO47)! - - Fix `QueryProxy` infinite `.$query` chaining and add typed `all` namespace key.
+  - `$query` and `$key` are now hidden inside the proxy — accessing `proxy.$query` returns `undefined` instead of re-wrapping the proxy, so `apiClient.$query.$query.$query` is no longer possible (also a TS error).
+  - Every proxy node now exposes an `all` property returning the frozen key array for that namespace, enabling bulk invalidation: `queryClient.invalidateQueries({ queryKey: apiClient.$query.v1.loyalty.all })`.
+  - `all` is now a first-class key in the mapped type (not an intersection), so it appears first in IDE autocomplete.
+
 ## 1.7.0
 
 ### Minor Changes

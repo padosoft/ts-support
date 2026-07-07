@@ -1,5 +1,32 @@
 # @padosoft/zod-to-openapi-client
 
+## 4.1.0
+
+### Minor Changes
+
+- [`3f6547f`](https://github.com/padosoft/ts-support/commit/3f6547faa0936f68282a8720392b1531b8900755) Thanks [@47PADO47](https://github.com/47PADO47)! - - `OpenApiClientModule` gains an optional third type parameter `TModuleKey extends readonly string[] = readonly []`. When set, `.$query.all` is typed as that key and all generated keys are prefixed with it.
+
+  - The base key is derived automatically at runtime from `static version` and `static key` on the concrete class — no extra plumbing needed.
+
+  ```ts
+  class AuthV1Module extends OpenApiClientModule<
+    [typeof authRoutes],
+    MyErrorResponse,
+    readonly ["v1", "auth"] // ← new
+  > {
+    static readonly version = "v1" as const;
+    static readonly key = "auth" as const;
+  }
+
+  auth.$query.all; // → readonly ['v1', 'auth']
+  auth.$query.login.$key(b); // → readonly ['v1', 'auth', 'login', b]
+  ```
+
+### Patch Changes
+
+- Updated dependencies [[`3f6547f`](https://github.com/padosoft/ts-support/commit/3f6547faa0936f68282a8720392b1531b8900755)]:
+  - @padosoft/utilities@1.7.1
+
 ## 4.0.0
 
 ### Patch Changes
