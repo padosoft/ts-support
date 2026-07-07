@@ -51,7 +51,8 @@ export type QueryProxy<
 
 /**
  * Wraps any typed object in a proxy that augments every async method with
- * `.$key(...args)` and `.$query(...args)` helpers.
+ * `.$key(...args)` and `.$query(...args)` helpers, and adds an `all` property
+ * to every namespace for bulk cache invalidation.
  *
  * The query key is derived automatically from the property-access path through
  * the object plus the call arguments — no separate key definitions needed.
@@ -66,20 +67,19 @@ export type QueryProxy<
  * q.v1.auth.getSession.$key(params)
  * // → ['v1', 'auth', 'getSession', params]
  *
+ * // Namespace key for bulk invalidation:
+ * queryClient.invalidateQueries({ queryKey: q.v1.auth.all })
+ * // → ['v1', 'auth']
+ *
  * // Spread into useQuery — params specified exactly once:
  * useQuery({
  *   ...q.v1.auth.getSession.$query(params),
  *   enabled: !!user,
  * });
  *
- * // Direct call still works identically:
- * await q.v1.auth.getSession(params);
- *
- * // For hook-based clients, wrap in useMemo:
- * function useQ() {
- *   const client = useApiClient();
- *   return useMemo(() => createQueryProxy(client), [client]);
- * }
+ * // With a baseKey prefix:
+ * const q2 = createQueryProxy(client, { baseKey: ['api'] as const });
+ * q2.v1.auth.all // → ['api', 'v1', 'auth']
  * ```
  *
  * @param target - Any typed object with async methods.
