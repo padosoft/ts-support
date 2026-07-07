@@ -9,7 +9,7 @@
 		"typescript",
 		"padosoft"
 	],
-	"version": "4.0.0",
+	"version": "4.1.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
@@ -33,7 +33,7 @@
 	"peerDependencies": {
 		"@asteasolutions/zod-to-openapi": ">=7",
 		"@padosoft/openapi-client": ">=1.0.1",
-		"@padosoft/utilities": ">=1.7.0"
+		"@padosoft/utilities": ">=1.7.1"
 	},
 	"peerDependenciesMeta": {
 		"@padosoft/openapi-client": {
