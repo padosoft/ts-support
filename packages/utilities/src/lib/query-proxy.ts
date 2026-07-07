@@ -27,9 +27,9 @@ type QueryLeaf<TArgs extends unknown[], TResult> = {
  * objects to prevent infinite `.$query.$query.$query` chaining.
  *
  * @typeParam T - The source object type being proxied.
- * @typeParam TPath - Accumulated property-access path (starts at `readonly []`).
  * @typeParam TBaseKey - The `baseKey` passed to `createQueryProxy`, prepended to
  *   every generated key and to the `all` namespace key.
+ * @typeParam TPath - Accumulated property-access path (starts at `readonly []`).
  */
 export type QueryProxy<
 	T,
@@ -41,10 +41,12 @@ export type QueryProxy<
 		? (...args: A) => R
 		: T extends object
 			? {
-					readonly [K in keyof T as K extends "$query" | "$key" | "all"
-						? never
-						: K]: QueryProxy<T[K], TBaseKey, [...TPath, K & string]>;
-				} & { readonly all: readonly [...TBaseKey, ...TPath] }
+					readonly [K in "all" | Exclude<keyof T, "$query" | "$key" | "all">]: K extends "all"
+						? readonly [...TBaseKey, ...TPath]
+						: K extends keyof T
+							? QueryProxy<T[K], TBaseKey, [...TPath, K & string]>
+							: never;
+				}
 			: T;
 
 // ---- Factory ----
