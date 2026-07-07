@@ -101,7 +101,6 @@ function buildProxy<
 >(target: T, baseKey?: TBaseKey, path?: TPath): QueryProxy<T, TBaseKey, TPath> {
 	return new Proxy(target, {
 		get(obj, prop) {
-			// Pass symbols through untouched (used internally by JS runtime).
 			if (typeof prop === "symbol") {
 				return (obj as Record<symbol, unknown>)[prop];
 			}
@@ -118,25 +117,25 @@ function buildProxy<
 				return undefined;
 			}
 
-			// Namespace prefix key — use for bulk invalidation:
+			// Namespace prefix key — includes baseKey so the type matches runtime:
 			//   queryClient.invalidateQueries({ queryKey: q.v1.loyalty.all })
-			if (prop === "all") return Object.freeze([...baseKey, ...path]);
+			if (prop === "all") {
+				return Object.freeze(basePath);
+			}
 
 			const value = (obj as Record<string, unknown>)[prop];
-			const propPath = [...path, prop];
+			const propPath = [...basePath, prop];
 
 			if (typeof value === "function") {
-				// Bind to the current target so `this` is correct inside the method.
 				const fn = (value as (...args: unknown[]) => unknown).bind(obj);
 				return Object.assign((...args: unknown[]) => fn(...args), {
 					$key: (...args: unknown[]): readonly unknown[] => [
-						...baseKey,
 						...propPath,
 						...args,
 					],
 					$query: (...args: unknown[]): QueryDescriptor<unknown> => ({
-						queryKey: [...baseKey, ...propPath, ...args],
-						queryFn: () => fn(...args) as Promise<unknown>,
+						queryKey: [...propPath, ...args],
+						queryFn: () => fn(...args),
 					}),
 				});
 			}
