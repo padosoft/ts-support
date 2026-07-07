@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.8.0
+
+### Minor Changes
+
+- [`d73d023`](https://github.com/padosoft/ts-support/commit/d73d0231ff68f4e2bb623fd51f5e92a85390180a) Thanks [@47PADO47](https://github.com/47PADO47)! - Add tuple head and tail utilities
+
 ## 1.7.1
 
 ### Patch Changes
