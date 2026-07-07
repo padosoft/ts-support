@@ -100,12 +100,12 @@
     },
     "packages/utilities": {
       "name": "@padosoft/utilities",
-      "version": "1.7.1",
+      "version": "1.8.0",
       "devDependencies": {
         "@padosoft/config": "workspace:^",
       },
       "peerDependencies": {
-        "zod": "^4.4.3",
+        "zod": "^4.0.0",
       },
     },
     "packages/zod-to-openapi-client": {
