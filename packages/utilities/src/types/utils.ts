@@ -34,3 +34,31 @@ export type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 export type DeepMutable<T> = T extends object
 	? { [P in keyof T]: DeepMutable<T[P]> }
 	: T;
+
+export type OmitLast<T extends readonly unknown[]> = T extends [
+	...infer Rest,
+	(infer _Last)?,
+]
+	? Rest
+	: never;
+
+export type OmitFirst<T extends readonly unknown[]> = T extends [
+	(infer _First)?,
+	...infer Rest,
+]
+	? Rest
+	: never;
+
+export type Last<T extends readonly unknown[]> = T extends [
+	...infer _Rest,
+	(infer Last)?,
+]
+	? Last
+	: never;
+
+export type First<T extends readonly unknown[]> = T extends [
+	(infer First)?,
+	...infer _Rest,
+]
+	? First
+	: never;
