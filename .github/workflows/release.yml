@@ -3,12 +3,12 @@ name: Release packages
 on:
   workflow_dispatch:
     inputs:
-      force_github_packages:
-        description: 'Force publish all packages to GitHub Packages (skips changesets check)'
+      skip_changesets:
+        description: 'Skip NPM publish via changesets (packages still built, versioned, and pushed to GitHub Packages)'
         type: boolean
         default: false
-      skip_changesets:
-        description: 'Skip the changesets step (create PR / publish to NPM)'
+      skip_github_packages:
+        description: 'Skip publishing to GitHub Packages'
         type: boolean
         default: false
   push:
@@ -52,41 +52,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build and version packages
+        if: inputs.skip_changesets == true
+        run: bun run build && bun run version-packages
+
       - name: Publish to GitHub Packages
-        if: steps.changesets.outputs.published == 'true' || inputs.force_github_packages == true
+        id: publish_github
+        if: inputs.skip_github_packages != true && (steps.changesets.outputs.published == 'true' || inputs.skip_changesets == true)
         env:
           NPM_CONFIG_PROVENANCE: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
-          if [ "${{ inputs.force_github_packages }}" = "true" ]; then
-            echo "Force mode: publishing all packages to GitHub Packages"
-            pkg_exists_on_github() {
-              local pkg_name="$1"
-              local pkg_version="$2"
-              npm view "${pkg_name}@${pkg_version}" --registry https://npm.pkg.github.com/ version 2>/dev/null | grep -qF "${pkg_version}"
-            }
+          if [ "${{ inputs.skip_changesets }}" = "true" ]; then
+            echo "Publishing all packages to GitHub Packages"
             for dir in packages/*/; do
               if [ -f "${dir}package.json" ]; then
                 pkg_name=$(jq -r '.name' "${dir}package.json")
-                pkg_version=$(jq -r '.version' "${dir}package.json")
-                echo "Checking $pkg_name@$pkg_version on GitHub Packages..."
-                if pkg_exists_on_github "$pkg_name" "$pkg_version"; then
-                  echo "Skipping $pkg_name@$pkg_version — already published"
+                echo "Publishing $pkg_name from $dir via bun pm pack..."
+                pushd "$dir" > /dev/null
+                tarball=$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz' | tail -1 || true)
+                if [ -z "$tarball" ] || [ ! -f "$tarball" ]; then
+                  echo "::warning::Failed to pack $pkg_name, continuing..."
                 else
-                  echo "Publishing $pkg_name@$pkg_version to GitHub Packages via bun pm pack..."
-                  pushd "$dir" > /dev/null
-                  tarball="$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz$' | tail -1 || true)"
-                  if [ -z "$tarball" ] || [ ! -f "$tarball" ]; then
-                    echo "Warning: failed to pack $pkg_name@$pkg_version, skipping"
-                    popd > /dev/null
-                    continue
-                  fi
                   npm publish "$tarball" --registry https://npm.pkg.github.com/ --access public \
-                    || echo "Warning: failed to publish $pkg_name, skipping"
-                  rm -f "$tarball"
-                  popd > /dev/null
+                    || echo "::warning::Failed to publish $pkg_name, continuing..."
+                  rm -f -- "$tarball"
                 fi
+                popd > /dev/null
               fi
             done
           else
@@ -98,14 +91,14 @@ jobs:
                   if [ "$name" = "$pkg_name" ]; then
                     echo "Publishing $pkg_name to GitHub Packages via bun pm pack..."
                     pushd "$dir" > /dev/null
-                    tarball="$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz$' | tail -1 || true)"
+                    tarball=$(bun pm pack 2>&1 | grep -Eo '[^[:space:]]+\.tgz' | tail -1 || true)
                     if [ -z "$tarball" ] || [ ! -f "$tarball" ]; then
-                      echo "Failed to determine tarball path from bun pm pack output for $pkg_name" >&2
-                      popd > /dev/null
-                      exit 1
+                      echo "::warning::Failed to pack $pkg_name, continuing..."
+                    else
+                      npm publish "$tarball" --registry https://npm.pkg.github.com/ --access public \
+                        || echo "::warning::Failed to publish $pkg_name, continuing..."
+                      rm -f -- "$tarball"
                     fi
-                    npm publish "$tarball" --registry https://npm.pkg.github.com/ --access public
-                    rm -f "$tarball"
                     popd > /dev/null
                   fi
                 fi
@@ -114,4 +107,5 @@ jobs:
           fi
 
       - name: Publish release tags
+        if: steps.changesets.outputs.published == 'true' || steps.publish_github.conclusion == 'success'
         run: git push --follow-tags --set-upstream origin HEAD
