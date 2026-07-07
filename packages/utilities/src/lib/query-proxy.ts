@@ -13,11 +13,11 @@ type QueryLeaf<
 > = {
   (...args: TArgs): Promise<TResult>;
   /** Returns the query key array for the given arguments. */
-  $key(...args: TArgs): readonly [...TKey, ...TArgs];
+  $key<const TCallArgs extends TArgs>(...args: TCallArgs): readonly [...TKey, ...TCallArgs];
   /** Returns `{ queryKey, queryFn }` — spread directly into `useQuery()`. */
-  $query(
-    ...args: TArgs
-  ): QueryDescriptor<TResult, readonly [...TKey, ...TArgs]>;
+  $query<const TCallArgs extends TArgs>(
+    ...args: TCallArgs
+  ): QueryDescriptor<TResult, readonly [...TKey, ...TCallArgs]>;
 };
 
 /**
