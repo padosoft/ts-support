@@ -1,5 +1,12 @@
 # @padosoft/utilities
 
+## 1.8.1
+
+### Patch Changes
+
+- [`8364a7f`](https://github.com/padosoft/ts-support/commit/8364a7fef95b7679c72d792b965dad7710cd9dee) Thanks [@47PADO47](https://github.com/47PADO47)! - - `QueryLeaf.$key` now returns a precisely typed tuple `readonly [...TKey, ...TArgs]` instead of `readonly unknown[]`, so hovering over `proxy.v1.auth.login.$key(body)` shows the exact key shape.
+  - `QueryLeaf.$query` now returns `QueryDescriptor<TResult, readonly [...TKey, ...TArgs]>`, giving the same precision to `queryKey` when spreading into `useQuery()`.
+
 ## 1.8.0
 
 ### Minor Changes
