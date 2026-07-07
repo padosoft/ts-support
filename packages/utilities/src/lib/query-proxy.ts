@@ -106,10 +106,17 @@ function buildProxy<T extends object, TPath extends readonly string[]>(
 				return (obj as Record<symbol, unknown>)[prop];
 			}
 
+			const basePath = [...(baseKey ?? []), ...(path ?? [])];
+
 			// Prevent $query / $key from being re-proxied (would cause infinite
-			// chaining: .$query.$query.$query…). These are meta-entry-points on
-			// the source object and must not be visible through the proxy itself.
-			if (prop === "$query" || prop === "$key") return undefined;
+			// chaining: .$query.$query.$query…).
+			if (prop === "$query" || prop === "$key") {
+				console.warn("[QueryProxy] .$query or .$key chaining is not supported");
+				console.warn(
+					`[QueryProxy] Accessed ${String(prop)} on ${basePath.join(".")}, which is already a query leaf.`,
+				);
+				return undefined;
+			}
 
 			// Namespace prefix key — use for bulk invalidation:
 			//   queryClient.invalidateQueries({ queryKey: q.v1.loyalty.all })
