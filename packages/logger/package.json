@@ -36,7 +36,7 @@
 		"@opentelemetry/exporter-logs-otlp-http": "^0.220.0",
 		"@opentelemetry/resources": "^2.9.0",
 		"@opentelemetry/sdk-logs": "^0.220.0",
-		"@opentelemetry/semantic-conventions": "^1.41.1",
+		"@opentelemetry/semantic-conventions": "^1.42.0",
 		"expo-file-system": "^57.0.0",
 		"expo-application": "^57.0.0"
 	},
