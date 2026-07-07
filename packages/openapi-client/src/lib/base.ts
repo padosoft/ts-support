@@ -268,13 +268,11 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		const res = await promise;
 
 		if (res.data) {
-			//@ts-expect-error res.data è unkown e non R["data"]["schema"] poichè SuccessfulClientMethodReturn non accetta un generico schema di ritorno (per questioni di performance), quindi va fatto il cast
 			return res.data;
 		}
 
 		// Gestisce 204 No Content (response senza body)
 		if (res.response.status === 204) {
-			//@ts-expect-error undefined è valido per risposte 204
 			return undefined;
 		}
 
