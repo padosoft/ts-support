@@ -38,24 +38,24 @@ type QueryLeaf<
  * @typeParam TPath - Accumulated property-access path (starts at `readonly []`).
  */
 export type QueryProxy<
-	T,
-	TBaseKey extends readonly unknown[] = readonly [],
-	TPath extends readonly string[] = readonly [],
+  T,
+  TBaseKey extends readonly unknown[] = readonly [],
+  TPath extends readonly string[] = readonly []
 > = T extends (...args: infer A) => Promise<infer R>
-	? QueryLeaf<A, R>
-	: T extends (...args: infer A) => infer R
-		? (...args: A) => R
-		: T extends object
-			? {
-					readonly [K in
-						| "all"
-						| Exclude<keyof T, "$query" | "$key" | "all">]: K extends "all"
-						? readonly [...TBaseKey, ...TPath]
-						: K extends keyof T
-							? QueryProxy<T[K], TBaseKey, [...TPath, K & string]>
-							: never;
-				}
-			: T;
+  ? QueryLeaf<A, R, readonly [...TBaseKey, ...TPath]>
+  : T extends (...args: infer A) => infer R
+  ? (...args: A) => R
+  : T extends object
+  ? {
+      readonly [K in
+        | "all"
+        | Exclude<keyof T, "$query" | "$key" | "all">]: K extends "all"
+        ? readonly [...TBaseKey, ...TPath]
+        : K extends keyof T
+        ? QueryProxy<T[K], TBaseKey, [...TPath, K & string]>
+        : never;
+    }
+  : T;
 
 // ---- Factory ----
 
@@ -96,55 +96,55 @@ export type QueryProxy<
  * @param options.baseKey - Optional prefix prepended to every generated key.
  */
 export function createQueryProxy<
-	T extends object,
-	TBaseKey extends readonly string[] = readonly [],
+  T extends object,
+  TBaseKey extends readonly string[] = readonly []
 >(target: T, options?: { baseKey?: TBaseKey }): QueryProxy<T, TBaseKey> {
-	const baseKey = options?.baseKey;
+  const baseKey = options?.baseKey;
 
-	// The Proxy implementation cannot be verified structurally by TypeScript —
-	// the single boundary cast lives at the bottom of this function.
-	function build<U extends object>(
-		obj: U,
-		path: readonly string[],
-	): QueryProxy<U, TBaseKey> {
-		return new Proxy(obj, {
-			get(inner, prop) {
-				if (typeof prop === "symbol")
-					return (inner as Record<symbol, unknown>)[prop];
+  // The Proxy implementation cannot be verified structurally by TypeScript —
+  // the single boundary cast lives at the bottom of this function.
+  function build<U extends object>(
+    obj: U,
+    path: readonly string[]
+  ): QueryProxy<U, TBaseKey> {
+    return new Proxy(obj, {
+      get(inner, prop) {
+        if (typeof prop === "symbol")
+          return (inner as Record<symbol, unknown>)[prop];
 
-				const fullPath = [...(baseKey ?? []), ...path];
+        const fullPath = [...(baseKey ?? []), ...path];
 
-				// Prevent $query / $key from being re-proxied (would cause infinite
-				// chaining: .$query.$query.$query…).
-				if (prop === "$query" || prop === "$key") return undefined;
+        // Prevent $query / $key from being re-proxied (would cause infinite
+        // chaining: .$query.$query.$query…).
+        if (prop === "$query" || prop === "$key") return undefined;
 
-				if (prop === "all") return Object.freeze(fullPath);
+        if (prop === "all") return Object.freeze(fullPath);
 
-				const value = (inner as Record<string, unknown>)[prop];
-				const propKey = [...fullPath, prop];
+        const value = (inner as Record<string, unknown>)[prop];
+        const propKey = [...fullPath, prop];
 
-				if (typeof value === "function") {
-					const fn = (value as (...args: unknown[]) => unknown).bind(inner);
-					return Object.assign((...args: unknown[]) => fn(...args), {
-						$key: (...args: unknown[]): readonly unknown[] => [
-							...propKey,
-							...args,
-						],
-						$query: (...args: unknown[]): QueryDescriptor<unknown> => ({
-							queryKey: [...propKey, ...args],
-							queryFn: () => fn(...args),
-						}),
-					});
-				}
+        if (typeof value === "function") {
+          const fn = (value as (...args: unknown[]) => unknown).bind(inner);
+          return Object.assign((...args: unknown[]) => fn(...args), {
+            $key: (...args: unknown[]): readonly unknown[] => [
+              ...propKey,
+              ...args,
+            ],
+            $query: (...args: unknown[]): QueryDescriptor<unknown> => ({
+              queryKey: [...propKey, ...args],
+              queryFn: () => fn(...args),
+            }),
+          });
+        }
 
-				if (value !== null && typeof value === "object") {
-					return build(value as object, [...path, prop]);
-				}
+        if (value !== null && typeof value === "object") {
+          return build(value as object, [...path, prop]);
+        }
 
-				return value;
-			},
-		}) as QueryProxy<U, TBaseKey>;
-	}
+        return value;
+      },
+    }) as QueryProxy<U, TBaseKey>;
+  }
 
-	return build(target, []);
+  return build(target, []);
 }
