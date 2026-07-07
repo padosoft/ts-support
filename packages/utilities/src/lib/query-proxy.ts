@@ -6,12 +6,18 @@ import type { QueryDescriptor } from "./query";
  * An async method augmented with `$key` and `$query` helpers.
  * The function itself remains directly callable.
  */
-type QueryLeaf<TArgs extends unknown[], TResult> = {
-	(...args: TArgs): Promise<TResult>;
-	/** Returns the query key array for the given arguments. */
-	$key(...args: TArgs): readonly unknown[];
-	/** Returns `{ queryKey, queryFn }` — spread directly into `useQuery()`. */
-	$query(...args: TArgs): QueryDescriptor<TResult>;
+type QueryLeaf<
+  TArgs extends unknown[],
+  TResult,
+  TKey extends readonly unknown[] = readonly unknown[]
+> = {
+  (...args: TArgs): Promise<TResult>;
+  /** Returns the query key array for the given arguments. */
+  $key(...args: TArgs): readonly [...TKey, ...TArgs];
+  /** Returns `{ queryKey, queryFn }` — spread directly into `useQuery()`. */
+  $query(
+    ...args: TArgs
+  ): QueryDescriptor<TResult, readonly [...TKey, ...TArgs]>;
 };
 
 /**
