@@ -88,14 +88,14 @@ export abstract class OpenApiClientModule<
 	protected readonly baseKey: TModuleKey;
 
 	constructor(
-		[...params]: ConstructorParameters<
+		params?: ConstructorParameters<
 			typeof OpenApiClient<
 				CreateClientPaths<RoutesInput<TRoutes>, TDefaultErrorResponse>
 			>
 		>,
 		baseKey?: TModuleKey,
 	) {
-		super(...params);
+		super(...(params ? params : []));
 
 		this.baseKey = baseKey ?? ([] as unknown as TModuleKey);
 	}
