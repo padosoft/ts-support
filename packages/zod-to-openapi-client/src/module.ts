@@ -118,7 +118,7 @@ export abstract class OpenApiClientModule<
 	 */
 	get $query(): QueryProxy<this, TModuleKey> {
 		if (!this.queryProxy) {
-			this.queryProxy = createQueryProxy(this, this.baseKey);
+			this.queryProxy = createQueryProxy(this, { baseKey: this.baseKey });
 		}
 
 		return this.queryProxy;
