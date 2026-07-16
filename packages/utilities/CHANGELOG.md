@@ -1,5 +1,15 @@
 # @padosoft/utilities
 
+## 1.9.0
+
+### Minor Changes
+
+- [`d93a1df`](https://github.com/padosoft/ts-support/commit/d93a1df76d64354a13f188d117913598b4d3d04b) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `withTimeout` promise utility that rejects with a custom error message if a promise does not settle within the specified timeout
+
+### Patch Changes
+
+- [`19d02df`](https://github.com/padosoft/ts-support/commit/19d02df49edb16faef67a3bb787e501d255622c1) Thanks [@47PADO47](https://github.com/47PADO47)! - - `QueryLeaf.$key` and `$query` now use a `const` type parameter so that call-site arguments are inferred at their narrowest type — string literals stay literal, object properties keep their exact values. The return types are `readonly [...TKey, ...TCallArgs]`, so hovering shows the actual values passed rather than the widened parameter types.
+
 ## 1.8.1
 
 ### Patch Changes
