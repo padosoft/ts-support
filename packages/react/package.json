@@ -27,14 +27,14 @@
 	},
 	"devDependencies": {
 		"@padosoft/config": "workspace:^",
-		"react": "^19.2.7",
+		"react": "^19.2.8",
 		"@types/react": "^19.2.17"
 	},
 	"dependencies": {
 		"@padosoft/utilities": "workspace:^"
 	},
 	"peerDependencies": {
-		"react": ">=18"
+		"react": ">=19.2.8"
 	},
 	"exports": {
 		".": {

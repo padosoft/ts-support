@@ -51,7 +51,7 @@
 		"@opentelemetry/sdk-logs": "*",
 		"@opentelemetry/semantic-conventions": "*",
 		"expo-file-system": "*",
-		"expo-application": "*"
+		"expo-application": "57.0.2"
 	},
 	"peerDependenciesMeta": {
 		"@opentelemetry/api": {
