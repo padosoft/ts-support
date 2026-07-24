@@ -12,22 +12,23 @@ export const inspectSettledPromiseResults = <T>(
 	return { fulfilled, rejected };
 };
 
-export const withTimeout = <T>(
+export const withTimeout = async <T>(
 	promise: Promise<T>,
-	timeoutMs: number,
-	message: string,
-): Promise<T> =>
-	new Promise((resolve, reject) => {
-		const timeout = setTimeout(() => reject(new Error(message)), timeoutMs);
+	ms: number,
+	message?: string,
+): Promise<T> => {
+	let timeout: ReturnType<typeof setTimeout> | undefined;
 
-		promise.then(
-			(value) => {
-				clearTimeout(timeout);
-				resolve(value);
-			},
-			(error) => {
-				clearTimeout(timeout);
-				reject(error);
-			},
+	const timeoutPromise = new Promise<never>((_, reject) => {
+		timeout = setTimeout(
+			() => reject(new Error(message ?? `Promise timed out after ${ms}ms`)),
+			ms,
 		);
 	});
+
+	try {
+		return await Promise.race([promise, timeoutPromise]);
+	} finally {
+		clearTimeout(timeout);
+	}
+};
