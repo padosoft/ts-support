@@ -24,14 +24,14 @@ import {
 } from "./utils";
 
 export class OpenApiClient<Paths extends OpenApiPaths> {
-	public readonly client: Client<Paths, MediaType>;
+	public client: Client<Paths, MediaType>;
 	protected middlewares: Map<string, StoredMiddleware<typeof this>> = new Map();
 	protected static INTERNAL_MIDDLEWARES: LiteralUnion<
 		keyof Middleware,
 		string
 	>[] = ["onRequest", "onResponse", "onError"];
 
-	public readonly options?: ClientOptions | undefined;
+	public options?: ClientOptions | undefined;
 
 	/**
 	 * @internal Creates a new openapi-fetch client instance
