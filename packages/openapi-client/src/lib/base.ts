@@ -55,14 +55,20 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		};
 	}
 
-	constructor(optionsOrClient?: ClientOptions | Client<Paths, MediaType>) {
+	setClient(optionsOrClient?: ClientOptions | Client<Paths, MediaType>): this {
 		if (isOpenApiFetchClient<Paths>(optionsOrClient)) {
 			this.client = optionsOrClient;
-			return;
+			return this;
 		}
 
 		this.client = OpenApiClient.createClient<Paths>(optionsOrClient);
 		this.options = optionsOrClient;
+
+		return this;
+	}
+
+	constructor(optionsOrClient?: ClientOptions | Client<Paths, MediaType>) {
+		this.setClient(optionsOrClient);
 	}
 
 	clone(options?: ClientOptions): OpenApiClient<Paths> {
