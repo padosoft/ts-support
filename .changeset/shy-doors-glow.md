@@ -5,3 +5,4 @@
 fix: make client/options writable
 refactor: create setClient function
 refactor: make executeMiddlewaresOfType return this
+refactor: make protected fields accessible via getters
