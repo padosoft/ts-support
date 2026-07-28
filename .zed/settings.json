@@ -1,4 +1,5 @@
 {
+	"format_on_save": "on",
 	"code_actions_on_format": {
 		"source.fixAll.biome": true,
 		"source.organizeImports.biome": true
@@ -25,6 +26,15 @@
 			}
 		},
 		"JavaScript": {
+			"language_servers": [
+				"typescript-ls",
+				"vtsls",
+				"!typescript-language-server",
+				"..."
+			],
+			"prettier": {
+				"allowed": false
+			},
 			"formatter": {
 				"language_server": {
 					"name": "biome"
@@ -53,6 +63,15 @@
 			}
 		},
 		"TSX": {
+			"language_servers": [
+				"typescript-ls",
+				"vtsls",
+				"!typescript-language-server",
+				"..."
+			],
+			"prettier": {
+				"allowed": false
+			},
 			"formatter": {
 				"language_server": {
 					"name": "biome"
@@ -60,6 +79,15 @@
 			}
 		},
 		"TypeScript": {
+			"language_servers": [
+				"typescript-ls",
+				"vtsls",
+				"!typescript-language-server",
+				"..."
+			],
+			"prettier": {
+				"allowed": false
+			},
 			"formatter": {
 				"language_server": {
 					"name": "biome"
