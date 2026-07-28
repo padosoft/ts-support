@@ -1,5 +1,17 @@
 # @padosoft/openapi-client
 
+## 1.1.0
+
+### Minor Changes
+
+- [`16d214b`](https://github.com/padosoft/ts-support/commit/16d214b1164d23364853c1706757bc64449b46e1) Thanks [@47PADO47](https://github.com/47PADO47)! - feat: add clone function
+  feat: add OpenApiClient options property
+
+### Patch Changes
+
+- Updated dependencies [[`0b337a7`](https://github.com/padosoft/ts-support/commit/0b337a7a1ce08de08546b9120be116f779312947)]:
+  - @padosoft/utilities@1.9.1
+
 ## 1.0.1
 
 ### Patch Changes

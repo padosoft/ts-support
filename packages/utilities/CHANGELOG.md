@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.9.1
+
+### Patch Changes
+
+- [`0b337a7`](https://github.com/padosoft/ts-support/commit/0b337a7a1ce08de08546b9120be116f779312947) Thanks [@47PADO47](https://github.com/47PADO47)! - refactor withTimeout
+
 ## 1.9.0
 
 ### Minor Changes

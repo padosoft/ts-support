@@ -73,9 +73,9 @@
     },
     "packages/openapi-client": {
       "name": "@padosoft/openapi-client",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "dependencies": {
-        "@padosoft/utilities": "^1.5.1",
+        "@padosoft/utilities": "^1.9.1",
         "openapi-fetch": "^0.17.0",
         "openapi-typescript-helpers": "^0.1.0",
       },
@@ -100,7 +100,7 @@
     },
     "packages/utilities": {
       "name": "@padosoft/utilities",
-      "version": "1.9.0",
+      "version": "1.9.1",
       "devDependencies": {
         "@padosoft/config": "workspace:^",
       },
@@ -110,7 +110,7 @@
     },
     "packages/zod-to-openapi-client": {
       "name": "@padosoft/zod-to-openapi-client",
-      "version": "4.1.0",
+      "version": "5.0.0",
       "dependencies": {
         "@padosoft/utilities": "workspace:^",
       },
@@ -120,7 +120,7 @@
       },
       "peerDependencies": {
         "@asteasolutions/zod-to-openapi": ">=7",
-        "@padosoft/openapi-client": ">=1.0.1",
+        "@padosoft/openapi-client": ">=1.1.0",
       },
       "optionalPeers": [
         "@padosoft/openapi-client",
