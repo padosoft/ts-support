@@ -9,7 +9,7 @@
 		"http-client",
 		"padosoft"
 	],
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
@@ -30,7 +30,7 @@
 		"@padosoft/config": "workspace:^"
 	},
 	"dependencies": {
-		"@padosoft/utilities": "^1.5.1",
+		"@padosoft/utilities": "^1.9.1",
 		"openapi-fetch": "^0.17.0",
 		"openapi-typescript-helpers": "^0.1.0"
 	},
