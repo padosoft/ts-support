@@ -65,6 +65,21 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		this.options = optionsOrClient;
 	}
 
+	clone(options?: ClientOptions): OpenApiClient<Paths> {
+		const newClient = OpenApiClient.createClient<Paths>({
+			...this.options,
+			...options,
+		});
+
+		const cloned = new OpenApiClient<Paths>(newClient) as this;
+
+		for (const middleware of this.middlewares.values()) {
+			cloned.use(middleware);
+		}
+
+		return cloned;
+	}
+
 	protected createApiError(status: number, details: unknown): Error {
 		const { cause, rest } = extractErrorCause(details);
 
