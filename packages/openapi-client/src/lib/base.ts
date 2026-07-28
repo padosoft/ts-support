@@ -17,18 +17,7 @@ import type {
 	ReturnTypeFromClientMethod,
 	StoredMiddleware,
 } from "../types/base";
-
-/**
- * Splits the `cause` field out of an error-details object so it can be attached
- * to the native `Error` (`{ cause }`) instead of being stringified into the message.
- */
-function extractCause(details: unknown): { cause: unknown; rest: unknown } {
-	if (details && typeof details === "object" && "cause" in details) {
-		const { cause, ...rest } = details as Record<string, unknown>;
-		return { cause, rest };
-	}
-	return { cause: undefined, rest: details };
-}
+import { extractErrorCause } from "./utils";
 
 /**
  * `JSON.stringify` that never throws: handles BigInt and circular references,
@@ -104,7 +93,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 	}
 
 	protected createApiError(status: number, details: unknown): Error {
-		const { cause, rest } = extractCause(details);
+		const { cause, rest } = extractErrorCause(details);
 
 		const error = new Error(
 			`API Error ${status}: ${safeStringify(rest)}`,
