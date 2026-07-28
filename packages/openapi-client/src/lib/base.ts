@@ -24,12 +24,14 @@ import {
 } from "./utils";
 
 export class OpenApiClient<Paths extends OpenApiPaths> {
-	protected client: Client<Paths, MediaType>;
+	public readonly client: Client<Paths, MediaType>;
 	protected middlewares: Map<string, StoredMiddleware<typeof this>> = new Map();
 	protected static INTERNAL_MIDDLEWARES: LiteralUnion<
 		keyof Middleware,
 		string
 	>[] = ["onRequest", "onResponse", "onError"];
+
+	public readonly options?: ClientOptions | undefined;
 
 	/**
 	 * @internal Creates a new openapi-fetch client instance
@@ -39,10 +41,6 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 	static createClient<Paths extends OpenApiPaths>(
 		options?: ClientOptions,
 	): Client<Paths> {
-		if (options?.baseUrl && !options.baseUrl.endsWith("/")) {
-			options.baseUrl = `${options.baseUrl}/`;
-		}
-
 		return createClient<Paths, MediaType>(options);
 	}
 
@@ -60,9 +58,11 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 	constructor(optionsOrClient?: ClientOptions | Client<Paths, MediaType>) {
 		if (isOpenApiFetchClient<Paths>(optionsOrClient)) {
 			this.client = optionsOrClient;
-		} else {
-			this.client = OpenApiClient.createClient<Paths>(optionsOrClient);
+			return;
 		}
+
+		this.client = OpenApiClient.createClient<Paths>(optionsOrClient);
+		this.options = optionsOrClient;
 	}
 
 	protected createApiError(status: number, details: unknown): Error {
