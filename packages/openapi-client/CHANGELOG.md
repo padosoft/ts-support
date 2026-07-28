@@ -1,5 +1,14 @@
 # @padosoft/openapi-client
 
+## 1.1.1
+
+### Patch Changes
+
+- [`be356d3`](https://github.com/padosoft/ts-support/commit/be356d3a82f8a2cafcd729069ac893eb645b40d8) Thanks [@47PADO47](https://github.com/47PADO47)! - fix: make client/options writable
+  refactor: create setClient function
+  refactor: make executeMiddlewaresOfType return this
+  refactor: make protected fields accessible via getters
+
 ## 1.1.0
 
 ### Minor Changes
