@@ -211,7 +211,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 			>;
 			return await middleware.middleware(p);
 		},
-	): Promise<void> {
+	): Promise<this> {
 		for (const middleware of this.middlewares.values()) {
 			if (middleware.type !== type) continue;
 
@@ -227,6 +227,8 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 				);
 			} catch {}
 		}
+
+		return this;
 	}
 
 	onResponseError(
