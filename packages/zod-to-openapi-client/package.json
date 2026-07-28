@@ -26,16 +26,14 @@
 		"build": "tsdown",
 		"ts:check": "tsc --noEmit"
 	},
-	"dependencies": {
-		"@padosoft/utilities": "workspace:^"
-	},
 	"devDependencies": {
 		"@padosoft/config": "workspace:^",
 		"@padosoft/openapi-client": "workspace:^"
 	},
 	"peerDependencies": {
 		"@asteasolutions/zod-to-openapi": ">=7",
-		"@padosoft/openapi-client": ">=1.1.0"
+		"@padosoft/openapi-client": ">=1.1.0",
+		"@padosoft/utilities": ">= 1.9.1"
 	},
 	"peerDependenciesMeta": {
 		"@padosoft/openapi-client": {
