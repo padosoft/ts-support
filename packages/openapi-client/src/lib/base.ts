@@ -125,11 +125,10 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		};
 	}
 
-	use(
-		// biome-ignore lint/suspicious/noExplicitAny: Middleware callbacks are contravariant in K — a `ClientMiddleware<"onError">` is not assignable to `ClientMiddleware<ClientMiddlewareType>` because the callback parameter union widens. Using `any` for both K and C avoids this while remaining safe: the method only stores and wraps the callback, never calls it with wrong params.
-		middleware: ClientMiddleware<any, string, any>,
+	use<K extends ClientMiddlewareType, N extends string>(
+		middleware: ClientMiddleware<K, N, this>,
 	): this {
-		this.middlewares.set(middleware.name, middleware as StoredMiddleware<this>);
+		this.middlewares.set(middleware.name, middleware);
 
 		if (!OpenApiClient.INTERNAL_MIDDLEWARES.includes(middleware.type)) {
 			return this;
@@ -145,7 +144,7 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		return this;
 	}
 
-	eject(name: string): this {
+	eject<N extends string>(name: N): this {
 		const middleware = this.middlewares.get(name);
 		if (!middleware) return this;
 
