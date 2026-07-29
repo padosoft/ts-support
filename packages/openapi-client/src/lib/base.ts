@@ -44,9 +44,13 @@ export class OpenApiClient<Paths extends OpenApiPaths> {
 		return createClient<Paths, MediaType>(options);
 	}
 
-	static createMiddleware<K extends ClientMiddlewareType, N extends string>(
-		options: CreateClientMiddlewareOptions<K, N>,
-	): Omit<CreateClientMiddlewareOptions<K, N>, "name"> & {
+	static createMiddleware<
+		K extends ClientMiddlewareType,
+		N extends string,
+		C extends OpenApiClient<OpenApiPaths> = OpenApiClient<OpenApiPaths>,
+	>(
+		options: CreateClientMiddlewareOptions<K, N, C>,
+	): Omit<CreateClientMiddlewareOptions<K, N, C>, "name"> & {
 		name: N | (N extends undefined ? K : N);
 	} {
 		return {
