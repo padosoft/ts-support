@@ -1,5 +1,12 @@
 # @padosoft/openapi-client
 
+## 1.1.2
+
+### Patch Changes
+
+- [`15b72a9`](https://github.com/padosoft/ts-support/commit/15b72a9224de36ca3c8b8f747bce1b0ff32c5591) Thanks [@47PADO47](https://github.com/47PADO47)! - - Add `tsdown.config.ts` to externalize `openapi-fetch` and `openapi-typescript-helpers` from the bundle and produce unbundled output with correct subpath exports
+  - Fix `use()` method type: accept `ClientMiddleware<any, string, any>` to avoid contravariance errors when passing a specific-K middleware (e.g. `"onError"`) — the callback parameter union would widen K to `ClientMiddlewareType`, making the assignment incompatible
+
 ## 1.1.1
 
 ### Patch Changes
