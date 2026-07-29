@@ -1,5 +1,12 @@
 # @padosoft/openapi-client
 
+## 1.1.3
+
+### Patch Changes
+
+- [`ee02fc3`](https://github.com/padosoft/ts-support/commit/ee02fc36490d06e88b694cae0f2f8e3a9da7aae1) Thanks [@47PADO47](https://github.com/47PADO47)! - chore: add jsdoc to public methods
+  fix: make createMiddleware typesafety
+
 ## 1.1.2
 
 ### Patch Changes
