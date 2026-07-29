@@ -47,6 +47,10 @@
 			"default": "./dist/lib/base.mjs",
 			"types": "./dist/lib/base.d.mts"
 		},
+		"./lib/utils": {
+			"default": "./dist/lib/utils.mjs",
+			"types": "./dist/lib/utils.d.mts"
+		},
 		"./types": {
 			"default": "./dist/types/index.mjs",
 			"types": "./dist/types/index.d.mts"
