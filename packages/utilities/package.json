@@ -34,6 +34,10 @@
 			"default": "./dist/lib/configuration.mjs",
 			"types": "./dist/lib/configuration.d.mts"
 		},
+		"./lib/dates": {
+			"default": "./dist/lib/dates.mjs",
+			"types": "./dist/lib/dates.d.mts"
+		},
 		"./lib/formatters": {
 			"default": "./dist/lib/formatters.mjs",
 			"types": "./dist/lib/formatters.d.mts"
