@@ -41,6 +41,10 @@
 			"default": "./dist/index.mjs",
 			"types": "./dist/index.d.mts"
 		},
+		"./component-registry": {
+			"default": "./dist/component-registry.mjs",
+			"types": "./dist/component-registry.d.mts"
+		},
 		"./config": {
 			"default": "./dist/config.mjs",
 			"types": "./dist/config.d.mts"
@@ -52,6 +56,14 @@
 		"./memo": {
 			"default": "./dist/memo.mjs",
 			"types": "./dist/memo.d.mts"
+		},
+		"./use-component-override": {
+			"default": "./dist/use-component-override.mjs",
+			"types": "./dist/use-component-override.d.mts"
+		},
+		"./with-component-override": {
+			"default": "./dist/with-component-override.mjs",
+			"types": "./dist/with-component-override.d.mts"
 		},
 		"./package.json": "./package.json"
 	}
