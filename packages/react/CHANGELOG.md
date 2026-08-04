@@ -1,5 +1,15 @@
 # @padosoft/react
 
+## 1.3.0
+
+### Minor Changes
+
+- [`b9fef85`](https://github.com/padosoft/ts-support/commit/b9fef85ec2bcc8c44dcbb7092b6c3a457157aaeb) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `componentRegistry`, `useComponentOverride`, and `withComponentOverride` from `@padosoft/react`.
+
+  - `componentRegistry` — singleton registry for swapping React components at runtime (white-labelling, theming).
+  - `useComponentOverride(fallback, key?)` — hook that reactively resolves an override from the registry via `useSyncExternalStore`.
+  - `withComponentOverride(component, key?)` — HOC that wraps a component so all usage sites automatically check the registry without any per-call boilerplate. Resolves the key from `displayName` (with `.type` fallback for `memo()`-wrapped inputs).
+
 ## 1.2.0
 
 ### Minor Changes
