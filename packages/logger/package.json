@@ -12,7 +12,7 @@
 		"typescript",
 		"padosoft"
 	],
-	"version": "1.4.2",
+	"version": "2.0.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
@@ -31,12 +31,6 @@
 	},
 	"devDependencies": {
 		"@padosoft/config": "workspace:^",
-		"@opentelemetry/api": "^1.9.1",
-		"@opentelemetry/api-logs": "^0.220.0",
-		"@opentelemetry/exporter-logs-otlp-http": "^0.220.0",
-		"@opentelemetry/resources": "^2.9.0",
-		"@opentelemetry/sdk-logs": "^0.220.0",
-		"@opentelemetry/semantic-conventions": "^1.42.0",
 		"expo-file-system": "^57.0.0",
 		"expo-application": "^57.0.0"
 	},
@@ -44,34 +38,10 @@
 		"@padosoft/utilities": "workspace:^"
 	},
 	"peerDependencies": {
-		"@opentelemetry/api": "*",
-		"@opentelemetry/api-logs": "*",
-		"@opentelemetry/exporter-logs-otlp-http": "*",
-		"@opentelemetry/resources": "*",
-		"@opentelemetry/sdk-logs": "*",
-		"@opentelemetry/semantic-conventions": "*",
 		"expo-file-system": "*",
 		"expo-application": "57.0.2"
 	},
 	"peerDependenciesMeta": {
-		"@opentelemetry/api": {
-			"optional": true
-		},
-		"@opentelemetry/api-logs": {
-			"optional": true
-		},
-		"@opentelemetry/resources": {
-			"optional": true
-		},
-		"@opentelemetry/exporter-logs-otlp-http": {
-			"optional": true
-		},
-		"@opentelemetry/sdk-logs": {
-			"optional": true
-		},
-		"@opentelemetry/semantic-conventions": {
-			"optional": true
-		},
 		"expo-file-system": {
 			"optional": true
 		}
@@ -177,13 +147,13 @@
 			"default": "./dist/transports/otel/index.mjs",
 			"types": "./dist/transports/otel/index.d.mts"
 		},
+		"./transports/otel/core": {
+			"default": "./dist/transports/otel/core.mjs",
+			"types": "./dist/transports/otel/core.d.mts"
+		},
 		"./transports/otel/types": {
 			"default": "./dist/transports/otel/types.mjs",
 			"types": "./dist/transports/otel/types.d.mts"
-		},
-		"./transports/otel/utils": {
-			"default": "./dist/transports/otel/utils.mjs",
-			"types": "./dist/transports/otel/utils.d.mts"
 		},
 		"./transports/ws": {
 			"default": "./dist/transports/ws.mjs",
