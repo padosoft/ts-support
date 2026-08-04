@@ -1,122 +1,89 @@
-/** biome-ignore-all lint/complexity/useLiteralKeys: needed to set attributes */
-import {
-	context,
-	DiagConsoleLogger,
-	DiagLogLevel,
-	diag,
-	trace,
-} from "@opentelemetry/api";
-import { type AnyValue, type AnyValueMap, logs } from "@opentelemetry/api-logs";
-import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
-import {
-	detectResources,
-	envDetector,
-	hostDetector,
-	osDetector,
-	processDetector,
-	resourceFromAttributes,
-	serviceInstanceIdDetector,
-} from "@opentelemetry/resources";
-import { LoggerProvider } from "@opentelemetry/sdk-logs";
-import {
-	ATTR_SERVICE_NAME,
-	ATTR_SERVICE_VERSION,
-} from "@opentelemetry/semantic-conventions";
-import { name, version } from "@/../package.json";
 import { createTransport } from "@/lib/mods";
 import type { Transport } from "@/types/mods";
-import type { OpenTelemetryTransportOptions } from "./types";
-import { createLogProcessor, mapLevelToSeverity } from "./utils";
+import {
+	levelToSeverityNumber,
+	redactAttributes,
+	sensitiveLeafKeys,
+	splitLogEntry,
+} from "./core";
+import type { OtelTransportOptions } from "./types";
 
-/**
- * OpenTelemetry transport (portable: Node + Edge + RN).
- */
-export const openTelemetryTransport = (
-	options: OpenTelemetryTransportOptions,
-): Transport => {
-	const serviceName = options.service?.name || name;
-	const serviceVersion = options.service?.version || version;
+export type { OtelTransportOptions, ProcessedLogRecord } from "./types";
 
-	if (options.debug) {
-		diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
-	}
+export {
+	isPlainObject,
+	levelToSeverityNumber,
+	OtelSeverityNumber,
+	redactAttributes,
+	sensitiveLeafKeys,
+	severityMethodFor,
+	splitLogEntry,
+	type OtelSinkMethod,
+} from "./core";
 
-	const detectedResources = detectResources({
-		detectors: [
-			envDetector,
-			hostDetector,
-			osDetector,
-			processDetector,
-			serviceInstanceIdDetector,
-		],
-	});
+export const otelTransport = (options: OtelTransportOptions): Transport => {
+	let emitting = false;
 
-	const resources = resourceFromAttributes({
-		[ATTR_SERVICE_NAME]: serviceName,
-		[ATTR_SERVICE_VERSION]: serviceVersion,
-		"deployment.environment": options.environment ?? "unknown",
-	});
+	const processEntry = options.processEntry ?? splitLogEntry;
 
-	const customResources = resourceFromAttributes(options.resources || {});
-	const resource = detectedResources.merge(resources).merge(customResources);
+	const resolveSensitiveLeaves = (): Set<string> => {
+		const keys = options.sensitiveKeys;
+		if (!keys) return new Set();
+		const resolved = typeof keys === "function" ? keys() : keys;
+		return sensitiveLeafKeys(resolved);
+	};
 
-	const exporter = new OTLPLogExporter({
-		concurrencyLimit: 10,
-		...options.httpExporterOptions,
-	});
-
-	const processors = options.exporters.map((exporter) =>
-		createLogProcessor(exporter, options.processor),
-	) || [createLogProcessor(exporter, options.processor)];
-
-	const provider =
-		options.loggerProvider ??
-		new LoggerProvider({
-			resource,
-			processors,
-		});
-
-	logs.setGlobalLoggerProvider(provider);
-	const otelLogger = provider.getLogger(serviceName, serviceVersion);
+	const redact = options.redact ?? redactAttributes;
 
 	return createTransport({
-		name: "opentelemetry",
-		async send(_logger, entry) {
-			const severityNumber = mapLevelToSeverity(entry.level);
-			const data = entry.data.join(" ");
+		name: "otel",
+		send(_logger, entry) {
+			if (emitting) return;
+			if (options.isDisabled?.()) return;
+			if (options.shouldEmit && !options.shouldEmit(entry.level)) return;
 
-			const attributes: AnyValueMap = {
-				args: entry.data as AnyValue,
-				time: entry.time.toISOString(),
-			};
+			emitting = true;
 
-			const ctx = context.active();
+			try {
+				const { body, attributes: rawAttributes } = processEntry(entry.data);
 
-			// capture trace context if available
-			const span = trace.getSpan(ctx);
-			const spanCtx = span?.spanContext();
+				const leaves = resolveSensitiveLeaves();
+				const redacted =
+					leaves.size > 0 ? redact(rawAttributes, leaves) : rawAttributes;
 
-			if (spanCtx) {
-				attributes["trace_id"] = spanCtx.traceId;
-				attributes["span_id"] = spanCtx.spanId;
-				attributes["trace_flags"] = spanCtx.traceFlags;
+				const enriched = options.enrichAttributes
+					? options.enrichAttributes(redacted, {
+							level: entry.level,
+							time: entry.time,
+							data: entry.data,
+						})
+					: redacted;
+
+				const severityNumber =
+					levelToSeverityNumber[
+						entry.level as keyof typeof levelToSeverityNumber
+					] ?? 0;
+
+				options.emit({
+					body,
+					attributes: enriched,
+					level: entry.level,
+					severityNumber,
+					severityText: entry.level.toUpperCase(),
+					timestamp: entry.time,
+				});
+			} catch (error) {
+				if (options.onError) {
+					options.onError(error);
+				} else {
+					console.warn("[otelTransport]", error);
+				}
+			} finally {
+				emitting = false;
 			}
-
-			otelLogger.emit({
-				body: data,
-				timestamp: entry.time,
-				severityNumber,
-				severityText: entry.level.toUpperCase(),
-				attributes,
-				context: ctx,
-			});
-		},
-		async batch(logger, batch) {
-			await Promise.allSettled(batch.map((e) => this.send(logger, e)));
 		},
 		async teardown() {
-			await Promise.allSettled(processors.map((p) => p.shutdown()));
-			logs.disable();
+			await options.teardown?.();
 		},
 	});
 };
