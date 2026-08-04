@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 2.0.0
+
+### Major Changes
+
+- [#49](https://github.com/padosoft/ts-support/pull/49) [`600dc47`](https://github.com/padosoft/ts-support/commit/600dc4780d30db944abac29184082859e6ed3897) Thanks [@47PADO47](https://github.com/47PADO47)! - Replace Node-only `openTelemetryTransport` with a single "bring your own OTel" `otelTransport`. The new transport takes a pluggable `emit` function and optional hooks (processEntry, redact, shouldEmit, enrichAttributes, isDisabled, onError, teardown) instead of statically importing `@opentelemetry/sdk-logs`. All `@opentelemetry/*` peer dependencies have been removed. A new `core.ts` module exports pure helper functions (splitLogEntry, redactAttributes, sensitiveLeafKeys, severityMethodFor) with zero external dependencies.
+
 ## 1.4.2
 
 ### Patch Changes
