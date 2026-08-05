@@ -1,5 +1,11 @@
 # @padosoft/utilities
 
+## 1.10.0
+
+### Minor Changes
+
+- [`8692f00`](https://github.com/padosoft/ts-support/commit/8692f0093e251786a9b63cf70ea40e8cc164800b) Thanks [@47PADO47](https://github.com/47PADO47)! - add date fortmat functions
+
 ## 1.9.1
 
 ### Patch Changes
