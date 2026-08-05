@@ -1,5 +1,13 @@
 # @padosoft/utilities
 
+## 1.10.1
+
+### Patch Changes
+
+- [`7cc1633`](https://github.com/padosoft/ts-support/commit/7cc1633acd60e18dd63e0e222c2364153ec5b36e) Thanks [@47PADO47](https://github.com/47PADO47)! - chore: remove zod export from barrel
+
+- [`7cc1633`](https://github.com/padosoft/ts-support/commit/7cc1633acd60e18dd63e0e222c2364153ec5b36e) Thanks [@47PADO47](https://github.com/47PADO47)! - remove turbo from barrel export
+
 ## 1.10.0
 
 ### Minor Changes
