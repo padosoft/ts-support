@@ -32,8 +32,8 @@
 	},
 	"peerDependencies": {
 		"@asteasolutions/zod-to-openapi": ">=7",
-		"@padosoft/openapi-client": ">=1.1.0",
-		"@padosoft/utilities": ">= 1.9.1"
+		"@padosoft/openapi-client": ">=1",
+		"@padosoft/utilities": ">= 1"
 	},
 	"peerDependenciesMeta": {
 		"@padosoft/openapi-client": {
