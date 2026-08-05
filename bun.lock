@@ -82,7 +82,7 @@
     },
     "packages/utilities": {
       "name": "@padosoft/utilities",
-      "version": "1.10.0",
+      "version": "1.10.1",
       "devDependencies": {
         "@padosoft/config": "workspace:^",
       },

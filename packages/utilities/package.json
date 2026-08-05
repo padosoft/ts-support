@@ -10,7 +10,7 @@
 		"types",
 		"padosoft"
 	],
-	"version": "1.10.0",
+	"version": "1.10.1",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"exports": {
