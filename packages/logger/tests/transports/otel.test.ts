@@ -68,14 +68,14 @@ describe("core: sensitiveLeafKeys", () => {
 });
 
 describe("core: splitLogEntry", () => {
-	it("keeps readable part in body and rest in attributes", () => {
+	it("includes objects in both body (JSON) and attributes", () => {
 		const { attributes, body } = splitLogEntry([
 			"[Cart]",
 			"add failed",
 			{ articoloId: 42 },
 		]);
 
-		expect(body).toBe("[Cart] add failed");
+		expect(body).toBe('[Cart] add failed {"articoloId":42}');
 		expect(attributes["log.articoloId"]).toBe(42);
 	});
 
@@ -161,7 +161,9 @@ describe("otelTransport", () => {
 		});
 
 		expect(emitted).toHaveLength(1);
-		expect(emitted[0]!.body).toBe("login failed");
+		expect(emitted[0]!.body).toBe(
+			'login failed {"token":"secret","user":"mario"}',
+		);
 		expect(emitted[0]!.attributes["log.token"]).toBe("[REDACTED]");
 		expect(emitted[0]!.attributes["log.user"]).toBe("mario");
 		expect(emitted[0]!.severityNumber).toBe(OtelSeverityNumber.ERROR);
@@ -329,7 +331,7 @@ describe("otelTransport", () => {
 		await Bun.sleep(50);
 
 		expect(emitted).toHaveLength(1);
-		expect(emitted[0]!.body).toBe("test message");
+		expect(emitted[0]!.body).toBe('test message {"key":"value"}');
 		expect(emitted[0]!.attributes["log.key"]).toBe("value");
 	});
 });

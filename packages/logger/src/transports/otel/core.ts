@@ -134,6 +134,11 @@ export function splitLogEntry(data: unknown[]): {
 			for (const [key, nested] of Object.entries(value)) {
 				attributes[`log.${key}`] = nested;
 			}
+			try {
+				bodyParts.push(JSON.stringify(value));
+			} catch {
+				/* non-serializable — attributes still carry the data */
+			}
 			continue;
 		}
 		if (value !== null && value !== undefined) {
