@@ -1,5 +1,6 @@
 import { createTransport } from "@/lib/mods";
 import type { Transport } from "@/types/mods";
+import pkg from "../../../package.json";
 import {
 	levelToSeverityNumber,
 	redactAttributes,
@@ -7,6 +8,11 @@ import {
 	splitLogEntry,
 } from "./core";
 import type { OtelTransportOptions } from "./types";
+
+const SCOPE_ATTRIBUTES = {
+	"otel.scope.name": pkg.name,
+	"otel.scope.version": pkg.version,
+} as const;
 
 export type { OtelTransportOptions, ProcessedLogRecord } from "./types";
 
@@ -64,9 +70,11 @@ export const otelTransport = (options: OtelTransportOptions): Transport => {
 						entry.level as keyof typeof levelToSeverityNumber
 					] ?? 0;
 
+				const attributes = { ...SCOPE_ATTRIBUTES, ...enriched };
+
 				options.emit({
 					body,
-					attributes: enriched,
+					attributes,
 					level: entry.level,
 					severityNumber,
 					severityText: entry.level.toUpperCase(),
