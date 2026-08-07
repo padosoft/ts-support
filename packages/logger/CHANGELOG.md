@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 2.0.1
+
+### Patch Changes
+
+- [`ce57768`](https://github.com/padosoft/ts-support/commit/ce57768363bd3d586dd04fbc8a5b593c5c9434e5) Thanks [@47PADO47](https://github.com/47PADO47)! - Include plain objects in OTel log body as JSON alongside attributes
+
 ## 2.0.0
 
 ### Major Changes
