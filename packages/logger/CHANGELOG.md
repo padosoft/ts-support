@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 2.0.2
+
+### Patch Changes
+
+- [#53](https://github.com/padosoft/ts-support/pull/53) [`d9f3ca9`](https://github.com/padosoft/ts-support/commit/d9f3ca9adf0662fac7670bf37721de7f3895015a) Thanks [@47PADO47](https://github.com/47PADO47)! - Stamp `otel.scope.name` and `otel.scope.version` on every log record emitted by the OTEL transport, using the library's own package.json name and version. This lets backends identify which instrumentation library produced each log.
+
 ## 2.0.1
 
 ### Patch Changes
