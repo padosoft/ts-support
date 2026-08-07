@@ -11,6 +11,7 @@ import {
 } from "@/transports/otel/core";
 import { otelTransport } from "@/transports/otel/index";
 import type { ProcessedLogRecord } from "@/transports/otel/types";
+import pkg from "../../package.json";
 
 const SENSITIVE_KEYS = [
 	"header.authorization",
@@ -168,6 +169,22 @@ describe("otelTransport", () => {
 		expect(emitted[0]!.attributes["log.user"]).toBe("mario");
 		expect(emitted[0]!.severityNumber).toBe(OtelSeverityNumber.ERROR);
 		expect(emitted[0]!.severityText).toBe("ERROR");
+	});
+
+	it("stamps otel.scope.name and otel.scope.version from package.json", () => {
+		const emitted: ProcessedLogRecord[] = [];
+		const transport = otelTransport({
+			emit: (record) => emitted.push(record),
+		});
+
+		transport.send(undefined as never, {
+			data: ["hello"],
+			level: "info",
+			time: new Date(),
+		});
+
+		expect(emitted[0]!.attributes["otel.scope.name"]).toBe(pkg.name);
+		expect(emitted[0]!.attributes["otel.scope.version"]).toBe(pkg.version);
 	});
 
 	it("drops records when isDisabled returns true", () => {
