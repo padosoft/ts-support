@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.4.0
+
+### Minor Changes
+
+- [#55](https://github.com/padosoft/ts-support/pull/55) [`5481f20`](https://github.com/padosoft/ts-support/commit/5481f2039d5b0c999536fbd3e26c5138d9cd26fa) Thanks [@47PADO47](https://github.com/47PADO47)! - Convert the hono/openapi → zod import-replacement plugin to unplugin, adding per-bundler entrypoints (vite, rollup, rolldown, webpack, rspack, esbuild, farm) under `compiler/plugins/hono-zod/*`. The `compiler/plugins/hono-zod` default export remains a rolldown plugin for backward compatibility.
+
 ## 1.3.2
 
 ### Patch Changes
