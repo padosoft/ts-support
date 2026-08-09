@@ -1,6 +1,5 @@
 import {
 	createUnplugin,
-	type RolldownPlugin,
 	type UnpluginFactory,
 	type UnpluginInstance,
 } from "unplugin";
@@ -26,9 +25,3 @@ export const unpluginFactory: UnpluginFactory<undefined> = () => ({
 
 export const unplugin: UnpluginInstance<undefined> =
 	createUnplugin(unpluginFactory);
-
-// Backward-compatible default: a rolldown plugin, matching the previous export
-// shape (the repo bundler is rolldown/tsdown).
-const rolldownPlugin: RolldownPlugin = unplugin.rolldown();
-
-export default rolldownPlugin;
