@@ -28,8 +28,36 @@
 	],
 	"exports": {
 		"./compiler/plugins/hono-zod": {
-			"default": "./dist/compiler/plugins/hono-zod.mjs",
-			"types": "./dist/compiler/plugins/hono-zod.d.mts"
+			"default": "./dist/compiler/plugins/hono-zod/index.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/index.d.mts"
+		},
+		"./compiler/plugins/hono-zod/esbuild": {
+			"default": "./dist/compiler/plugins/hono-zod/esbuild.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/esbuild.d.mts"
+		},
+		"./compiler/plugins/hono-zod/farm": {
+			"default": "./dist/compiler/plugins/hono-zod/farm.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/farm.d.mts"
+		},
+		"./compiler/plugins/hono-zod/rolldown": {
+			"default": "./dist/compiler/plugins/hono-zod/rolldown.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/rolldown.d.mts"
+		},
+		"./compiler/plugins/hono-zod/rollup": {
+			"default": "./dist/compiler/plugins/hono-zod/rollup.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/rollup.d.mts"
+		},
+		"./compiler/plugins/hono-zod/rspack": {
+			"default": "./dist/compiler/plugins/hono-zod/rspack.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/rspack.d.mts"
+		},
+		"./compiler/plugins/hono-zod/vite": {
+			"default": "./dist/compiler/plugins/hono-zod/vite.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/vite.d.mts"
+		},
+		"./compiler/plugins/hono-zod/webpack": {
+			"default": "./dist/compiler/plugins/hono-zod/webpack.mjs",
+			"types": "./dist/compiler/plugins/hono-zod/webpack.d.mts"
 		},
 		"./compiler/tsdown": {
 			"default": "./dist/compiler/tsdown.mjs",
@@ -65,5 +93,8 @@
 		"./typescript/expo": "./src/typescript/expo.json",
 		"./typescript/hono": "./src/typescript/hono.json",
 		"./tools/biome": "./src/tools/biome.json"
+	},
+	"dependencies": {
+		"unplugin": "^3.3.0"
 	}
 }
