@@ -4,7 +4,7 @@ import type { Plugin } from "@/types";
 import { createSharedContextStore } from "./shared-store";
 import type { Context, ContextStore } from "./types";
 
-export type * from "./types"
+export type * from "./types";
 
 /**
  * Options for {@link contextPlugin}.
