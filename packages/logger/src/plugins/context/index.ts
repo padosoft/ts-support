@@ -4,8 +4,7 @@ import type { Plugin } from "@/types";
 import { createSharedContextStore } from "./shared-store";
 import type { Context, ContextStore } from "./types";
 
-// Re-export so consumers can import ContextStore / Context from the same subpath.
-export type { Context, ContextStore };
+export type * from "./types"
 
 /**
  * Options for {@link contextPlugin}.
