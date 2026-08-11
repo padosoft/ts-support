@@ -9,23 +9,13 @@ import {
 } from "./core";
 import type { OtelTransportOptions } from "./types";
 
+export * from "./core";
+export type * from "./types";
+
 const SCOPE_ATTRIBUTES = {
 	"otel.scope.name": pkg.name,
 	"otel.scope.version": pkg.version,
 } as const;
-
-export type { OtelTransportOptions, ProcessedLogRecord } from "./types";
-
-export {
-	isPlainObject,
-	levelToSeverityNumber,
-	OtelSeverityNumber,
-	redactAttributes,
-	sensitiveLeafKeys,
-	severityMethodFor,
-	splitLogEntry,
-	type OtelSinkMethod,
-} from "./core";
 
 export const otelTransport = (options: OtelTransportOptions): Transport => {
 	let emitting = false;
