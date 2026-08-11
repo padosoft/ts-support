@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "bun:test";
 import { Logger } from "@/core/logger";
 import { LogLevels } from "@/lib/levels";
 import { contextPlugin } from "@/plugins/context";
-import { createAsyncLocalStorageContextStore } from "@/plugins/context-als";
+import { createAsyncLocalStorageContextStore } from "@/plugins/context/als-store";
 
 describe("contextPlugin (default shared store)", () => {
 	let logger: Logger;

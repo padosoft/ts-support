@@ -1,17 +1,17 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { Context, ContextStore } from "@/plugins/context";
+import type { Context, ContextStore } from "./types";
 
 /**
  * AsyncLocalStorage-backed context store for concurrent Node / Bun / Cloudflare
- * Workers environments (Workers require `nodejs_compat` flag).
+ * Workers environments (Workers require the `nodejs_compat` flag).
  *
  * Each `runWithContext(ctx, fn)` call propagates the context to all async
  * continuations inside `fn`, including across `await` boundaries, without
  * leaking into other concurrent requests.
  *
  * Do NOT import this in React Native or edge runtimes that lack
- * `node:async_hooks` — use the default shared store from `contextPlugin`
- * (the import-free default) instead.
+ * `node:async_hooks` — use `createSharedContextStore` from `./shared-store`
+ * (the contextPlugin default) instead.
  *
  * @example
  * ```ts
