@@ -84,8 +84,20 @@
 			"types": "./dist/lib/utils.d.mts"
 		},
 		"./plugins/context": {
-			"default": "./dist/plugins/context.mjs",
-			"types": "./dist/plugins/context.d.mts"
+			"default": "./dist/plugins/context/index.mjs",
+			"types": "./dist/plugins/context/index.d.mts"
+		},
+		"./plugins/context/als-store": {
+			"default": "./dist/plugins/context/als-store.mjs",
+			"types": "./dist/plugins/context/als-store.d.mts"
+		},
+		"./plugins/context/shared-store": {
+			"default": "./dist/plugins/context/shared-store.mjs",
+			"types": "./dist/plugins/context/shared-store.d.mts"
+		},
+		"./plugins/context/types": {
+			"default": "./dist/plugins/context/types.mjs",
+			"types": "./dist/plugins/context/types.d.mts"
 		},
 		"./plugins/metrics": {
 			"default": "./dist/plugins/metrics.mjs",
