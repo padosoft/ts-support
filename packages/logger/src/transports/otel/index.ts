@@ -13,8 +13,8 @@ export * from "./core";
 export type * from "./types";
 
 const SCOPE_ATTRIBUTES = {
-	"otel.scope.name": pkg.name,
-	"otel.scope.version": pkg.version,
+	"scope.name": pkg.name,
+	"scope.version": pkg.version,
 } as const;
 
 export const otelTransport = (options: OtelTransportOptions): Transport => {
