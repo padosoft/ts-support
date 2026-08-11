@@ -1,5 +1,11 @@
 # @padosoft/logger
 
+## 2.1.0
+
+### Minor Changes
+
+- [#57](https://github.com/padosoft/ts-support/pull/57) [`0e2a7d7`](https://github.com/padosoft/ts-support/commit/0e2a7d7ac3955e70ad0896d70e33d1545751a2fc) Thanks [@47PADO47](https://github.com/47PADO47)! - chore: improve context plugin
+
 ## 2.0.2
 
 ### Patch Changes
