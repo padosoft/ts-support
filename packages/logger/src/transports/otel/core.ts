@@ -1,4 +1,9 @@
 import type { LogLevel } from "@/lib/levels";
+import {
+	isPlainObject,
+	normalizeErrors,
+	serializeError,
+} from "@/lib/serialize-error";
 
 const MAX_REDACTION_DEPTH = 4;
 
@@ -42,17 +47,6 @@ const LEVEL_TO_SINK_METHOD: Record<string, OtelSinkMethod> = {
 
 export function severityMethodFor(level: string): OtelSinkMethod {
 	return LEVEL_TO_SINK_METHOD[level] ?? "info";
-}
-
-export function isPlainObject(
-	value: unknown,
-): value is Record<string, unknown> {
-	return (
-		typeof value === "object" &&
-		value !== null &&
-		!Array.isArray(value) &&
-		!(value instanceof Error)
-	);
 }
 
 function leafOf(key: string): string {
@@ -104,6 +98,19 @@ export function redactAttributes(
 	return result;
 }
 
+/**
+ * Attribute keys of {@link serializeError} output that already have a
+ * dedicated `exception.*` mapping; everything else is a custom enumerable
+ * diagnostic field of the subclass (statusCode, code, ...).
+ */
+const ERROR_STANDARD_KEYS = new Set([
+	"name",
+	"message",
+	"stack",
+	"cause",
+	"errors",
+]);
+
 export function splitLogEntry(data: unknown[]): {
 	body: string;
 	attributes: Record<string, unknown>;
@@ -128,21 +135,47 @@ export function splitLogEntry(data: unknown[]): {
 			if (value.stack) {
 				attributes["exception.stacktrace"] = value.stack;
 			}
+			// Non-enumerable extras the plain mapping above drops: the
+			// recursive `cause` chain, `AggregateError.errors`, and the
+			// enumerable diagnostic fields of subclasses (statusCode, code,
+			// ...) — kept so Grafana can filter on them.
+			//
+			// Kept as structures (like the `log.*` attributes below), NOT
+			// stringified here: `redactAttributes` runs after `splitLogEntry`
+			// and must recurse into them so a sensitive leaf nested in a
+			// `cause` (e.g. `{ password }`) is redacted before it reaches the
+			// backend. `serializeError` has already made them JSON-safe.
+			const serialized = serializeError(value);
+			if (serialized.cause !== undefined) {
+				attributes["exception.cause"] = serialized.cause;
+			}
+			if (serialized.errors !== undefined) {
+				attributes["exception.errors"] = serialized.errors;
+			}
+			for (const [key, extra] of Object.entries(serialized)) {
+				if (ERROR_STANDARD_KEYS.has(key)) continue;
+				attributes[`exception.${key}`] = extra;
+			}
 			continue;
 		}
 		if (isPlainObject(value)) {
-			for (const [key, nested] of Object.entries(value)) {
+			// Normalized first: a raw Error nested in the object would reach
+			// both the attributes and the JSON body as `{}` — message/stack
+			// are not enumerable.
+			const normalized = normalizeErrors(value);
+			const record = isPlainObject(normalized) ? normalized : value;
+			for (const [key, nested] of Object.entries(record)) {
 				attributes[`log.${key}`] = nested;
 			}
 			try {
-				bodyParts.push(JSON.stringify(value));
+				bodyParts.push(JSON.stringify(record));
 			} catch {
 				/* non-serializable — attributes still carry the data */
 			}
 			continue;
 		}
 		if (value !== null && value !== undefined) {
-			attributes[`log.arg${extraIndex}`] = value;
+			attributes[`log.arg${extraIndex}`] = normalizeErrors(value);
 			extraIndex += 1;
 		}
 	}

@@ -1,4 +1,5 @@
 import { createTransport } from "@/lib/mods";
+import { normalizeLogEntryErrors } from "@/lib/serialize-error";
 import type { LogEntry } from "@/types";
 import type { Transport } from "@/types/mods";
 
@@ -43,12 +44,15 @@ export const httpTransport = (options: HttpTransportOptions): Transport => {
 	return createTransport({
 		name: "http",
 
+		// Errors in entry.data have non-enumerable message/stack and would
+		// serialize to `{}`: normalize before the entries reach
+		// transformBody/fetchFn/JSON.stringify (see @/lib/serialize-error).
 		send(_logger, entry) {
-			sendRequest([entry]);
+			sendRequest([normalizeLogEntryErrors(entry)]);
 		},
 
 		batch(_logger, batch) {
-			sendRequest(batch);
+			sendRequest(batch.map(normalizeLogEntryErrors));
 		},
 	});
 };

@@ -89,6 +89,7 @@
 		},
 		"./package.json": "./package.json",
 		"./typescript/base": "./src/typescript/base.json",
+		"./typescript/base-ts7": "./src/typescript/base-ts7.json",
 		"./typescript/compiler": "./src/typescript/compiler.json",
 		"./typescript/expo": "./src/typescript/expo.json",
 		"./typescript/hono": "./src/typescript/hono.json",

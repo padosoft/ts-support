@@ -1,5 +1,3 @@
-import type { Logger } from "@/core/logger";
-
 /**
  * Arbitrary key-value map attached to every log entry under the `ctx` field.
  *

@@ -79,6 +79,10 @@
 			"default": "./dist/lib/mods.mjs",
 			"types": "./dist/lib/mods.d.mts"
 		},
+		"./lib/serialize-error": {
+			"default": "./dist/lib/serialize-error.mjs",
+			"types": "./dist/lib/serialize-error.d.mts"
+		},
 		"./lib/utils": {
 			"default": "./dist/lib/utils.mjs",
 			"types": "./dist/lib/utils.d.mts"
@@ -146,6 +150,10 @@
 		"./transports/expo-fs/lib/file-logger": {
 			"default": "./dist/transports/expo-fs/lib/file-logger.mjs",
 			"types": "./dist/transports/expo-fs/lib/file-logger.d.mts"
+		},
+		"./transports/expo-fs/lib/format": {
+			"default": "./dist/transports/expo-fs/lib/format.mjs",
+			"types": "./dist/transports/expo-fs/lib/format.d.mts"
 		},
 		"./transports/file": {
 			"default": "./dist/transports/file.mjs",

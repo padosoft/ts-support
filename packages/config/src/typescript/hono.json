@@ -6,5 +6,5 @@
 		"moduleResolution": "Bundler",
 		"skipLibCheck": true
 	},
-	"extends": "./base"
+	"extends": "./base-ts7"
 }
