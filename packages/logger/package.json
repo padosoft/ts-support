@@ -12,7 +12,7 @@
 		"typescript",
 		"padosoft"
 	],
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
