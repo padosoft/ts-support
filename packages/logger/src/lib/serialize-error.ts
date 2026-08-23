@@ -77,6 +77,13 @@ const serializeNested = (value: unknown, depth: number): unknown => {
 	if (value instanceof Error) {
 		return depth < MAX_DEPTH ? serializeError(value, depth + 1) : String(value);
 	}
+	// A container (a `cause`, an `AggregateError` member, or a custom field) can
+	// itself hold Errors: walk it so a nested Error becomes a serialized object
+	// instead of the `{}` that `JSON.stringify` would emit for it. Depth-capped
+	// exactly like the Error branch above.
+	if (depth < MAX_DEPTH && (Array.isArray(value) || isPlainObject(value))) {
+		return jsonSafe(normalizeErrors(value, depth));
+	}
 	return jsonSafe(value);
 };
 

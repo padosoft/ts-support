@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/complexity/useLiteralKeys: bracket access required by tsc noPropertyAccessFromIndexSignature (TS4111) */
 import { describe, expect, it } from "bun:test";
 import { Logger } from "@/core/logger";
+import { isPlainObject } from "@/lib/serialize-error";
 import {
-	isPlainObject,
 	levelToSeverityNumber,
 	OtelSeverityNumber,
 	redactAttributes,
@@ -42,7 +42,7 @@ describe("core: levelToSeverityNumber", () => {
 	});
 });
 
-describe("core: isPlainObject", () => {
+describe("isPlainObject", () => {
 	it("returns true for plain objects", () => {
 		expect(isPlainObject({})).toBe(true);
 		expect(isPlainObject({ a: 1 })).toBe(true);
@@ -122,7 +122,7 @@ describe("core: splitLogEntry", () => {
 		expect(body).toContain('"message":"boom"');
 	});
 
-	it("carries the recursive cause chain on exception.cause", () => {
+	it("carries the recursive cause chain on exception.cause as a structure", () => {
 		const error = new Error("outer", {
 			cause: new Error("inner", { cause: "root-detail" }),
 		});
@@ -130,12 +130,17 @@ describe("core: splitLogEntry", () => {
 		const { attributes } = splitLogEntry(["failed", error]);
 
 		expect(attributes["exception.message"]).toBe("outer");
-		const cause = attributes["exception.cause"] as string;
-		expect(cause).toContain('"message":"inner"');
-		expect(cause).toContain("root-detail");
+		// Kept structured (not JSON-stringified) so redactAttributes can recurse
+		// into it before emission.
+		const cause = attributes["exception.cause"] as {
+			message: string;
+			cause: unknown;
+		};
+		expect(cause.message).toBe("inner");
+		expect(cause.cause).toBe("root-detail");
 	});
 
-	it("carries AggregateError members on exception.errors", () => {
+	it("carries AggregateError members on exception.errors as structures", () => {
 		const aggregate = new AggregateError(
 			[new TypeError("first"), new RangeError("second")],
 			"all failed",
@@ -144,9 +149,12 @@ describe("core: splitLogEntry", () => {
 		const { attributes } = splitLogEntry([aggregate]);
 
 		expect(attributes["exception.message"]).toBe("all failed");
-		const members = attributes["exception.errors"] as string;
-		expect(members).toContain('"message":"first"');
-		expect(members).toContain('"message":"second"');
+		const members = attributes["exception.errors"] as [
+			{ message: string },
+			{ message: string },
+		];
+		expect(members[0].message).toBe("first");
+		expect(members[1].message).toBe("second");
 	});
 
 	it("keeps enumerable diagnostic fields of Error subclasses as exception.*", () => {
@@ -397,6 +405,33 @@ describe("otelTransport", () => {
 
 		expect(emitted[0]!.attributes["log.secret"]).toBe("[REDACTED]");
 		expect(emitted[0]!.attributes["log.visible"]).toBe("ok");
+	});
+
+	it("redacts sensitive leaves nested inside an Error cause", () => {
+		const emitted: ProcessedLogRecord[] = [];
+		const transport = otelTransport({
+			emit: (record) => emitted.push(record),
+			sensitiveKeys: SENSITIVE_KEYS,
+		});
+
+		transport.send(undefined as never, {
+			data: [
+				new Error("auth failed", {
+					cause: { password: "secret", user: "mario" },
+				}),
+			],
+			level: "error",
+			time: new Date(),
+		});
+
+		// The secret must not survive to the backend: exception.cause is kept
+		// structured through redaction, so redactAttributes reaches the leaf.
+		const cause = emitted[0]!.attributes["exception.cause"] as {
+			password: string;
+			user: string;
+		};
+		expect(cause.password).toBe("[REDACTED]");
+		expect(cause.user).toBe("mario");
 	});
 
 	it("skips redaction when no sensitiveKeys", () => {

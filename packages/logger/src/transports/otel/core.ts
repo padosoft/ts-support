@@ -49,10 +49,6 @@ export function severityMethodFor(level: string): OtelSinkMethod {
 	return LEVEL_TO_SINK_METHOD[level] ?? "info";
 }
 
-// Moved to @/lib/serialize-error (shared with the other serializing
-// transports); re-exported here to keep the transport's public API stable.
-export { isPlainObject };
-
 function leafOf(key: string): string {
 	return key.slice(key.lastIndexOf(".") + 1).toLowerCase();
 }
@@ -115,27 +111,6 @@ const ERROR_STANDARD_KEYS = new Set([
 	"errors",
 ]);
 
-/**
- * OTLP attribute values should be primitives: structured extras (cause
- * chains, AggregateError members, object-valued custom fields) are carried
- * as JSON strings.
- */
-function toAttributeValue(value: unknown): unknown {
-	if (
-		value === null ||
-		typeof value === "string" ||
-		typeof value === "number" ||
-		typeof value === "boolean"
-	) {
-		return value;
-	}
-	try {
-		return JSON.stringify(value) ?? String(value);
-	} catch {
-		return String(value);
-	}
-}
-
 export function splitLogEntry(data: unknown[]): {
 	body: string;
 	attributes: Record<string, unknown>;
@@ -164,16 +139,22 @@ export function splitLogEntry(data: unknown[]): {
 			// recursive `cause` chain, `AggregateError.errors`, and the
 			// enumerable diagnostic fields of subclasses (statusCode, code,
 			// ...) — kept so Grafana can filter on them.
+			//
+			// Kept as structures (like the `log.*` attributes below), NOT
+			// stringified here: `redactAttributes` runs after `splitLogEntry`
+			// and must recurse into them so a sensitive leaf nested in a
+			// `cause` (e.g. `{ password }`) is redacted before it reaches the
+			// backend. `serializeError` has already made them JSON-safe.
 			const serialized = serializeError(value);
 			if (serialized.cause !== undefined) {
-				attributes["exception.cause"] = toAttributeValue(serialized.cause);
+				attributes["exception.cause"] = serialized.cause;
 			}
 			if (serialized.errors !== undefined) {
-				attributes["exception.errors"] = toAttributeValue(serialized.errors);
+				attributes["exception.errors"] = serialized.errors;
 			}
 			for (const [key, extra] of Object.entries(serialized)) {
 				if (ERROR_STANDARD_KEYS.has(key)) continue;
-				attributes[`exception.${key}`] = toAttributeValue(extra);
+				attributes[`exception.${key}`] = extra;
 			}
 			continue;
 		}

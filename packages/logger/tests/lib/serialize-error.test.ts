@@ -83,6 +83,25 @@ describe("serializeError", () => {
 		expect(result.message).toBe("boom");
 	});
 
+	it("normalizes Errors nested inside container fields, cause and members", () => {
+		const error = Object.assign(new Error("outer"), {
+			meta: { inner: new Error("inner-field") },
+		});
+		error.cause = { nested: new Error("inner-cause") };
+
+		const result = serializeError(error);
+
+		const meta = result["meta"] as { inner: { message: string } };
+		expect(meta.inner.message).toBe("inner-field");
+		const cause = result.cause as { nested: { message: string } };
+		expect(cause.nested.message).toBe("inner-cause");
+
+		// The whole point: a nested Error must not collapse to `{}`.
+		const json = JSON.stringify(result);
+		expect(json).toContain('"message":"inner-field"');
+		expect(json).toContain('"message":"inner-cause"');
+	});
+
 	it("degrades non-JSON-safe custom fields to strings", () => {
 		const circular: Record<string, unknown> = {};
 		circular["self"] = circular;
