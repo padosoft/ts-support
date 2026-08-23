@@ -1,4 +1,5 @@
-import { describe, expect, it, mock } from "bun:test";
+/** biome-ignore-all lint/complexity/useLiteralKeys: bracket access required by tsc noPropertyAccessFromIndexSignature (TS4111) */
+import { describe, expect, it } from "bun:test";
 import { Logger } from "@/core/logger";
 import {
 	isPlainObject,
@@ -100,6 +101,81 @@ describe("core: splitLogEntry", () => {
 		const { attributes } = splitLogEntry([sym]);
 		expect(attributes["log.arg0"]).toBe(sym);
 	});
+
+	it("keeps message/stack for an Error nested in a plain object", () => {
+		const { attributes, body } = splitLogEntry([
+			"open failed",
+			{ url: "https://x.test", error: new TypeError("boom") },
+		]);
+
+		const nested = attributes["log.error"] as {
+			name: string;
+			message: string;
+			stack?: string;
+		};
+		// Before normalization the raw Error reached both the attribute and
+		// the JSON body as `{}` (message/stack are not enumerable).
+		expect(nested.name).toBe("TypeError");
+		expect(nested.message).toBe("boom");
+		expect(typeof nested.stack).toBe("string");
+		expect(attributes["log.url"]).toBe("https://x.test");
+		expect(body).toContain('"message":"boom"');
+	});
+
+	it("carries the recursive cause chain on exception.cause", () => {
+		const error = new Error("outer", {
+			cause: new Error("inner", { cause: "root-detail" }),
+		});
+
+		const { attributes } = splitLogEntry(["failed", error]);
+
+		expect(attributes["exception.message"]).toBe("outer");
+		const cause = attributes["exception.cause"] as string;
+		expect(cause).toContain('"message":"inner"');
+		expect(cause).toContain("root-detail");
+	});
+
+	it("carries AggregateError members on exception.errors", () => {
+		const aggregate = new AggregateError(
+			[new TypeError("first"), new RangeError("second")],
+			"all failed",
+		);
+
+		const { attributes } = splitLogEntry([aggregate]);
+
+		expect(attributes["exception.message"]).toBe("all failed");
+		const members = attributes["exception.errors"] as string;
+		expect(members).toContain('"message":"first"');
+		expect(members).toContain('"message":"second"');
+	});
+
+	it("keeps enumerable diagnostic fields of Error subclasses as exception.*", () => {
+		class ApiError extends Error {
+			readonly statusCode: number;
+			readonly code: string;
+			constructor(statusCode: number, code: string, message: string) {
+				super(message);
+				this.name = "ApiError";
+				this.statusCode = statusCode;
+				this.code = code;
+			}
+		}
+
+		const { attributes } = splitLogEntry([
+			new ApiError(502, "UPSTREAM", "boom"),
+		]);
+
+		expect(attributes["exception.type"]).toBe("ApiError");
+		expect(attributes["exception.statusCode"]).toBe(502);
+		expect(attributes["exception.code"]).toBe("UPSTREAM");
+	});
+
+	it("normalizes Errors inside array arguments (log.argN)", () => {
+		const { attributes } = splitLogEntry([[new Error("in-array")]]);
+
+		const arg = attributes["log.arg0"] as [{ message: string }];
+		expect(arg[0].message).toBe("in-array");
+	});
 });
 
 describe("core: redactAttributes", () => {
@@ -110,8 +186,8 @@ describe("core: redactAttributes", () => {
 			{ password: "secret", user: "mario" },
 			leaves,
 		);
-		expect(result.password).toBe("[REDACTED]");
-		expect(result.user).toBe("mario");
+		expect(result["password"]).toBe("[REDACTED]");
+		expect(result["user"]).toBe("mario");
 	});
 
 	it("redacts nested values recursively", () => {
@@ -143,7 +219,7 @@ describe("core: redactAttributes", () => {
 
 	it("leaves non-object array items untouched", () => {
 		const result = redactAttributes({ ids: [1, 2, 3] }, leaves);
-		expect(result.ids).toEqual([1, 2, 3]);
+		expect(result["ids"]).toEqual([1, 2, 3]);
 	});
 });
 
@@ -171,7 +247,7 @@ describe("otelTransport", () => {
 		expect(emitted[0]!.severityText).toBe("ERROR");
 	});
 
-	it("stamps otel.scope.name and otel.scope.version from package.json", () => {
+	it("stamps scope.name and scope.version from package.json", () => {
 		const emitted: ProcessedLogRecord[] = [];
 		const transport = otelTransport({
 			emit: (record) => emitted.push(record),
@@ -183,8 +259,11 @@ describe("otelTransport", () => {
 			time: new Date(),
 		});
 
-		expect(emitted[0]!.attributes["otel.scope.name"]).toBe(pkg.name);
-		expect(emitted[0]!.attributes["otel.scope.version"]).toBe(pkg.version);
+		// `scope.*` (not `otel.scope.*`) is the deliberate key choice of
+		// commit f56ba41 ("fix: otel plugin SCOPE_ATTRIBUTES"); this test had
+		// not been updated with it.
+		expect(emitted[0]!.attributes["scope.name"]).toBe(pkg.name);
+		expect(emitted[0]!.attributes["scope.version"]).toBe(pkg.version);
 	});
 
 	it("drops records when isDisabled returns true", () => {
@@ -281,7 +360,7 @@ describe("otelTransport", () => {
 		});
 
 		expect(emitted[0]!.body).toBe("CUSTOM: a,b");
-		expect(emitted[0]!.attributes.custom).toBe(true);
+		expect(emitted[0]!.attributes["custom"]).toBe(true);
 	});
 
 	it("uses enrichAttributes", () => {

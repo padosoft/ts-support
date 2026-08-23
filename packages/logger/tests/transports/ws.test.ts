@@ -49,6 +49,25 @@ describe("webSocketTransport", () => {
 		expect(payload.length).toBe(2);
 	});
 
+	it("should serialize Errors in entry.data with message (not `{}`)", async () => {
+		const send = mock();
+		// @ts-expect-error override global
+		global.WebSocket = class {
+			send = send;
+			close = mock();
+		};
+
+		const t = webSocketTransport({ url: "ws://test" });
+		const logger = new Logger({ transports: [t] });
+
+		logger.error("failed", new TypeError("boom"));
+		await sleep(100);
+
+		const payload = JSON.parse(send.mock.calls[0]?.[0]);
+		expect(payload[0].data[1].message).toBe("boom");
+		expect(payload[0].data[1].name).toBe("TypeError");
+	});
+
 	it("should close websocket on teardown", () => {
 		const close = mock();
 		// @ts-expect-error override global

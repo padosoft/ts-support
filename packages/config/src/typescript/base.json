@@ -24,9 +24,7 @@
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
-		"noImplicitUseStrict": false,
 		"noPropertyAccessFromIndexSignature": true,
-		"noStrictGenericChecks": false,
 		"noUncheckedIndexedAccess": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
@@ -36,8 +34,6 @@
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
 		"strictPropertyInitialization": true,
-		"suppressExcessPropertyErrors": false,
-		"suppressImplicitAnyIndexErrors": false,
 		"useUnknownInCatchVariables": true
 	},
 	"typeAcquisition": {

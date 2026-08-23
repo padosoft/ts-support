@@ -5,6 +5,7 @@ import type { TimestampType } from "@/types/format";
 import type { Transport } from "@/types/mods";
 import { LOG_FILE_SEPARATOR } from "./lib/constants";
 import { FileLogger } from "./lib/file-logger";
+import { formatLogEntry } from "./lib/format";
 
 export let expoFileLogger: FileLogger | null = null;
 
@@ -29,38 +30,10 @@ export const expoFileSystemTransport = (
 	});
 	expoFileLogger.open();
 
-	const format = (entry: LogEntry) => {
-		if (options.raw) {
-			try {
-				return JSON.stringify(entry);
-			} catch {
-				return String(entry);
-			}
-		}
-
-		const messages = [timestamp(entry.time), `[${entry.level.toUpperCase()}]`];
-
-		const prefix = messages.filter((s) => s.trim().length).join(" ");
-		const formattedArgs = entry.data?.map?.((a) => {
-			if (!a) return "";
-
-			if (
-				typeof a === "string" ||
-				typeof a === "number" ||
-				typeof a === "boolean"
-			) {
-				return a.toString().trim();
-			}
-
-			try {
-				return JSON.stringify(a);
-			} catch {
-				return String(a);
-			}
-		});
-
-		return [prefix, ...formattedArgs].filter((s) => s.trim().length).join(" ");
-	};
+	// Extracted to ./lib/format (pure, testable without native deps); it
+	// normalizes Errors so they no longer reach the file as `{}`.
+	const format = (entry: LogEntry) =>
+		formatLogEntry(entry, { raw: options.raw, timestamp });
 
 	return createTransport({
 		name: "expo-fs",

@@ -3,6 +3,7 @@ import type { FileHandle } from "node:fs/promises";
 import { mkdir, open } from "node:fs/promises";
 import * as path from "node:path";
 import { createTransport } from "@/lib/mods";
+import { normalizeLogEntryErrors } from "@/lib/serialize-error";
 import type { LogEntry } from "@/types";
 import type { Transport } from "@/types/mods";
 
@@ -27,7 +28,10 @@ export const fileTransport = (options: FileTransportOptions): Transport => {
 	const writeMode: OpenMode = options.writeMode ?? (options.append ? "a" : "w");
 	let file: FileHandle | null = null;
 
-	const formatEntry = (entry: LogEntry): string => JSON.stringify(entry) + "\n";
+	// Errors in entry.data have non-enumerable message/stack and would
+	// serialize to `{}`: normalize them first (see @/lib/serialize-error).
+	const formatEntry = (entry: LogEntry): string =>
+		`${JSON.stringify(normalizeLogEntryErrors(entry))}\n`;
 
 	const ensureHandle = async () => {
 		if (!file) {

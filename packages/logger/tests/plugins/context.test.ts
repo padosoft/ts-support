@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/complexity/useLiteralKeys: bracket access required by tsc noPropertyAccessFromIndexSignature (TS4111) */
 import { beforeEach, describe, expect, it } from "bun:test";
 import { Logger } from "@/core/logger";
 import { LogLevels } from "@/lib/levels";
@@ -112,17 +113,17 @@ describe("contextPlugin (AsyncLocalStorage store)", () => {
 		const a = results.find((r) => r.id === "req-A");
 		const b = results.find((r) => r.id === "req-B");
 
-		expect(a?.ctx.request_id).toBe("req-A");
-		expect(b?.ctx.request_id).toBe("req-B");
+		expect(a?.ctx["request_id"]).toBe("req-A");
+		expect(b?.ctx["request_id"]).toBe("req-B");
 		// Neither should see the other's request_id
-		expect(a?.ctx.request_id).not.toBe("req-B");
-		expect(b?.ctx.request_id).not.toBe("req-A");
+		expect(a?.ctx["request_id"]).not.toBe("req-B");
+		expect(b?.ctx["request_id"]).not.toBe("req-A");
 		// Both should have enriched=true from patchContext
-		expect(a?.ctx.enriched).toBe(true);
-		expect(b?.ctx.enriched).toBe(true);
+		expect(a?.ctx["enriched"]).toBe(true);
+		expect(b?.ctx["enriched"]).toBe(true);
 		// Both should carry the initial context
-		expect(a?.ctx.service).toBe("api");
-		expect(b?.ctx.service).toBe("api");
+		expect(a?.ctx["service"]).toBe("api");
+		expect(b?.ctx["service"]).toBe("api");
 	});
 
 	it("outside a runWithContext scope, get() returns initial", () => {
@@ -162,6 +163,6 @@ describe("contextPlugin (AsyncLocalStorage store)", () => {
 
 		expect(ctxInsideA).toMatchObject({ req: "A", extra: "for-A" });
 		expect(ctxInsideB).toMatchObject({ req: "B", extra: "for-B" });
-		expect(ctxInsideA.extra).not.toBe("for-B");
+		expect(ctxInsideA["extra"]).not.toBe("for-B");
 	});
 });

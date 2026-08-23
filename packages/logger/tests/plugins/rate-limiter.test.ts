@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest, mock } from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { sleep } from "bun";
 import { Logger } from "@/core/logger";
 import { createTransport } from "@/lib";
@@ -8,8 +8,10 @@ describe("rateLimiterPlugin", () => {
 	let logger: Logger;
 	let transportSend: ReturnType<typeof mock>;
 
+	// NOTE: no jest.useFakeTimers() — the test awaits REAL `Bun.sleep(...)`
+	// (and the plugin reads the real Date.now()); with fake timers the sleep
+	// never resolved and the whole `bun test` run hung.
 	beforeEach(() => {
-		jest.useFakeTimers();
 		transportSend = mock(() => {});
 		logger = new Logger({
 			transports: [createTransport({ name: "t", send: transportSend })],

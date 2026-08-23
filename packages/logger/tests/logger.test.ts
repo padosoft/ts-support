@@ -1,13 +1,5 @@
 /** biome-ignore-all lint/complexity/useLiteralKeys: Necessario per accedere a metodi protected/private */
-import {
-	afterEach,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	jest,
-	mock,
-} from "bun:test";
+import { beforeEach, describe, expect, it, mock } from "bun:test";
 import { sleep } from "bun";
 import { Logger } from "@/core/logger"; // adjust import path
 import { createPlugin, createTransport } from "@/lib";
@@ -18,14 +10,13 @@ describe("Logger", () => {
 	let transport: Transport;
 	let plugin: Plugin;
 
+	// NOTE: no jest.useFakeTimers() here — these tests await REAL
+	// `Bun.sleep(...)` and never advance fake time, so fake timers made every
+	// sleep hang forever (bun test never exited). Real timers + short sleeps
+	// are what the tests actually rely on.
 	beforeEach(() => {
 		transport = createTransport({ name: "test", send: mock() });
 		plugin = createPlugin({ name: "test" });
-		jest.useFakeTimers();
-	});
-
-	afterEach(() => {
-		jest.useRealTimers();
 	});
 
 	it("defaults level to INFO", () => {
@@ -203,7 +194,9 @@ describe("Logger", () => {
 		});
 
 		expect(logger["batchingState"].timer).not.toBeNull();
-		await sleep(100);
+		// 150 > maxIntervalMs (100): sleeping exactly the interval races the
+		// flush timer.
+		await sleep(150);
 		await Promise.resolve();
 		expect(batch).toHaveBeenCalled();
 	});

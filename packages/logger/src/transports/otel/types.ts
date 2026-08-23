@@ -18,9 +18,10 @@ export interface OtelTransportOptions {
 
 	/** Replace the default entry processor (`splitLogEntry` from core).
 	 *  Controls how log args are split into body + attributes. */
-	processEntry?: (
-		data: unknown[],
-	) => { body: string; attributes: Record<string, unknown> };
+	processEntry?: (data: unknown[]) => {
+		body: string;
+		attributes: Record<string, unknown>;
+	};
 
 	/** Replace the default key-leaf redaction.
 	 *  Receives attributes after `processEntry`, returns redacted version. */

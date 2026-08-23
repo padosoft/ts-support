@@ -37,4 +37,23 @@ describe("httpTransport", () => {
 		//@ts-expect-error
 		expect(args?.body).toContain("b");
 	});
+
+	it("serializes Errors in entry.data with message and stack (not `{}`)", async () => {
+		const spy = mock(async () => {});
+		//@ts-expect-error
+		globalThis.fetch = spy;
+
+		const t = httpTransport({ endpoint: "http://test" });
+
+		await t.send(undefined as never, {
+			level: LogLevels.ERROR,
+			time: new Date(),
+			data: ["failed", new TypeError("boom")],
+		});
+
+		//@ts-expect-error
+		const body = spy.mock.calls[0]?.[1]?.body as string;
+		expect(body).toContain('"message":"boom"');
+		expect(body).toContain('"name":"TypeError"');
+	});
 });
