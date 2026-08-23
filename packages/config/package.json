@@ -10,7 +10,7 @@
 		"padosoft"
 	],
 	"type": "module",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"repository": {
 		"url": "git+https://github.com/padosoft/ts-support.git"
 	},
