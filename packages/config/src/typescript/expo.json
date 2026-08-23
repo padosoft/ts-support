@@ -3,7 +3,7 @@
 	"extends": [
 		"@react-native/typescript-config",
 		"expo/tsconfig.base",
-		"./base.json"
+		"./base-ts7.json"
 	],
 	"compilerOptions": {
 		"moduleResolution": "bundler",
