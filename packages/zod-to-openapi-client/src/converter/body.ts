@@ -7,9 +7,12 @@ import type { Endpoints } from "../utilities/endpoint";
 
 interface RequestBodyContent<Body extends ZodRequestBody> {
 	content: {
+		// Request body uses the zod INPUT type: `.default()` fields are optional
+		// for the caller (the server applies the default when they are omitted).
 		"application/json": NonNullable<
 			ConvertMaybeZod<
-				NonNullable<NonNullable<Body["content"]>["application/json"]>["schema"]
+				NonNullable<NonNullable<Body["content"]>["application/json"]>["schema"],
+				"input"
 			>
 		>;
 	};

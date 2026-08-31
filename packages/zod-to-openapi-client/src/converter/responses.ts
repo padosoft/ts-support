@@ -28,7 +28,8 @@ export interface ConvertResponses<
 								Response,
 								InterestingResponseFields
 							>]: Response[InfoField] extends infer ResponseInfoField
-								? DeepConvertMaybeZod<ResponseInfoField>
+								? // Responses use the zod OUTPUT type (server-returned, post-parse).
+									DeepConvertMaybeZod<ResponseInfoField, "output">
 								: never;
 						}
 					: never

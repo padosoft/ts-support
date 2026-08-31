@@ -16,7 +16,9 @@ export interface ConvertParameters<T, Endpoint extends Endpoints<T>> {
 			? {
 					[Key in keyof ParametersNameFetchClientToSpec]?:
 						| (NonNullable<Request>[ParametersNameFetchClientToSpec[Key]] extends infer ParameterConfig
-								? ConvertMaybeZod<ParameterConfig>
+								? // Request params use the zod INPUT type: `.default()` fields
+									// are optional for the caller (the server applies the default).
+									ConvertMaybeZod<ParameterConfig, "input">
 								: NoParameters)
 						| undefined;
 				}
