@@ -1,5 +1,15 @@
 # @padosoft/utilities
 
+## 1.11.0
+
+### Minor Changes
+
+- [#61](https://github.com/padosoft/ts-support/pull/61) [`06f761d`](https://github.com/padosoft/ts-support/commit/06f761d6f2b6e60fba6e4a8502f8c3a10c40e3a0) Thanks [@47PADO47](https://github.com/47PADO47)! - Request params/body are now typed from zod **input** instead of output.
+
+  **@padosoft/utilities** — `ConvertMaybeZod` and `DeepConvertMaybeZod` gain an optional second type parameter `Mode extends ZodInferMode` (`"input" | "output" | "infer"`, default `"infer"` = output, so existing usage is unchanged). New exports `ZodInferMode` and `InferZod`.
+
+  **@padosoft/zod-to-openapi-client** — the request `parameters` and `requestBody` converters now use `ConvertMaybeZod<…, "input">`; the response converter keeps `"output"`. This means a request field declared with zod `.default()` is now **optional** on the generated client method (the caller may omit it — the server applies the default), instead of being incorrectly required. Responses are unaffected. Consumers no longer need per-call `as` casts to reconcile defaulted request params.
+
 ## 1.10.1
 
 ### Patch Changes
