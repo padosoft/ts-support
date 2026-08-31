@@ -9,7 +9,7 @@
 		"typescript",
 		"padosoft"
 	],
-	"version": "5.0.0",
+	"version": "5.1.0",
 	"type": "module",
 	"types": "./dist/index.d.mts",
 	"files": [
