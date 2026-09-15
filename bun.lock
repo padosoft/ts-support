@@ -39,7 +39,7 @@
     },
     "packages/logger": {
       "name": "@padosoft/logger",
-      "version": "2.2.0",
+      "version": "2.2.1",
       "dependencies": {
         "@padosoft/utilities": "workspace:^",
       },
@@ -49,10 +49,11 @@
         "expo-file-system": "^57.0.0",
       },
       "peerDependencies": {
-        "expo-application": "57.0.2",
+        "expo-application": "*",
         "expo-file-system": "*",
       },
       "optionalPeers": [
+        "expo-application",
         "expo-file-system",
       ],
     },
