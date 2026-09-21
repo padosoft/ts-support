@@ -96,6 +96,6 @@
 		"./tools/biome": "./src/tools/biome.json"
 	},
 	"dependencies": {
-		"unplugin": "^3.3.0"
+		"unplugin": "^3.4.0"
 	}
 }
