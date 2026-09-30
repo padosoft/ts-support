@@ -59,6 +59,10 @@
 			"default": "./dist/compiler/plugins/hono-zod/webpack.mjs",
 			"types": "./dist/compiler/plugins/hono-zod/webpack.d.mts"
 		},
+		"./compiler/plugins/reference-directives": {
+			"default": "./dist/compiler/plugins/reference-directives.mjs",
+			"types": "./dist/compiler/plugins/reference-directives.d.mts"
+		},
 		"./compiler/tsdown": {
 			"default": "./dist/compiler/tsdown.mjs",
 			"types": "./dist/compiler/tsdown.d.mts"
