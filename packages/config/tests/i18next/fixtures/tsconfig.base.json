@@ -1,0 +1,14 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": "../../../src/typescript/base-ts7.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"skipLibCheck": false,
+		"module": "preserve",
+		"types": [],
+		"paths": {
+			"@padosoft/config/types/i18next": ["../../../src/types/i18next.ts"]
+		}
+	}
+}
