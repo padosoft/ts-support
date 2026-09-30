@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": "../../../src/typescript/base-ts7.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"skipLibCheck": false,
+		"module": "preserve",
+		"types": [],
+		"typeRoots": ["./stubs/types"],
+		"paths": {
+			"@padosoft/config/types/*": ["./dist/*.d.mts"],
+			"expo-router/build/react-navigation/native-stack": [
+				"./stubs/expo-router/native-stack.d.ts"
+			],
+			"expo-router/react-navigation": [
+				"./stubs/expo-router/react-navigation.d.ts"
+			],
+			"expo-router/unstable-native-tabs": [
+				"./stubs/expo-router/unstable-native-tabs.d.ts"
+			]
+		}
+	},
+	"include": ["usage.ts", "stubs/react.d.ts"]
+}
