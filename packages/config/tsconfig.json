@@ -5,5 +5,5 @@
 		"moduleResolution": "nodenext",
 		"module": "nodenext"
 	},
-	"exclude": ["dist"]
+	"exclude": ["dist", "tests/*/fixtures"]
 }

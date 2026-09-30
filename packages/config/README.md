@@ -69,6 +69,41 @@ import "@padosoft/config/types/expo-router";
 import "@padosoft/config/types/i18next";
 ```
 
+#### i18next
+
+`@padosoft/config/types/i18next` types i18next's `t()` keys, interpolation values and `i18n.language` from an `I18nConfig` interface that you augment:
+
+```ts
+// src/types/i18n.d.ts
+import "@padosoft/config/types/i18next";
+import type { common } from "../i18n/locales/en/common";
+
+declare module "@padosoft/config/types/i18next" {
+  interface I18nConfig {
+    Locale: "en" | "it";
+    Translation: { common: typeof common };
+  }
+}
+```
+
+Keep the `import` line: augmenting a module doesn't load it.
+
+Every member is optional:
+
+| Member | Meaning | Default |
+|--------|---------|---------|
+| `Locale` | Union of supported locale codes (`i18n.language`, `languages`, `resolvedLanguage`) | `string` |
+| `Translation` | Resources of one locale, keyed by namespace (i18next `resources`) | not set: any key is accepted |
+| `DefaultNS` | i18next `defaultNS` | `keyof Translation` |
+| `EnableSelector` | i18next `enableSelector` (`false`, `true`, `"optimize"`, `"strict"`) | `false` |
+| `StrictKeyChecks` | i18next `strictKeyChecks` | `false` |
+
+Only the members you declare are passed to i18next's `CustomTypeOptions`, so without an augmentation i18next keeps its default, permissive typing. Other i18next type options can still go on `CustomTypeOptions` directly.
+
+> **`skipLibCheck` hides augmentation errors.** `skipLibCheck: true` skips every `.d.ts` file, your own included. If the augmentation doesn't compile (e.g. TS2717 because a member is declared twice with different types), it's dropped without an error and `t()` falls back to untyped or broken keys. Check the augmentation once with `tsc --noEmit --skipLibCheck false`, or keep it in a `.ts` file.
+
+`@padosoft/rn-i18n` declares its own, separate `I18nConfig` with lowercase members: its `locale` matches `Locale` here, and its `translations` is keyed by locale first, i.e. `Record<Locale, Translation>`. Augment each module you use.
+
 ### Export utilities
 
 ```ts

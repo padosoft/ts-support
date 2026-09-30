@@ -97,5 +97,8 @@
 	},
 	"dependencies": {
 		"unplugin": "^3.4.0"
+	},
+	"devDependencies": {
+		"i18next": "^26.4.2"
 	}
 }
