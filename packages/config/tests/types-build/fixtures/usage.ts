@@ -1,4 +1,5 @@
 // A consumer of the published (built) type entries.
+import "@padosoft/config/types/css";
 import "@padosoft/config/types/nativewind";
 import type { NativeTabIcon } from "@padosoft/config/types/expo-router";
 import type {
@@ -7,6 +8,12 @@ import type {
 	NativeStackHeaderItemMenuAction,
 	NativeStackNavigationOptions,
 } from "expo-router/react-navigation";
+import styles from "./button.module.css";
+import stylesheet from "./theme.css";
+
+// css: CSS modules and plain stylesheets.
+export const className: string | undefined = styles["button"];
+export const css: string = stylesheet;
 
 // nativewind: `nativewind/types` is loaded.
 export const nativewind: "loaded" = __nativewindTypes;

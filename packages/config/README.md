@@ -59,7 +59,9 @@ export default tsdown({
 
 ### TypeScript type declarations
 
-Import ambient declarations for CSS modules, NativeWind, Expo Router, and i18next:
+Import ambient declarations for CSS modules, NativeWind, Expo Router, and i18next.
+
+Expo apps don't need `types/css`: `expo/types` (loaded by `expo-env.d.ts`) already declares CSS modules, and loading both makes TypeScript report `Duplicate identifier 'classes'`.
 
 ```ts
 // In your tsconfig.json types array or a .d.ts file:
