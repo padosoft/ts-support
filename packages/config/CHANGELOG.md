@@ -1,5 +1,36 @@
 # @padosoft/config
 
+## 1.5.0
+
+### Minor Changes
+
+- [#65](https://github.com/padosoft/ts-support/pull/65) [`24a9c73`](https://github.com/padosoft/ts-support/commit/24a9c73f3075b7f208790feed1a80082b39acfef) Thanks [@47PADO47](https://github.com/47PADO47)! - Make `@padosoft/config/types/i18next` actually augmentable, and configurable.
+
+  `I18nConfig` declared `Locale: never; Translation: never`, so augmenting it failed with TS2717. Apps usually keep the augmentation in a `.d.ts` file, where `skipLibCheck: true` hid the error: `resources` stayed `never` and every `t()` call failed with "Type instantiation is excessively deep". Including the file without augmenting it broke `t()` the same way.
+
+  - `I18nConfig` is now an empty interface and its members are read with `infer`, so every member is optional. `Locale` falls back to `string`. Without a `Translation`, i18next keeps its default, permissive typing.
+  - New optional members `DefaultNS`, `EnableSelector` and `StrictKeyChecks` map to i18next's `defaultNS`, `enableSelector` and `strictKeyChecks`. Only declared members reach `CustomTypeOptions`, so other i18next options can still be set there directly.
+  - `Locale` and `Translation` are exported. `i18n.languages` is now `readonly Locale[]`, matching i18next.
+  - `CustomI18NTypeOptions` no longer has `lng` and `fallbackLng`, which i18next doesn't read from its type options.
+  - Fixed the JSDoc example (it augmented `@gescat/i18n/config`) and documented the setup in the README, including how `skipLibCheck` hides augmentation errors.
+
+- [#68](https://github.com/padosoft/ts-support/pull/68) [`5249c99`](https://github.com/padosoft/ts-support/commit/5249c9949b95149863f0890e0cb889f7265b783a) Thanks [@47PADO47](https://github.com/47PADO47)! - New `@padosoft/config/compiler/plugins/reference-directives` rolldown plugin, now included by the `tsdown()` factory.
+
+  With `isolatedDeclarations`, tsdown generates declarations with Oxc, which drops triple-slash reference directives. The plugin puts back the ones marked `preserve="true"` on top of each declaration file, as `tsc` does, collecting them from every module bundled into it and rebasing `path` references on the output. Unmarked directives are left out, as `tsc` leaves them out since TypeScript 5.5, so packages built with the factory only change when a source opts in.
+
+  `@padosoft/config`'s own type entries now use it: `types/nativewind` and `types/css` mark their directives `preserve="true"`, and the package's `tsdown.config.ts` no longer carries its own copy of the plugin.
+
+### Patch Changes
+
+- [#66](https://github.com/padosoft/ts-support/pull/66) [`9bc5206`](https://github.com/padosoft/ts-support/commit/9bc5206a6e18e045f9f993659db0a55c4128d0f6) Thanks [@47PADO47](https://github.com/47PADO47)! - Fix `@padosoft/config/types/nativewind`, `types/expo-router` and `types/css`, which the declaration build published broken.
+
+  - `types/nativewind` was an empty `export {}`: Oxc's declaration emit drops `/// <reference />` directives, and the entry is only that directive. The build now copies each entry's reference directives back on top of its `.d.mts` (rebasing `path` ones on the output).
+  - `types/expo-router` lost its import aliases in the bundled `.d.mts`, so every augmented interface extended itself (TS2310, hidden by `skipLibCheck`) and nothing was added. It now uses a namespace import, which bundles correctly.
+  - `types/css` declared nothing: the bundled `.d.mts` is a module, where `declare module "*.css"` is ignored. The declarations now live in a script, `src/types/ambient/css.d.ts`, which the entry references.
+  - `typescript/expo` no longer lists `@padosoft/config/types/css` in `types`: Expo apps get CSS module types from `expo/types`, and loading both is a `Duplicate identifier` error. Nothing changes for them, since the entry was empty until now.
+
+  A new test builds the type entries with the package's tsdown config and compiles a consumer fixture against the output with `skipLibCheck: false`.
+
 ## 1.4.1
 
 ### Patch Changes
