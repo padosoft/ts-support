@@ -40,7 +40,7 @@ export default tsdown({
 });
 ```
 
-The factory sets `dts: true`, `splitting: false`, `treeshake: true`, minification outside watch mode, and `outDir: "dist"` by default.
+The factory sets `dts: true`, `splitting: false`, `treeshake: true`, minification outside watch mode, and `outDir: "dist"` by default, and adds the [`reference-directives`](#reference-directives) plugin after the package's own plugins.
 
 ### Compiler plugins
 
@@ -54,6 +54,37 @@ import { honoZodPlugin } from "@padosoft/config/compiler/plugins/hono-zod";
 
 export default tsdown({
   plugins: [honoZodPlugin()],
+});
+```
+
+#### `reference-directives`
+
+With `isolatedDeclarations`, tsdown generates declarations with Oxc, which drops triple-slash reference directives. This rolldown plugin puts back the ones marked `preserve="true"`, as `tsc` does, collecting them from every module bundled into each declaration file:
+
+```ts
+// src/types/nativewind.ts
+/// <reference types="nativewind/types" preserve="true" />
+```
+
+```ts
+// dist/types/nativewind.d.mts
+/// <reference types="nativewind/types" preserve="true" />
+export {}
+```
+
+- Directives without `preserve="true"` are left out, as `tsc` leaves them out since TypeScript 5.5, so dev-only references don't leak into published types.
+- `path` references are rebased on the output file. The file they point to must be published too (e.g. by shipping `src`).
+
+The `tsdown` factory already includes it. Other tsdown configs can add it directly:
+
+```ts
+import { referenceDirectives } from "@padosoft/config/compiler/plugins/reference-directives";
+import { defineConfig } from "tsdown";
+
+export default defineConfig({
+  entry: ["src/index.ts"],
+  dts: true,
+  plugins: [referenceDirectives()],
 });
 ```
 

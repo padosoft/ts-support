@@ -1,4 +1,5 @@
 import { defineConfig, type InlineConfig, type UserConfigFn } from "tsdown";
+import { referenceDirectives } from "./plugins/reference-directives.ts";
 import { defaultCustomExports } from "./utils/exports.ts";
 
 export const tsdown = (packageOptions?: InlineConfig): UserConfigFn => {
@@ -28,6 +29,7 @@ export const tsdown = (packageOptions?: InlineConfig): UserConfigFn => {
 			minify: !options.watch,
 			outDir: "dist",
 			...options,
+			plugins: [options.plugins, referenceDirectives()],
 		};
 	});
 };
