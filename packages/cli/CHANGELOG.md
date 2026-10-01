@@ -1,5 +1,22 @@
 # @padosoft/cli
 
+## 1.4.0
+
+### Minor Changes
+
+- [#70](https://github.com/padosoft/ts-support/pull/70) [`090ff08`](https://github.com/padosoft/ts-support/commit/090ff08342cba2bab6835f7beadf03fd40e33075) Thanks [@47PADO47](https://github.com/47PADO47)! - `@padosoft/cli`: add `build bump`, `build check`, `build reset` and `release apps` commands (ported from the gescat mobile app scripts) for managing Expo app build numbers against EAS and tagging/releasing apps from their changesets CHANGELOG.
+
+  `expo update` now defaults to the `latest` dist-tag (was `canary`) and, when `--tag` is omitted on an interactive terminal, prompts for `latest`, `next`, `canary` or a custom tag.
+
+  Fix npm version lookups (`expo update`, `dep add`) silently resolving nothing on Windows.
+
+  `@padosoft/utilities`: add runtime-agnostic `lib/build-number` (`computeVersionCode`, `incrementBuildNumber`, `resetBuildNumber`, `computeBuildVersions`) and `lib/changelog` (`extractChangelogSection`), plus `mapLimit` in `lib/promise`. Add Node-only subpath modules, kept out of the barrels: `lib/process` (`run`, `runOrThrow`, `runCommand`, `spawnProcess`, `toShellCommand`), `lib/git`, `lib/github`, `lib/npm` (`getTaggedVersion`), `lib/workspace` (`readWorkspacePackages`) and `lib/json-file`.
+
+### Patch Changes
+
+- Updated dependencies [[`090ff08`](https://github.com/padosoft/ts-support/commit/090ff08342cba2bab6835f7beadf03fd40e33075)]:
+  - @padosoft/utilities@1.12.0
+
 ## 1.3.1
 
 ### Patch Changes
