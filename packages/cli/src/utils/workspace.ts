@@ -16,7 +16,9 @@ export function runCommand(cmd: string, args: string[]): Promise<void> {
 				resolve();
 				return;
 			}
-			reject(new Error(`${cmd} ${args.join(" ")} exited with code ${String(code)}`));
+			reject(
+				new Error(`${cmd} ${args.join(" ")} exited with code ${String(code)}`),
+			);
 		});
 		child.on("error", reject);
 	});
@@ -26,7 +28,10 @@ export async function formatFile(filePath: string): Promise<void> {
 	await runCommand("bunx", ["biome", "format", filePath, "--write"]);
 }
 
-export function parsePackageSpec(spec: string): { name: string; version?: string } {
+export function parsePackageSpec(spec: string): {
+	name: string;
+	version?: string;
+} {
 	// handles: expo | expo@beta | expo@1.2.3 | @scope/pkg@1.0.0
 	const at = spec.lastIndexOf("@");
 	if (at <= 0) return { name: spec };
@@ -37,10 +42,15 @@ export async function getTaggedVersion(
 	pkg: string,
 	tag: string,
 ): Promise<string | null> {
+	const spec = `${pkg}@${tag}`;
+	// On Windows npm is npm.cmd, which only resolves through a shell — so keep
+	// the spec to characters that are inert in cmd.exe.
+	if (!/^[\w@/.~*+-]+$/.test(spec)) return null;
 	return new Promise((resolve) => {
 		const chunks: Buffer[] = [];
-		const child = spawn("npm", ["view", `${pkg}@${tag}`, "version"], {
+		const child = spawn("npm", ["view", spec, "version"], {
 			stdio: ["ignore", "pipe", "ignore"],
+			shell: process.platform === "win32",
 		});
 		child.stdout.on("data", (chunk: Buffer) => chunks.push(chunk));
 		child.on("close", () => {
