@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { runCommand } from "@padosoft/utilities/lib/process";
 
 export type DepMap = Record<string, string>;
 
@@ -6,22 +6,6 @@ export function sortDeps(deps: DepMap): DepMap {
 	return Object.fromEntries(
 		Object.entries(deps).sort(([a], [b]) => a.localeCompare(b)),
 	);
-}
-
-export function runCommand(cmd: string, args: string[]): Promise<void> {
-	return new Promise((resolve, reject) => {
-		const child = spawn(cmd, args, { stdio: "inherit" });
-		child.on("close", (code) => {
-			if (code === 0) {
-				resolve();
-				return;
-			}
-			reject(
-				new Error(`${cmd} ${args.join(" ")} exited with code ${String(code)}`),
-			);
-		});
-		child.on("error", reject);
-	});
 }
 
 export async function formatFile(filePath: string): Promise<void> {
@@ -38,44 +22,7 @@ export function parsePackageSpec(spec: string): {
 	return { name: spec.slice(0, at), version: spec.slice(at + 1) };
 }
 
-export async function getTaggedVersion(
-	pkg: string,
-	tag: string,
-): Promise<string | null> {
-	const spec = `${pkg}@${tag}`;
-	// On Windows npm is npm.cmd, which only resolves through a shell — so keep
-	// the spec to characters that are inert in cmd.exe.
-	if (!/^[\w@/.~*+-]+$/.test(spec)) return null;
-	return new Promise((resolve) => {
-		const chunks: Buffer[] = [];
-		const child = spawn("npm", ["view", spec, "version"], {
-			stdio: ["ignore", "pipe", "ignore"],
-			shell: process.platform === "win32",
-		});
-		child.stdout.on("data", (chunk: Buffer) => chunks.push(chunk));
-		child.on("close", () => {
-			const result = Buffer.concat(chunks).toString("utf8").trim();
-			resolve(result || null);
-		});
-		child.on("error", () => resolve(null));
-	});
-}
-
-export async function mapLimit<T, R>(
-	items: T[],
-	limit: number,
-	fn: (item: T) => Promise<R>,
-): Promise<R[]> {
-	const results: R[] = new Array(items.length) as R[];
-	let idx = 0;
-	await Promise.all(
-		Array.from({ length: Math.min(limit, items.length) }, async () => {
-			while (true) {
-				const i = idx++;
-				if (i >= items.length) break;
-				results[i] = await fn(items[i] as T);
-			}
-		}),
-	);
-	return results;
+/** Whether a dependency spec is a workspace catalog reference (`catalog:` / `catalog:<name>`). */
+export function isCatalog(value: string): boolean {
+	return value.startsWith("catalog:");
 }

@@ -174,9 +174,9 @@ Without `--tag`, an interactive terminal asks which tag to use — Enter picks `
 ```
 ? Which npm dist-tag should Expo packages be updated to?
   1) latest   stable release (default)
-  2) next     upcoming SDK beta / release candidate
-  3) canary   nightly builds from expo/expo main
-  4) custom…  any other dist-tag, e.g. beta or sdk-55
+  2) next     upcoming release / release candidate
+  3) canary   nightly builds
+  4) custom…  any other dist-tag, e.g. beta
 ```
 
 In CI or when stdin is not a TTY there is no prompt and `latest` is used.
@@ -185,7 +185,7 @@ In CI or when stdin is not a TTY there is no prompt and `latest` is used.
 
 ### `build bump` / `build check` / `build reset`
 
-Manage the `buildNumber` of Expo apps living in `apps/<app>/` (iOS build number / Android versionCode), for monorepos that keep `version` + `buildNumber` in each app's `package.json`.
+Manage the `buildNumber` of Expo apps living in `apps/<app>/` (versionCode math from `@padosoft/utilities/lib/build-number`) (iOS build number / Android versionCode), for monorepos that keep `version` + `buildNumber` in each app's `package.json`.
 
 ```
 padosoft build bump <app>  [--format <f>] [--apps-dir apps]

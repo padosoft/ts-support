@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { extractChangelogSection } from "../src/utils/changelog";
+import { extractChangelogSection } from "../src/lib/changelog";
 
 const CHANGELOG = `# luisaviaroma
 

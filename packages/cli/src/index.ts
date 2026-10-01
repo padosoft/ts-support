@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import sade from "sade";
-import { buildBump, buildCheck, buildReset } from "./commands/build-number";
+import { buildBump } from "./commands/build-bump";
+import { buildCheck } from "./commands/build-check";
+import { buildReset } from "./commands/build-reset";
 import { depAdd } from "./commands/dep-add";
 import { expoUpdate } from "./commands/expo-update";
 import { i18nExtract } from "./commands/i18n-extract";
@@ -11,6 +13,7 @@ import { initTsdown } from "./commands/init-tsdown";
 import { newPackage } from "./commands/new-package";
 import { releaseApps } from "./commands/release-apps";
 import { syncEditor } from "./commands/sync-editor";
+import { withErrorHandling } from "./utils/errors";
 
 const cli = sade("padosoft");
 
@@ -144,7 +147,7 @@ cli
 	)
 	.option("--apps-dir", "Directory containing the apps", "apps")
 	.example("build bump luisaviaroma")
-	.action(buildBump);
+	.action(withErrorHandling(buildBump));
 
 cli
 	.command("build check <app>")
@@ -164,7 +167,7 @@ cli
 	.option("--apps-dir", "Directory containing the apps", "apps")
 	.example("build check luisaviaroma")
 	.example("build check luisaviaroma --auto-increment --platform android")
-	.action(buildCheck);
+	.action(withErrorHandling(buildCheck));
 
 cli
 	.command("build reset")
@@ -173,7 +176,7 @@ cli
 	)
 	.option("--apps-dir", "Directory containing the apps", "apps")
 	.example("build reset")
-	.action(buildReset);
+	.action(withErrorHandling(buildReset));
 
 // ── release ──────────────────────────────────────────────────────────────────
 
@@ -186,7 +189,7 @@ cli
 	.option("--apps-dir", "Directory containing the apps", "apps")
 	.example("release apps --dry-run")
 	.example("release apps")
-	.action(releaseApps);
+	.action(withErrorHandling(releaseApps));
 
 // ── i18n ─────────────────────────────────────────────────────────────────────
 

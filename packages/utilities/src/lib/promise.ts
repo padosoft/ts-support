@@ -32,3 +32,23 @@ export const withTimeout = async <T>(
 		clearTimeout(timeout);
 	}
 };
+
+/** Maps `items` through `fn` with at most `limit` calls in flight; results keep input order. */
+export const mapLimit = async <T, R>(
+	items: T[],
+	limit: number,
+	fn: (item: T) => Promise<R>,
+): Promise<R[]> => {
+	const results: R[] = new Array(items.length) as R[];
+	let idx = 0;
+	await Promise.all(
+		Array.from({ length: Math.min(limit, items.length) }, async () => {
+			while (true) {
+				const i = idx++;
+				if (i >= items.length) break;
+				results[i] = await fn(items[i] as T);
+			}
+		}),
+	);
+	return results;
+};

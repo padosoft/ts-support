@@ -26,9 +26,17 @@
 			"default": "./dist/lib/async-semaphore.mjs",
 			"types": "./dist/lib/async-semaphore.d.mts"
 		},
+		"./lib/build-number": {
+			"default": "./dist/lib/build-number.mjs",
+			"types": "./dist/lib/build-number.d.mts"
+		},
 		"./lib/chalk": {
 			"default": "./dist/lib/chalk.mjs",
 			"types": "./dist/lib/chalk.d.mts"
+		},
+		"./lib/changelog": {
+			"default": "./dist/lib/changelog.mjs",
+			"types": "./dist/lib/changelog.d.mts"
 		},
 		"./lib/configuration": {
 			"default": "./dist/lib/configuration.mjs",
@@ -41,6 +49,26 @@
 		"./lib/formatters": {
 			"default": "./dist/lib/formatters.mjs",
 			"types": "./dist/lib/formatters.d.mts"
+		},
+		"./lib/git": {
+			"default": "./dist/lib/git.mjs",
+			"types": "./dist/lib/git.d.mts"
+		},
+		"./lib/github": {
+			"default": "./dist/lib/github.mjs",
+			"types": "./dist/lib/github.d.mts"
+		},
+		"./lib/json-file": {
+			"default": "./dist/lib/json-file.mjs",
+			"types": "./dist/lib/json-file.d.mts"
+		},
+		"./lib/npm": {
+			"default": "./dist/lib/npm.mjs",
+			"types": "./dist/lib/npm.d.mts"
+		},
+		"./lib/process": {
+			"default": "./dist/lib/process.mjs",
+			"types": "./dist/lib/process.d.mts"
 		},
 		"./lib/promise": {
 			"default": "./dist/lib/promise.mjs",
@@ -65,6 +93,10 @@
 		"./lib/utils": {
 			"default": "./dist/lib/utils.mjs",
 			"types": "./dist/lib/utils.d.mts"
+		},
+		"./lib/workspace": {
+			"default": "./dist/lib/workspace.mjs",
+			"types": "./dist/lib/workspace.d.mts"
 		},
 		"./lib/zod": {
 			"default": "./dist/lib/zod/index.mjs",

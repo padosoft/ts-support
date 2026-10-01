@@ -1,13 +1,11 @@
 import { join } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
+import { getTaggedVersion } from "@padosoft/utilities/lib/npm";
+import { mapLimit } from "@padosoft/utilities/lib/promise";
+import { resolveDistTag } from "../utils/dist-tag";
+import { isExpoPackage } from "../utils/expo";
 import { readJSON, writeJSON } from "../utils/fs";
-import { type Choice, input, isInteractive, select } from "../utils/prompt";
-import {
-	type DepMap,
-	formatFile,
-	getTaggedVersion,
-	mapLimit,
-} from "../utils/workspace";
+import { type DepMap, formatFile, isCatalog } from "../utils/workspace";
 
 interface ExpoUpdateOptions {
 	tag?: string;
@@ -23,44 +21,6 @@ type PkgJSON = {
 	patchedDependencies?: Record<string, string>;
 	workspaces?: { catalog?: DepMap };
 };
-
-function isExpoPackage(name: string): boolean {
-	return (
-		name === "expo" ||
-		name.startsWith("expo-") ||
-		name.startsWith("@expo/") ||
-		name.endsWith("-expo")
-	);
-}
-
-function isCatalog(value: string): boolean {
-	return value.startsWith("catalog:");
-}
-
-const DEFAULT_TAG = "latest";
-
-const TAG_CHOICES: Choice[] = [
-	{ value: "latest", hint: "stable release (default)" },
-	{ value: "next", hint: "upcoming SDK beta / release candidate" },
-	{ value: "canary", hint: "nightly builds from expo/expo main" },
-	{
-		value: "custom",
-		label: "custom…",
-		hint: "any other dist-tag, e.g. beta or sdk-55",
-	},
-];
-
-/** `--tag` wins; otherwise ask on a TTY, and fall back to `latest` in CI / pipes. */
-async function resolveTag(tag: string | undefined): Promise<string> {
-	if (tag) return tag;
-	if (!isInteractive()) return DEFAULT_TAG;
-
-	const picked = await select(
-		"Which npm dist-tag should Expo packages be updated to?",
-		TAG_CHOICES,
-	);
-	return picked === "custom" ? input("Custom dist-tag:") : picked;
-}
 
 export const expoUpdate = async (opts: ExpoUpdateOptions): Promise<void> => {
 	const cwd = process.cwd();
@@ -94,7 +54,10 @@ export const expoUpdate = async (opts: ExpoUpdateOptions): Promise<void> => {
 		return;
 	}
 
-	const tag = await resolveTag(opts.tag);
+	const tag = await resolveDistTag(
+		opts.tag,
+		"Which npm dist-tag should Expo packages be updated to?",
+	);
 	console.log(
 		`\nFetching ${expoNames.size} Expo package(s) @ ${chalk.cyan(tag)}…\n`,
 	);

@@ -1,5 +1,7 @@
 export * from "./async-semaphore";
+export * from "./build-number";
 export * from "./chalk";
+export * from "./changelog";
 export * from "./configuration";
 export * from "./dates";
 export * from "./formatters";
