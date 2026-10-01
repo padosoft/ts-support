@@ -1,7 +1,11 @@
 import { join } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
+import { getTaggedVersion } from "@padosoft/utilities/lib/npm";
+import { mapLimit } from "@padosoft/utilities/lib/promise";
+import { resolveDistTag } from "../utils/dist-tag";
+import { isExpoPackage } from "../utils/expo";
 import { readJSON, writeJSON } from "../utils/fs";
-import { type DepMap, formatFile, getTaggedVersion, mapLimit } from "../utils/workspace";
+import { type DepMap, formatFile, isCatalog } from "../utils/workspace";
 
 interface ExpoUpdateOptions {
 	tag?: string;
@@ -18,22 +22,8 @@ type PkgJSON = {
 	workspaces?: { catalog?: DepMap };
 };
 
-function isExpoPackage(name: string): boolean {
-	return (
-		name === "expo" ||
-		name.startsWith("expo-") ||
-		name.startsWith("@expo/") ||
-		name.endsWith("-expo")
-	);
-}
-
-function isCatalog(value: string): boolean {
-	return value.startsWith("catalog:");
-}
-
 export const expoUpdate = async (opts: ExpoUpdateOptions): Promise<void> => {
 	const cwd = process.cwd();
-	const tag = opts.tag ?? "canary";
 	const excluded = new Set(
 		opts.exclude
 			? opts.exclude
@@ -64,7 +54,13 @@ export const expoUpdate = async (opts: ExpoUpdateOptions): Promise<void> => {
 		return;
 	}
 
-	console.log(`\nFetching ${expoNames.size} Expo package(s) @ ${chalk.cyan(tag)}…\n`);
+	const tag = await resolveDistTag(
+		opts.tag,
+		"Which npm dist-tag should Expo packages be updated to?",
+	);
+	console.log(
+		`\nFetching ${expoNames.size} Expo package(s) @ ${chalk.cyan(tag)}…\n`,
+	);
 	if (excluded.size) {
 		console.log(`  ${chalk.dim("excluding")}  ${[...excluded].join(", ")}\n`);
 	}
@@ -93,7 +89,9 @@ export const expoUpdate = async (opts: ExpoUpdateOptions): Promise<void> => {
 			}
 			deps[name] = newVersion;
 			changed = true;
-			console.log(`  ${chalk.green("updated")}  [${label}] ${name} → ${newVersion}`);
+			console.log(
+				`  ${chalk.green("updated")}  [${label}] ${name} → ${newVersion}`,
+			);
 		}
 	};
 
@@ -116,7 +114,9 @@ export const expoUpdate = async (opts: ExpoUpdateOptions): Promise<void> => {
 			patched[nextKey] = patched[key] as string;
 			delete patched[key];
 			changed = true;
-			console.log(`  ${chalk.green("updated")}  [patchedDependencies] ${key} → ${nextKey}`);
+			console.log(
+				`  ${chalk.green("updated")}  [patchedDependencies] ${key} → ${nextKey}`,
+			);
 		}
 	}
 

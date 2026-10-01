@@ -163,6 +163,56 @@ import { listApps, listPacakges, fileNameValidator } from "@padosoft/utilities/l
 
 Helpers for Turborepo generators: list apps/packages in the monorepo and validate user-provided file names.
 
+## Build numbers
+
+```ts
+import {
+  computeVersionCode,
+  computeBuildVersions,
+  incrementBuildNumber,
+  resetBuildNumber,
+} from "@padosoft/utilities/lib/build-number";
+```
+
+Pure helpers for mobile app build numbers (iOS build number / Android versionCode), safe in every runtime.
+
+| Format | Android versionCode | `incrementBuildNumber` | `resetBuildNumber` (after a semver bump) |
+|---|---|---|---|
+| `sequential` | `(major*10000 + minor*100 + patch) * 10 + buildNumber` (buildNumber 0-9) | `+1` | `0` |
+| `yearly` | `YYYY * 1000 + buildNumber` | `+1`, restarts at `1` in a new year | `+1` |
+| `date` | `YYYYMMDD` | today | today |
+
+`computeBuildVersions(version, buildNumber, format)` returns `{ ios, android }`, the build version each store sees.
+
+## Changelog
+
+```ts
+import { extractChangelogSection } from "@padosoft/utilities/lib/changelog";
+
+extractChangelogSection(changelog, "3.2.0"); // body of "## 3.2.0", or null
+```
+
+## Node-only helpers
+
+These modules import `node:*` builtins, so they are **not** re-exported from the root or `lib` barrels. Import them by subpath; React Native / browser bundles never pull them in.
+
+| Import | Exports |
+|---|---|
+| `@padosoft/utilities/lib/process` | `run` (sync, never throws), `runOrThrow`, `runCommand` (inherited stdio), `spawnProcess`, `toShellCommand`, `WINDOWS_SHELL` |
+| `@padosoft/utilities/lib/git` | `remoteTagExists`, `createAnnotatedTag`, `pushTag` |
+| `@padosoft/utilities/lib/github` | `githubReleaseExists`, `createGithubRelease` (via an authenticated `gh`) |
+| `@padosoft/utilities/lib/npm` | `getTaggedVersion(pkg, tag)` |
+| `@padosoft/utilities/lib/workspace` | `readWorkspacePackages(root)`: direct subdirs with a named, versioned `package.json` |
+| `@padosoft/utilities/lib/json-file` | `readJSONFile` / `writeJSONFile` (round-trip the file's indentation), `detectIndent` |
+
+Commands that are `.cmd` shims on Windows (`npm`, `eas`, `bunx`) need `{ shell: WINDOWS_SHELL }`. With `shell` set, the command and args are joined by `toShellCommand`, which refuses args containing shell-active characters (Node does not escape them, see DEP0190).
+
+```ts
+import { run, WINDOWS_SHELL } from "@padosoft/utilities/lib/process";
+
+const { status, stdout } = run("eas", ["build:list", "--json"], { shell: WINDOWS_SHELL });
+```
+
 ## Zod defaults
 
 ```ts
@@ -199,6 +249,12 @@ Splits a `Promise.allSettled` result array into `fulfilled` values and `rejected
 const results = await Promise.allSettled([fetchUser(1), fetchUser(2), fetchUser(3)]);
 const { fulfilled, rejected } = inspectSettledPromiseResults(results);
 // fulfilled: User[]   rejected: unknown[]
+```
+
+`mapLimit(items, limit, fn)` maps with at most `limit` calls in flight, keeping input order:
+
+```ts
+const versions = await mapLimit(packageNames, 8, (name) => getTaggedVersion(name, "latest"));
 ```
 
 ## Formatters

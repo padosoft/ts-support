@@ -156,6 +156,81 @@ Generated `tsconfig.json` (e.g. `--preset compiler`):
 
 ---
 
+### `expo update`
+
+Updates every Expo package (`expo`, `expo-*`, `@expo/*`, `*-expo`) in the current `package.json` — `dependencies`, `devDependencies`, `overrides`, the workspace `catalog` and `patchedDependencies` keys — to the version behind an npm dist-tag. Entries using `catalog:` are skipped (the catalog itself is updated).
+
+```
+padosoft expo update [--tag <tag>] [--exclude a,b]
+```
+
+| Option | Alias | Default | Description |
+|---|---|---|---|
+| `--tag` | `-t` | `latest` | npm dist-tag. Without it, a TTY prompts for one (see below) |
+| `--exclude` | `-e` | `expo-atlas,expo-quick-actions` | Comma-separated packages to skip |
+
+Without `--tag`, an interactive terminal asks which tag to use — Enter picks `latest`:
+
+```
+? Which npm dist-tag should Expo packages be updated to?
+  1) latest   stable release (default)
+  2) next     upcoming release / release candidate
+  3) canary   nightly builds
+  4) custom…  any other dist-tag, e.g. beta
+```
+
+In CI or when stdin is not a TTY there is no prompt and `latest` is used.
+
+---
+
+### `build bump` / `build check` / `build reset`
+
+Manage the `buildNumber` of Expo apps living in `apps/<app>/` (versionCode math from `@padosoft/utilities/lib/build-number`) (iOS build number / Android versionCode), for monorepos that keep `version` + `buildNumber` in each app's `package.json`.
+
+```
+padosoft build bump <app>  [--format <f>] [--apps-dir apps]
+padosoft build check <app> [--auto-increment] [--platform ios|android] [--format <f>] [--apps-dir apps]
+padosoft build reset       [--apps-dir apps]
+```
+
+| Command | What it does |
+|---|---|
+| `build bump` | Increments `buildNumber` according to the app's build code format |
+| `build check` | Lists the app's EAS builds (`eas build:list`) and fails if the current version + buildNumber was already used. With `--auto-increment` it bumps until unique and writes the result |
+| `build reset` | Run after `changeset version`: `sequential` apps restart at `0`, `yearly`/`date` apps are bumped (their versionCode is not semver-aware) |
+
+**Build code formats** (Android versionCode):
+
+| Format | versionCode | Notes |
+|---|---|---|
+| `sequential` | `(major*10000 + minor*100 + patch) * 10 + buildNumber` | Up to 10 builds (0-9) per semver |
+| `yearly` | `YYYY * 1000 + buildNumber` | `buildNumber` restarts at 1 every year |
+| `date` | `YYYYMMDD` | `buildNumber` is today's date |
+
+The format is resolved from, in order: `--format`, a `buildCodeFormat` field in the app's `package.json`, the `buildCodeFormat` of the default export of `apps/<app>/src/config/index.{ts,js,mjs}`, then `sequential`. Importing a TypeScript config with extensionless imports needs Bun (`bunx --bun padosoft …`); if the import fails the command stops instead of guessing.
+
+```bash
+# in apps/<app>/package.json
+"build:prod": "padosoft build check my-app --auto-increment && eas build --profile production"
+
+# root package.json
+"version-packages": "changeset version && padosoft build reset && bun i --lockfile-only"
+```
+
+---
+
+### `release apps`
+
+Tags every app in `apps/*` at its current version as `<name>@<version>`, pushes the tag and creates the matching GitHub Release, with that version's section of `apps/<app>/CHANGELOG.md` as notes. Run it after the changesets "version packages" PR merges.
+
+```
+padosoft release apps [--dry-run] [--apps-dir apps]
+```
+
+Idempotent: a tag already on `origin` is never moved and an existing release is never recreated. Requires `git` with an `origin` remote and an authenticated `gh` CLI.
+
+---
+
 ## Multi-repo patterns
 
 `sync editor` is designed to be re-run whenever `@padosoft/config` updates its editor settings, keeping all repos in sync:
