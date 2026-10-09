@@ -1,5 +1,11 @@
 # @padosoft/cli
 
+## 1.4.1
+
+### Patch Changes
+
+- [#72](https://github.com/padosoft/ts-support/pull/72) [`fff12ae`](https://github.com/padosoft/ts-support/commit/fff12ae4c10008dd7daa7283d6a9706a43b9a83d) Thanks [@47PADO47](https://github.com/47PADO47)! - Il bin si chiama `padosoft`, come documentato nel README (prima era installato come `cli`).
+
 ## 1.4.0
 
 ### Minor Changes
