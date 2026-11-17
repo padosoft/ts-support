@@ -92,17 +92,17 @@
 			"types": "./dist/types/nativewind.d.mts"
 		},
 		"./package.json": "./package.json",
-		"./typescript/base": "./src/typescript/base.json",
 		"./typescript/base-ts7": "./src/typescript/base-ts7.json",
+		"./typescript/base": "./src/typescript/base.json",
 		"./typescript/compiler": "./src/typescript/compiler.json",
 		"./typescript/expo": "./src/typescript/expo.json",
 		"./typescript/hono": "./src/typescript/hono.json",
 		"./tools/biome": "./src/tools/biome.json"
 	},
 	"dependencies": {
-		"unplugin": "^3.4.0"
+		"unplugin": "^3.7.0"
 	},
 	"devDependencies": {
-		"i18next": "^26.4.2"
+		"i18next": "^26.7.2"
 	}
 }

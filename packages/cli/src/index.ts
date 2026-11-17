@@ -4,6 +4,7 @@ import sade from "sade";
 import { buildBump } from "./commands/build-bump";
 import { buildCheck } from "./commands/build-check";
 import { buildReset } from "./commands/build-reset";
+import { contractGen } from "./commands/contract-gen";
 import { depAdd } from "./commands/dep-add";
 import { expoUpdate } from "./commands/expo-update";
 import { i18nExtract } from "./commands/i18n-extract";
@@ -177,6 +178,53 @@ cli
 	.option("--apps-dir", "Directory containing the apps", "apps")
 	.example("build reset")
 	.action(withErrorHandling(buildReset));
+
+// ── styles-contract ─────────────────────────────────────────────────────────────────
+
+cli
+	.command("styles-contract gen")
+	.describe(
+		"Statically extract every fn(path, defaults, options?) call into a typed contract + defaults JSON",
+	)
+	.option("--fn, -f", "Function whose calls define the contract (required)")
+	.option("--src, -s", "Source directories to scan, comma-separated", "src")
+	.option("--out, -o", "Output directory", "src/contract")
+	.option("--name, -n", "Name of the generated interface", "Contract")
+	.option(
+		"--variant-type",
+		"Name of the generated union of paths that take a variant (default <name>VariantPath)",
+	)
+	.option(
+		"--namespaces",
+		"Path namespaces, comma-separated; unprefixed paths get the first (e.g. components,screens)",
+	)
+	.option(
+		"--variant-prop",
+		"Option property that marks a call as taking a variant",
+		"variant",
+	)
+	.option(
+		"--variants-key",
+		"Defaults key that holds the variants (not a slot)",
+		"variants",
+	)
+	.option(
+		"--opaque",
+		"Expression roots kept as { $expr } instead of evaluated, comma-separated",
+		"Platform.select,StyleSheet",
+	)
+	.option("--check, -c", "Fail if the generated files are out of date", false)
+	.option(
+		"--minify, -m",
+		"Minify the output: single-line JSON, no comments or whitespace in the contract (implies --no-format)",
+		false,
+	)
+	.option("--no-format", "Do not format the output with the project's Biome")
+	.example(
+		"styles-contract gen --fn useStyleOverride --src packages/core/src,packages/ui/src --out packages/ui/src/style-contract --name StyleContract --namespaces components,screens",
+	)
+	.example("styles-contract gen --fn useStyleOverride --check")
+	.action(withErrorHandling(contractGen));
 
 // ── release ──────────────────────────────────────────────────────────────────
 
