@@ -103,6 +103,6 @@
 		"unplugin": "^3.7.0"
 	},
 	"devDependencies": {
-		"i18next": "^26.7.2"
+		"i18next": "^27.1.3"
 	}
 }
