@@ -1,5 +1,18 @@
 # @padosoft/cli
 
+## 1.5.0
+
+### Minor Changes
+
+- [#74](https://github.com/padosoft/ts-support/pull/74) [`f4f6ac9`](https://github.com/padosoft/ts-support/commit/f4f6ac997c50a96ce5d9e71653b2a0d15acf9496) Thanks [@47PADO47](https://github.com/47PADO47)! - Nuovo comando `padosoft styles-contract gen`: estrae staticamente (solo AST, via `oxc-parser`) ogni chiamata `fn(path, defaults, options?)` e genera un contratto tipizzato (`path → slot`) più i default per call site, con `--check` per la CI. Pensato per i layer di override di stile/tema (es. `useStyleOverride`), con `--minify` per output compatto, configurabile per funzione, namespace dei path, chiave delle varianti ed espressioni opache (`Platform.select`, `StyleSheet`).
+
+### Patch Changes
+
+- [#72](https://github.com/padosoft/ts-support/pull/72) [`fff12ae`](https://github.com/padosoft/ts-support/commit/fff12ae4c10008dd7daa7283d6a9706a43b9a83d) Thanks [@47PADO47](https://github.com/47PADO47)! - Il bin si chiama `padosoft`, come documentato nel README (prima era installato come `cli`).
+
+- Updated dependencies [[`f4f6ac9`](https://github.com/padosoft/ts-support/commit/f4f6ac997c50a96ce5d9e71653b2a0d15acf9496)]:
+  - @padosoft/config@1.5.1
+
 ## 1.4.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.5.1
+
+### Patch Changes
+
+- [#74](https://github.com/padosoft/ts-support/pull/74) [`f4f6ac9`](https://github.com/padosoft/ts-support/commit/f4f6ac997c50a96ce5d9e71653b2a0d15acf9496) Thanks [@47PADO47](https://github.com/47PADO47)! - Aggiornate le dipendenze entro i range semver (`unplugin` ^3.7.0).
+
 ## 1.5.0
 
 ### Minor Changes
