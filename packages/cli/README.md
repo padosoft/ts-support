@@ -251,6 +251,7 @@ padosoft styles-contract gen --fn <name> [--src dirs] [--out dir] [--name Contra
 | `--variants-key` | `variants` | Key of the defaults object that holds variants (not a slot) |
 | `--opaque` | `Platform.select,StyleSheet` | Expression roots kept as `{ "$expr": "…" }` instead of evaluated |
 | `--check, -c` | `false` | Write nothing; exit 1 if the generated files are out of date (CI) |
+| `--minify, -m` | `false` | Minified output: single-line JSON, contract without comments or whitespace (implies `--no-format`) |
 | `--no-format` | — | Skip formatting with the project's Biome |
 
 **Example:**

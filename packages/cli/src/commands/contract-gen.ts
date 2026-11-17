@@ -23,6 +23,7 @@ interface ContractGenOptions {
 	"variants-key"?: string;
 	opaque?: string | string[];
 	check?: boolean;
+	minify?: boolean;
 	format?: boolean;
 }
 
@@ -75,21 +76,23 @@ export const contractGen = async (opts: ContractGenOptions): Promise<void> => {
 	}
 
 	const defaults = buildDefaults(calls, options.variantsKey);
-	const format = opts.format !== false;
+	const minify = opts.minify === true;
+	// Biome would re-expand minified output.
+	const format = opts.format !== false && !minify;
 	const finish = (content: string, file: string) =>
 		format ? formatWithBiome(content, file, root) : content;
 	const outputs = [
 		{
 			file: join(outDir, CONTRACT_FILE),
 			content: finish(
-				renderContract(defaults, options),
+				renderContract(defaults, { ...options, minify }),
 				join(outDir, CONTRACT_FILE),
 			),
 		},
 		{
 			file: join(outDir, DEFAULTS_FILE),
 			content: finish(
-				`${JSON.stringify(defaults, null, "\t")}\n`,
+				`${JSON.stringify(defaults, null, minify ? undefined : "\t")}\n`,
 				join(outDir, DEFAULTS_FILE),
 			),
 		},

@@ -214,6 +214,11 @@ cli
 		"Platform.select,StyleSheet",
 	)
 	.option("--check, -c", "Fail if the generated files are out of date", false)
+	.option(
+		"--minify, -m",
+		"Minify the output: single-line JSON, no comments or whitespace in the contract (implies --no-format)",
+		false,
+	)
 	.option("--no-format", "Do not format the output with the project's Biome")
 	.example(
 		"styles-contract gen --fn useStyleOverride --src packages/core/src,packages/ui/src --out packages/ui/src/style-contract --name StyleContract --namespaces components,screens",

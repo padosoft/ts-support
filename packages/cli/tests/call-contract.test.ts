@@ -172,6 +172,20 @@ describe("renderContract", () => {
 		);
 	});
 
+	test("minify drops comments, indentation and line breaks", () => {
+		const min = renderContract(buildDefaults(calls, "variants"), {
+			...options,
+			minify: true,
+		});
+		expect(min.split("\n")).toHaveLength(6); // header + 4 declarations + trailing newline
+		expect(min).not.toContain("/**");
+		expect(min).not.toContain("\t");
+		expect(min).toContain(
+			'"components.button":{container:string;flags:readonly StyleContractJson[];hairline:StyleContractJson;',
+		);
+		expect(min).toContain('export type StyleVariantPath="components.button";');
+	});
+
 	test("is `never` when no path takes a variant", () => {
 		const noVariants = buildDefaults(
 			calls.filter((c) => c.path.startsWith("screens.")),
