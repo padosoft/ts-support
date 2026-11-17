@@ -31,5 +31,5 @@ for dir in packages/*/; do
   popd > /dev/null
 done
 
-# Create git tags for all published packages (equivalent to what changeset publish does)
-changeset tag
+# Create git tags for all published packages (equivalent to what changeset publish does; emits CHANGESETS_OUTPUT for changesets/action)
+changeset git-tag
