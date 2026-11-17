@@ -43,12 +43,12 @@ jobs:
       - name: Create Release Pull Request or Publish to NPM
         id: changesets
         if: inputs.skip_changesets != true
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: bun version-packages
-          publish: bun publish-packages
-          commit: "chore(release): version packages"
-          title: "chore(release): version packages"
+          version-script: bun version-packages
+          publish-script: bun publish-packages
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -83,7 +83,7 @@ jobs:
               fi
             done
           else
-            published='${{ steps.changesets.outputs.publishedPackages }}'
+            published='${{ steps.changesets.outputs.published-packages }}'
             echo "$published" | jq -r '.[].name' | while IFS= read -r pkg_name; do
               for dir in packages/*/; do
                 if [ -f "${dir}package.json" ]; then
