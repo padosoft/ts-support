@@ -179,10 +179,10 @@ cli
 	.example("build reset")
 	.action(withErrorHandling(buildReset));
 
-// ── contract ─────────────────────────────────────────────────────────────────
+// ── styles-contract ─────────────────────────────────────────────────────────────────
 
 cli
-	.command("contract gen")
+	.command("styles-contract gen")
 	.describe(
 		"Statically extract every fn(path, defaults, options?) call into a typed contract + defaults JSON",
 	)
@@ -216,9 +216,9 @@ cli
 	.option("--check, -c", "Fail if the generated files are out of date", false)
 	.option("--no-format", "Do not format the output with the project's Biome")
 	.example(
-		"contract gen --fn useStyleOverride --src packages/core/src,packages/ui/src --out packages/ui/src/style-contract --name StyleContract --namespaces components,screens",
+		"styles-contract gen --fn useStyleOverride --src packages/core/src,packages/ui/src --out packages/ui/src/style-contract --name StyleContract --namespaces components,screens",
 	)
-	.example("contract gen --fn useStyleOverride --check")
+	.example("styles-contract gen --fn useStyleOverride --check")
 	.action(withErrorHandling(contractGen));
 
 // ── release ──────────────────────────────────────────────────────────────────

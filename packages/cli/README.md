@@ -231,12 +231,12 @@ Idempotent: a tag already on `origin` is never moved and an existing release is 
 
 ---
 
-### `contract gen`
+### `styles-contract gen`
 
 Statically extracts every call of a function shaped like `fn(path, defaults, options?)` and generates a typed **contract** from them. It is meant for apps that let a theme or a white-label layer override component styles: components declare their defaults at the call site (`useStyleOverride("button", defaults)`), and the contract tells the override layer which paths and slots exist, so unknown paths or slots become TypeScript errors instead of silently dead keys.
 
 ```
-padosoft contract gen --fn <name> [--src dirs] [--out dir] [--name Contract] [--check]
+padosoft styles-contract gen --fn <name> [--src dirs] [--out dir] [--name Contract] [--check]
 ```
 
 | Option | Default | Description |
@@ -256,10 +256,10 @@ padosoft contract gen --fn <name> [--src dirs] [--out dir] [--name Contract] [--
 **Example:**
 
 ```bash
-padosoft contract gen --fn useStyleOverride   --src packages/core/src,packages/ui/src   --out packages/ui/src/style-contract   --name StyleContract --namespaces components,screens
+padosoft styles-contract gen --fn useStyleOverride   --src packages/core/src,packages/ui/src   --out packages/ui/src/style-contract   --name StyleContract --namespaces components,screens
 
 # in CI: fail if someone changed a default without regenerating
-padosoft contract gen --fn useStyleOverride ... --check
+padosoft styles-contract gen --fn useStyleOverride ... --check
 ```
 
 **What it understands** (no type checker, only the AST, so it is fast): the path as a string literal, as an identifier typed with a union alias of string literals declared in the same file, or as a template over such identifiers; defaults as an object literal or a `const` of the same file or of a relative import, with `as` / `satisfies` / spreads / simple arithmetic. Any call it cannot resolve is reported with `file:line` and the command fails — the contract never has holes.
