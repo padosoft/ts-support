@@ -231,6 +231,50 @@ Idempotent: a tag already on `origin` is never moved and an existing release is 
 
 ---
 
+### `contract gen`
+
+Statically extracts every call of a function shaped like `fn(path, defaults, options?)` and generates a typed **contract** from them. It is meant for apps that let a theme or a white-label layer override component styles: components declare their defaults at the call site (`useStyleOverride("button", defaults)`), and the contract tells the override layer which paths and slots exist, so unknown paths or slots become TypeScript errors instead of silently dead keys.
+
+```
+padosoft contract gen --fn <name> [--src dirs] [--out dir] [--name Contract] [--check]
+```
+
+| Option | Default | Description |
+|---|---|---|
+| `--fn, -f` | — | Function whose calls define the contract (required) |
+| `--src, -s` | `src` | Directories to scan, comma-separated (or repeat the flag) |
+| `--out, -o` | `src/contract` | Output directory |
+| `--name, -n` | `Contract` | Name of the generated interface |
+| `--variant-type` | `<name>VariantPath` | Name of the generated union of paths that take a variant |
+| `--namespaces` | — | Path namespaces, comma-separated. Paths already in one are kept; bare paths get the **first** (`components,screens` turns `button` into `components.button`) |
+| `--variant-prop` | `variant` | Property of the options argument that marks a call as taking a variant |
+| `--variants-key` | `variants` | Key of the defaults object that holds variants (not a slot) |
+| `--opaque` | `Platform.select,StyleSheet` | Expression roots kept as `{ "$expr": "…" }` instead of evaluated |
+| `--check, -c` | `false` | Write nothing; exit 1 if the generated files are out of date (CI) |
+| `--no-format` | — | Skip formatting with the project's Biome |
+
+**Example:**
+
+```bash
+padosoft contract gen --fn useStyleOverride   --src packages/core/src,packages/ui/src   --out packages/ui/src/style-contract   --name StyleContract --namespaces components,screens
+
+# in CI: fail if someone changed a default without regenerating
+padosoft contract gen --fn useStyleOverride ... --check
+```
+
+**What it understands** (no type checker, only the AST, so it is fast): the path as a string literal, as an identifier typed with a union alias of string literals declared in the same file, or as a template over such identifiers; defaults as an object literal or a `const` of the same file or of a relative import, with `as` / `satisfies` / spreads / simple arithmetic. Any call it cannot resolve is reported with `file:line` and the command fails — the contract never has holes.
+
+**Output** in `--out`:
+
+| File | Description |
+|---|---|
+| `contract.generated.ts` | Self-contained: `<name>` (path → slots, union of the shapes at every call site), `<name>Json`, `<name>Object` and the variant-paths union |
+| `defaults.generated.json` | Per path, the defaults of every call site (`file` + `defaults`) — documentation for theme authors and the baseline for parity tests |
+
+Files are formatted with the Biome found in `node_modules/.bin` (searched upwards from the current directory), so they pass `biome check`.
+
+---
+
 ## Multi-repo patterns
 
 `sync editor` is designed to be re-run whenever `@padosoft/config` updates its editor settings, keeping all repos in sync:
@@ -266,7 +310,7 @@ Files that already exist are skipped unless `--force` is passed. The CLI prints 
 
 ## Requirements
 
-- Node.js 18+ or Bun 1+
+- Node.js 20.19+ or Bun 1+
 - `@padosoft/config` must be installed alongside this CLI (it is the source of all editor, biome, and tsconfig assets)
 
 ## License
