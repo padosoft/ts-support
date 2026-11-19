@@ -155,6 +155,32 @@ import { fillArray, toPascalCase, isColor, sleep } from "@padosoft/utilities/lib
 | `isColor(str)` | Returns `true` if `str` is a valid hex or rgb color |
 | `sleep(ms)` | Returns a `Promise` that resolves after `ms` milliseconds |
 
+## Module interop
+
+```ts
+import { resolveModuleInterop } from "@padosoft/utilities/lib/module-interop";
+```
+
+Resolves the real API of a CommonJS module imported through an ESM interop layer. Depending on the bundler and interop mode, the API can sit on the namespace itself, on `ns.default`, or on `ns.default.default`. `resolveModuleInterop` checks those levels in order and returns the first one that exposes every required key as a function (bounded by `maxDepth`, default 3, and cycle-safe):
+
+```ts
+import plistModule from "@expo/plist";
+import { resolveModuleInterop } from "@padosoft/utilities/lib/module-interop";
+
+type PlistApi = {
+  parse: (xml: string) => unknown;
+  build: (value: unknown) => string;
+};
+
+const plist = resolveModuleInterop<PlistApi>(plistModule, ["parse", "build"], {
+  name: "@expo/plist",
+});
+```
+
+- Pass a list of keys (checked as functions), or a type guard as the second argument for a custom check.
+- If no level matches, it throws an `Error` naming the missing keys and the shapes it inspected.
+- Motivating incident: a CJS-built package called `plist.parse` on a default import that was the whole `module.exports`, failing at runtime with `a.default.parse is not a function`.
+
 ## Turborepo utilities
 
 ```ts

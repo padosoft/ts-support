@@ -5,6 +5,7 @@ export * from "./changelog";
 export * from "./configuration";
 export * from "./dates";
 export * from "./formatters";
+export * from "./module-interop";
 export * from "./promise";
 export * from "./query";
 export * from "./query-proxy";
