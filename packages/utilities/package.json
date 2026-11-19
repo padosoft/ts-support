@@ -62,6 +62,10 @@
 			"default": "./dist/lib/json-file.mjs",
 			"types": "./dist/lib/json-file.d.mts"
 		},
+		"./lib/module-interop": {
+			"default": "./dist/lib/module-interop.mjs",
+			"types": "./dist/lib/module-interop.d.mts"
+		},
 		"./lib/npm": {
 			"default": "./dist/lib/npm.mjs",
 			"types": "./dist/lib/npm.d.mts"
