@@ -289,7 +289,7 @@ padosoft stack plan     [--json]          # pending migrations, in the order to 
 
 # changing a project
 padosoft stack init --stack <id> [--choice axis=option] [--feature name] [--defaults]
-padosoft stack apply <recipe> [--force]   # e.g. feature.otel, styling.uniwind
+padosoft stack apply <recipe> [--force]   # e.g. feature/otel, styling/uniwind
 padosoft stack migrate <id>               # packages + codemod, then prints the manual steps
 padosoft stack verify <id>                # the migration's verify commands
 padosoft stack mark <id>                  # verify, then record it as applied with the choices it sets
@@ -325,12 +325,13 @@ Choices are always explicit: an axis `default` is only proposed by `stack init`,
 ```
 stacks/<stack>/stack.json                         { "extends": ["base"], "axes": { "<axis>": { "options", "descriptions", "default" } }, "defaults": { "<inherited axis>": "<option>" } }
 stacks/<stack>/rules/<name>.md                    always included
-stacks/<stack>/rules/<axis>.<option>.md           included when choices[axis] = option
-stacks/<stack>/rules/feature.<name>.md            included when features contains name
+stacks/<stack>/rules/<axis>/<option>.md           included when choices[axis] = option
+stacks/<stack>/rules/feature/<name>.md            included when features contains name
 stacks/<stack>/skills/<name>/SKILL.md             Agent Skills format; name must match the folder
-stacks/<stack>/recipes/<name>/recipe.json         { "title", "deps": { "add", "dev", "remove" }, "merge": { "<file>.json": {...} } }
-stacks/<stack>/recipes/<name>/files/**            copied into the project
-stacks/<stack>/recipes/<name>/steps.md            printed for the agent after applying
+stacks/<stack>/recipes/<recipe>/recipe.json       { "title", "deps": { "add", "dev", "remove" }, "merge": { "<file>.json": {...} } }
+stacks/<stack>/recipes/<recipe>/files/**          copied into the project
+stacks/<stack>/recipes/<recipe>/steps.md          printed for the agent after applying
+                                                  <recipe> = init | <axis>/<option> | feature/<name>
 stacks/<stack>/migrations/<name>/migration.json   { "title", "kind", "when", "set", "deps", "verify" }
 stacks/<stack>/migrations/<name>/codemod.{mjs,js,ts}   run in the project folder ($PADOSOFT_PROJECT_DIR)
 stacks/<stack>/migrations/<name>/steps.md         printed by `stack migrate`
@@ -338,7 +339,7 @@ stacks/<stack>/migrations/<name>/steps.md         printed by `stack migrate`
 
 An axis `descriptions` says when to pick each option: `stack init` shows it in its prompts and, without a terminal, prints it as the list of choices to make (for an agent to relay to the user). A stack `defaults` overrides the default of an inherited axis; when several stacks of a project set one, the last stack listed wins (for example a `web` stack proposing a different linter than a mobile-only project gets).
 
-Recipe folder names follow the rule names: `<axis>.<option>` records that choice, `feature.<name>` adds the feature, and `init` (one per stack) runs on `stack init`, bases first. Applying a recipe for another option of an axis the project already chose is refused: switching options is a migration. Recipes are idempotent: identical files are skipped, differing files are kept unless `--force`, and JSON merges only add what is missing (objects merge, arrays gain missing items, values are replaced).
+Rules and recipes are grouped the same way: at the top level they always apply (`init` is the recipe run by `stack init`, one per stack, bases first), under `<axis>/<option>` they belong to that choice, and under `feature/<name>` to that feature. A recipe's path is its name: `stack apply list/legend-list`. Applying a recipe for another option of an axis the project already chose is refused: switching options is a migration. Recipes are idempotent: identical files are skipped, differing files are kept unless `--force`, and JSON merges only add what is missing (objects merge, arrays gain missing items, values are replaced).
 
 Migrations run in name order (use a date prefix) across the stack chain; each required migration's `set` is applied before the next `when` is evaluated, and required migrations can only be applied in that order. Packages are changed with the project's package manager (from the nearest lockfile or `packageManager` field). In a project that depends on `expo`, runtime packages are added with `expo install`, so their versions match the SDK. On Windows, npm, pnpm and yarn run through the shell, so keep package specs to exact or `~` versions there.
 

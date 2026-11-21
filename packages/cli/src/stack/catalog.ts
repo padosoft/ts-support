@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
 import {
 	formatZodError,
@@ -18,11 +18,13 @@ import {
  *
  * ```
  * stacks/<stack>/stack.json
- * stacks/<stack>/rules/<name>.md                 always
- * stacks/<stack>/rules/<axis>.<option>.md        when choices[axis] = option
- * stacks/<stack>/rules/feature.<name>.md         when features contains name
+ * stacks/<stack>/rules/<name>.md                    always
+ * stacks/<stack>/rules/<axis>/<option>.md           when choices[axis] = option
+ * stacks/<stack>/rules/feature/<name>.md            when features contains name
  * stacks/<stack>/skills/<name>/SKILL.md
- * stacks/<stack>/recipes/<name>/recipe.json      (+ files/, steps.md)
+ * stacks/<stack>/recipes/<name>/recipe.json         (+ files/, steps.md)
+ * stacks/<stack>/recipes/<axis>/<option>/recipe.json
+ * stacks/<stack>/recipes/feature/<name>/recipe.json
  * stacks/<stack>/migrations/<name>/migration.json (+ codemod.{mjs,js,ts}, steps.md)
  * ```
  *
@@ -39,7 +41,7 @@ export type Condition =
 
 export interface RuleEntry {
 	stack: string;
-	/** File name, e.g. `styling.uniwind.md`. */
+	/** Path relative to `rules/`, e.g. `styling/uniwind.md`. */
 	file: string;
 	path: string;
 	condition: Condition;
@@ -47,6 +49,7 @@ export interface RuleEntry {
 
 export interface RecipeEntry {
 	stack: string;
+	/** `init`, `<axis>/<option>` or `feature/<name>`: what `stack apply` takes. */
 	name: string;
 	dir: string;
 	/** What applying it records: a choice, a feature, or nothing. */
@@ -92,23 +95,24 @@ export interface Catalog {
 	issues: CatalogIssue[];
 }
 
-const FEATURE_PREFIX = "feature";
+const FEATURE_GROUP = "feature";
+const SEGMENT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /**
- * Reads a rule file name (without `.md`) or a recipe folder name:
- * `<name>` always, `<axis>.<option>` for a choice, `feature.<name>` for a
- * feature. Returns an error message for any other shape.
+ * Reads where a rule (path without `.md`) or a recipe sits: `<name>`
+ * always, `<axis>/<option>` for a choice, `feature/<name>` for a feature.
+ * Returns an error message for any other shape.
  */
-export const parseCondition = (name: string): Condition | string => {
-	const parts = name.split(".");
-	if (parts.length === 1) return { kind: "always" };
-	if (parts.length !== 2 || parts.some((p) => p.length === 0)) {
-		return `expected <name>, <axis>.<option> or ${FEATURE_PREFIX}.<name>`;
+export const parseCondition = (path: string): Condition | string => {
+	const parts = path.split("/");
+	if (parts.length > 2 || !parts.every((part) => SEGMENT.test(part))) {
+		return `expected <name>, <axis>/<option> or ${FEATURE_GROUP}/<name>, in lowercase letters, digits and hyphens`;
 	}
-	const [prefix, value] = parts as [string, string];
-	return prefix === FEATURE_PREFIX
+	const [group, value] = parts as [string, string | undefined];
+	if (value === undefined) return { kind: "always" };
+	return group === FEATURE_GROUP
 		? { kind: "feature", feature: value }
-		: { kind: "choice", axis: prefix, option: value };
+		: { kind: "choice", axis: group, option: value };
 };
 
 const listDirs = async (dir: string): Promise<string[]> =>
@@ -118,6 +122,30 @@ const listDirs = async (dir: string): Promise<string[]> =>
 				.map((e) => e.name)
 				.sort()
 		: [];
+
+/**
+ * `.md` files of `dir` and of its direct subfolders, as `/`-separated
+ * relative paths, plus the folders nested deeper than that (never read).
+ */
+async function listMarkdown(
+	dir: string,
+): Promise<{ files: string[]; tooDeep: string[] }> {
+	const files: string[] = [];
+	const tooDeep: string[] = [];
+	for (const entry of await readdir(dir, { withFileTypes: true })) {
+		if (entry.isFile() && entry.name.endsWith(".md")) files.push(entry.name);
+		if (!entry.isDirectory()) continue;
+		const sub = join(dir, entry.name);
+		for (const child of await readdir(sub, { withFileTypes: true })) {
+			if (child.isFile() && child.name.endsWith(".md")) {
+				files.push(`${entry.name}/${child.name}`);
+			} else if (child.isDirectory()) {
+				tooDeep.push(join(sub, child.name));
+			}
+		}
+	}
+	return { files: files.sort(), tooDeep };
+}
 
 const readJson = async (path: string): Promise<unknown> =>
 	JSON.parse(await readFile(path, "utf8"));
@@ -166,17 +194,17 @@ async function loadStack(
 
 	const rules: RuleEntry[] = [];
 	const rulesDir = join(dir, "rules");
-	if (existsSync(rulesDir)) {
-		const files = (await readdir(rulesDir, { withFileTypes: true }))
-			.filter((e) => e.isFile() && e.name.endsWith(".md"))
-			.map((e) => e.name)
-			.sort();
-		for (const file of files) {
-			const path = join(rulesDir, file);
-			const condition = parseCondition(basename(file, ".md"));
-			if (typeof condition === "string") issue(path, condition);
-			else rules.push({ stack: id, file, path, condition });
-		}
+	const listed = existsSync(rulesDir)
+		? await listMarkdown(rulesDir)
+		: { files: [], tooDeep: [] };
+	for (const path of listed.tooDeep) {
+		issue(path, "rules nest one level only: rules/<axis>/<option>.md");
+	}
+	for (const file of listed.files) {
+		const path = join(rulesDir, ...file.split("/"));
+		const condition = parseCondition(file.slice(0, -".md".length));
+		if (typeof condition === "string") issue(path, condition);
+		else rules.push({ stack: id, file, path, condition });
 	}
 
 	const skills: SkillEntry[] = [];
@@ -215,8 +243,21 @@ async function loadStack(
 
 	const recipes: RecipeEntry[] = [];
 	const recipesDir = join(dir, "recipes");
-	for (const name of await listDirs(recipesDir)) {
-		const recipeDir = join(recipesDir, name);
+	// A folder holding recipe.json is a recipe; any other folder groups one
+	// recipe per option (`<axis>/<option>/`, `feature/<name>/`).
+	const recipeNames: string[] = [];
+	for (const top of await listDirs(recipesDir)) {
+		if (existsSync(join(recipesDir, top, "recipe.json"))) {
+			recipeNames.push(top);
+			continue;
+		}
+		const options = await listDirs(join(recipesDir, top));
+		if (options.length === 0)
+			issue(join(recipesDir, top), "missing recipe.json");
+		recipeNames.push(...options.map((option) => `${top}/${option}`));
+	}
+	for (const name of recipeNames) {
+		const recipeDir = join(recipesDir, ...name.split("/"));
 		const path = join(recipeDir, "recipe.json");
 		const target = parseCondition(name);
 		if (typeof target === "string") {

@@ -312,10 +312,10 @@ export async function stackInit(options: InitOptions): Promise<void> {
 	const toApply = [
 		...recipes.filter((r) => r.name === INIT_RECIPE),
 		...[...chain.axes.keys()].flatMap((axis) =>
-			recipes.filter((r) => r.name === `${axis}.${choices[axis]}`),
+			recipes.filter((r) => r.name === `${axis}/${choices[axis]}`),
 		),
 		...features.flatMap((f) =>
-			recipes.filter((r) => r.name === `feature.${f}`),
+			recipes.filter((r) => r.name === `feature/${f}`),
 		),
 	];
 	for (const entry of toApply)

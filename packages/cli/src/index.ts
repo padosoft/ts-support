@@ -360,8 +360,8 @@ cli
 		"Overwrite project files that differ from the recipe's",
 		false,
 	)
-	.example("stack apply feature.otel")
-	.example("stack apply styling.uniwind")
+	.example("stack apply feature/otel")
+	.example("stack apply styling/uniwind")
 	.action(withErrorHandling(stackApply));
 
 cli

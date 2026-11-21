@@ -53,8 +53,8 @@ const FILES: Record<string, string> = {
 		},
 	}),
 	"stacks/base/rules/general.md": "GENERAL RULE",
-	"stacks/base/rules/lint.alpha-lint.md": "ALPHA LINT RULE",
-	"stacks/base/rules/lint.beta-lint.md": "BETA LINT RULE",
+	"stacks/base/rules/lint/alpha-lint.md": "ALPHA LINT RULE",
+	"stacks/base/rules/lint/beta-lint.md": "BETA LINT RULE",
 	"stacks/base/skills/add-tracing/SKILL.md":
 		"---\nname: add-tracing\ndescription: >-\n  Use when adding\n  tracing.\n---\n# Add tracing\n",
 	"stacks/app/stack.json": JSON.stringify({
@@ -65,8 +65,8 @@ const FILES: Record<string, string> = {
 		},
 	}),
 	"stacks/app/rules/app.md": "APP RULE",
-	"stacks/app/rules/list.new-list.md": "NEW LIST RULE",
-	"stacks/app/rules/feature.tracing.md": "TRACING RULE",
+	"stacks/app/rules/list/new-list.md": "NEW LIST RULE",
+	"stacks/app/rules/feature/tracing.md": "TRACING RULE",
 	"stacks/app/migrations/2026.01-config/migration.json": JSON.stringify({
 		title: "Config",
 	}),
@@ -86,24 +86,25 @@ const FILES: Record<string, string> = {
 		when: { forms: "form-a" },
 		set: { forms: "form-b" },
 	}),
-	"stacks/app/recipes/list.new-list/recipe.json": JSON.stringify({
+	"stacks/app/recipes/list/new-list/recipe.json": JSON.stringify({
 		title: "New list",
 		deps: { add: ["new-list@1.0.0"] },
 	}),
-	"stacks/app/recipes/list.old-list/recipe.json": JSON.stringify({
+	"stacks/app/recipes/list/old-list/recipe.json": JSON.stringify({
 		title: "Old list",
 		deps: { add: ["old-list"] },
 	}),
 	"stacks/app/recipes/init/recipe.json": JSON.stringify({ title: "Init" }),
 	// Broken on purpose: reported, never thrown.
-	"stacks/broken/recipes/x.c/recipe.json": JSON.stringify({
+	"stacks/broken/recipes/x/c/recipe.json": JSON.stringify({
 		title: "Bad option",
 	}),
 	"stacks/broken/stack.json": JSON.stringify({
 		axes: { x: { options: ["a"] } },
 	}),
-	"stacks/broken/rules/x.b.md": "unknown option",
-	"stacks/broken/rules/too.many.dots.md": "bad name",
+	"stacks/broken/rules/x/b.md": "unknown option",
+	"stacks/broken/rules/bad.name.md": "dotted name",
+	"stacks/broken/rules/too/many/deep.md": "bad name",
 	"stacks/broken/skills/wrong-name/SKILL.md":
 		"---\nname: other\ndescription: d\n---\n",
 };
@@ -129,16 +130,16 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 describe("rule and recipe names", () => {
 	test("parse into conditions", () => {
 		expect(parseCondition("general")).toEqual({ kind: "always" });
-		expect(parseCondition("lint.beta-lint")).toEqual({
+		expect(parseCondition("lint/beta-lint")).toEqual({
 			kind: "choice",
 			axis: "lint",
 			option: "beta-lint",
 		});
-		expect(parseCondition("feature.otel")).toEqual({
+		expect(parseCondition("feature/otel")).toEqual({
 			kind: "feature",
 			feature: "otel",
 		});
-		expect(typeof parseCondition("a.b.c")).toBe("string");
+		expect(typeof parseCondition("a/b/c")).toBe("string");
 	});
 });
 
@@ -146,7 +147,8 @@ describe("catalog", () => {
 	test("loads stacks and reports broken files without throwing", () => {
 		expect([...catalog.stacks.keys()]).toEqual(["app", "base", "broken"]);
 		const messages = catalog.issues.map((i) => i.message).join("\n");
-		expect(messages).toContain("expected <name>, <axis>.<option>");
+		expect(messages).toContain("expected <name>, <axis>/<option>");
+		expect(messages).toContain("rules nest one level only");
 		expect(messages).toContain('must match its folder "wrong-name"');
 	});
 
@@ -210,14 +212,14 @@ describe("choices", () => {
 			selectRules(chain, choices, features).map((r) => r.file);
 		expect(files({ lint: "beta-lint", list: "old-list" }, [])).toEqual([
 			"general.md",
-			"lint.beta-lint.md",
+			"lint/beta-lint.md",
 			"app.md",
 		]);
 		expect(files({ list: "new-list" }, ["tracing"])).toEqual([
 			"general.md",
 			"app.md",
-			"feature.tracing.md",
-			"list.new-list.md",
+			"feature/tracing.md",
+			"list/new-list.md",
 		]);
 	});
 });
@@ -370,7 +372,7 @@ describe("published JSON Schemas", () => {
 describe("recipes", () => {
 	test("are found by name; init is per stack, never by name", () => {
 		const chain = resolveChain(catalog, ["app"]);
-		expect(findRecipe(chain, "list.new-list")?.target).toEqual({
+		expect(findRecipe(chain, "list/new-list")?.target).toEqual({
 			kind: "choice",
 			axis: "list",
 			option: "new-list",
