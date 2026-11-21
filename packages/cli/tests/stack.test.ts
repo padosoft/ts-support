@@ -435,13 +435,10 @@ describe("project files", () => {
 
 describe("verify", () => {
 	test("stops at the first failing command", () => {
-		const commands = [
-			'node -e "process.exit(0)"',
-			'node -e "process.exit(3)"',
-			"never-run",
-		];
-		expect(runVerify(commands, tmpdir())).toBe(commands[1]);
-		expect(runVerify([commands[0] as string], tmpdir())).toBeUndefined();
+		const pass = 'node -e "process.exit(0)"';
+		const fail = 'node -e "process.exit(3)"';
+		expect(runVerify([pass, fail, "never-run"], tmpdir())).toBe(fail);
+		expect(runVerify([pass], tmpdir())).toBeUndefined();
 	});
 });
 

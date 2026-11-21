@@ -108,7 +108,7 @@ export const parseCondition = (path: string): Condition | string => {
 	if (parts.length > 2 || !parts.every((part) => SEGMENT.test(part))) {
 		return `expected <name>, <axis>/<option> or ${FEATURE_GROUP}/<name>, in lowercase letters, digits and hyphens`;
 	}
-	const [group, value] = parts as [string, string | undefined];
+	const [group = "", value] = parts;
 	if (value === undefined) return { kind: "always" };
 	return group === FEATURE_GROUP
 		? { kind: "feature", feature: value }

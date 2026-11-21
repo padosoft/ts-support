@@ -52,6 +52,9 @@ export const contextCommand = (source?: string): string => {
 
 const MARKER = "padosoft stack context";
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
 interface HookCommand {
 	type?: string;
 	command?: string;
@@ -73,13 +76,9 @@ export function withClaudeHook(
 	settings: Record<string, unknown>,
 	command: string,
 ): Record<string, unknown> {
-	const hooks =
-		typeof settings["hooks"] === "object" && settings["hooks"] !== null
-			? (settings["hooks"] as Record<string, unknown>)
-			: {};
-	const groups = Array.isArray(hooks["SessionStart"])
-		? (hooks["SessionStart"] as HookGroup[])
-		: [];
+	const hooks = isRecord(settings["hooks"]) ? settings["hooks"] : {};
+	const sessionStart = hooks["SessionStart"];
+	const groups: HookGroup[] = Array.isArray(sessionStart) ? sessionStart : [];
 	const kept = groups
 		.map((group) => ({
 			...group,
@@ -142,10 +141,8 @@ export async function setupAgents(
 			: "";
 		let next: string;
 		if (target.kind === "hook") {
-			const settings =
-				current.trim() === ""
-					? {}
-					: (JSON.parse(current) as Record<string, unknown>);
+			const settings: Record<string, unknown> =
+				current.trim() === "" ? {} : JSON.parse(current);
 			const updated = withClaudeHook(settings, command);
 			next =
 				current !== "" && JSON.stringify(updated) === JSON.stringify(settings)

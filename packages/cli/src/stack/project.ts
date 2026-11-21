@@ -46,17 +46,17 @@ export const lockfileManager = (dir: string): PackageManager | undefined =>
 
 const MANAGERS = new Set<string>(LOCKFILES.map(([, manager]) => manager));
 
+const isManager = (name: string): name is PackageManager => MANAGERS.has(name);
+
 /** The `packageManager` field of `<dir>/package.json` (e.g. `bun@1.2.20`). */
 const declaredManager = (dir: string): PackageManager | undefined => {
 	const path = join(dir, "package.json");
 	if (!existsSync(path)) return undefined;
-	const { packageManager } = JSON.parse(readFileSync(path, "utf8")) as {
-		packageManager?: string;
-	};
+	const { packageManager }: { packageManager?: string } = JSON.parse(
+		readFileSync(path, "utf8"),
+	);
 	const name = packageManager?.split("@")[0];
-	return name !== undefined && MANAGERS.has(name)
-		? (name as PackageManager)
-		: undefined;
+	return name !== undefined && isManager(name) ? name : undefined;
 };
 
 /**
@@ -92,10 +92,10 @@ const COMMANDS: Record<
 export function installedPackages(dir: string): Set<string> {
 	const path = join(dir, "package.json");
 	if (!existsSync(path)) return new Set();
-	const pkg = JSON.parse(readFileSync(path, "utf8")) as {
+	const pkg: {
 		dependencies?: Record<string, string>;
 		devDependencies?: Record<string, string>;
-	};
+	} = JSON.parse(readFileSync(path, "utf8"));
 	return new Set([
 		...Object.keys(pkg.dependencies ?? {}),
 		...Object.keys(pkg.devDependencies ?? {}),

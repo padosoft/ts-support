@@ -9,6 +9,9 @@ import {
 	setupAgents,
 } from "../stack/agents";
 
+const toAgentId = (value: string): AgentId | undefined =>
+	AGENT_IDS.find((id) => id === value);
+
 interface AgentsSetupOptions {
 	agents?: string;
 	source?: string;
@@ -26,14 +29,14 @@ export async function agentsSetup(options: AgentsSetupOptions): Promise<void> {
 		?.split(",")
 		.map((a) => a.trim())
 		.filter(Boolean);
-	const unknown = requested?.filter((a) => !AGENT_IDS.includes(a as AgentId));
+	const unknown = requested?.filter((a) => toAgentId(a) === undefined);
 	if (unknown !== undefined && unknown.length > 0) {
 		throw new Error(
 			`Unknown agent(s): ${unknown.join(", ")} (supported: ${AGENT_IDS.join(", ")})`,
 		);
 	}
 	const agents =
-		(requested as AgentId[] | undefined) ??
+		requested?.flatMap((a) => toAgentId(a) ?? []) ??
 		AGENT_IDS.filter((id) => existsSync(targets[id].home));
 	if (agents.length === 0) {
 		throw new Error(
