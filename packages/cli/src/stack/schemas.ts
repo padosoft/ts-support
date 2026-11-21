@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 
 /**
  * Formats shared by the stack commands. The CLI knows only these shapes: what
