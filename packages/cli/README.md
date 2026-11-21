@@ -276,6 +276,82 @@ Files are formatted with the Biome found in `node_modules/.bin` (searched upward
 
 ---
 
+### `stack` — project stacks
+
+Keeps projects on a shared stack (rules, skills, recipes, migrations) without copying any of it into them. The knowledge lives in a separate **stacks source**; a project records only its state in `.padosoft/stack.json`. The CLI knows the formats, never the content.
+
+```
+# reading
+padosoft stack status   [--json]          # stacks, choices, unset axes, pending migrations, problems
+padosoft stack context  [--if-present]    # rules + skills index for this project, as markdown for an agent
+padosoft stack skill <name>               # print one skill (its folder path comes first)
+padosoft stack plan     [--json]          # pending migrations, in the order to apply them
+
+# changing a project
+padosoft stack init --stack <id> [--choice axis=option] [--feature name] [--defaults]
+padosoft stack apply <recipe> [--force]   # e.g. feature.otel, styling.uniwind
+padosoft stack migrate <id>               # packages + codemod, then prints the manual steps
+padosoft stack verify <id>                # the migration's verify commands
+padosoft stack mark <id>                  # verify, then record it as applied with the choices it sets
+
+# checking
+padosoft stack doctor   [--json]          # exit 1 on drift: for CI
+padosoft stack validate                   # check a whole stacks source: for its authors and CI
+
+# once per machine
+padosoft agents setup [--agents claude,codex,gemini] [--source <spec>] [--dry-run]
+```
+
+Every `stack` command takes `--source <folder|git-url>` (default `$PADOSOFT_STACKS_SOURCE`), `--refresh` and `--offline`. A folder is used as is, which is handy while authoring. A git URL is cloned into `~/.cache/padosoft/stacks` (or `$XDG_CACHE_HOME/padosoft/stacks`) and refreshed when older than 6 hours, using your git credentials; git never prompts, so set up a credential helper (`gh auth login` then `gh auth setup-git`). If a refresh fails, the cached copy is used with a warning. When the source has a `package.json` and a lockfile, its dependencies (what codemods import) are installed after each clone or refresh.
+
+#### Project manifest
+
+`.padosoft/stack.json`, found from the current folder upwards (so each package of a monorepo can have its own):
+
+```json
+{
+  "$schema": "../node_modules/@padosoft/cli/schema/stack-manifest.json",
+  "stacks": ["mobile"],
+  "choices": { "lint": "biome", "styling": "uniwind", "list": "legend-list" },
+  "features": ["otel"],
+  "applied": ["mobile/2026.12-flashlist-to-legend-list"]
+}
+```
+
+Choices are always explicit: an axis `default` is only proposed by `stack init`, never applied to an existing project, so changing a stack's default never changes what existing projects get. `stack init` records every migration that exists at that moment as applied: a new project starts at the current state of its stacks.
+
+#### Stacks source layout
+
+```
+stacks/<stack>/stack.json                         { "extends": ["base"], "axes": { "<axis>": { "options", "descriptions", "default" } }, "defaults": { "<inherited axis>": "<option>" } }
+stacks/<stack>/rules/<name>.md                    always included
+stacks/<stack>/rules/<axis>.<option>.md           included when choices[axis] = option
+stacks/<stack>/rules/feature.<name>.md            included when features contains name
+stacks/<stack>/skills/<name>/SKILL.md             Agent Skills format; name must match the folder
+stacks/<stack>/recipes/<name>/recipe.json         { "title", "deps": { "add", "dev", "remove" }, "merge": { "<file>.json": {...} } }
+stacks/<stack>/recipes/<name>/files/**            copied into the project
+stacks/<stack>/recipes/<name>/steps.md            printed for the agent after applying
+stacks/<stack>/migrations/<name>/migration.json   { "title", "kind", "when", "set", "deps", "verify" }
+stacks/<stack>/migrations/<name>/codemod.{mjs,js,ts}   run in the project folder ($PADOSOFT_PROJECT_DIR)
+stacks/<stack>/migrations/<name>/steps.md         printed by `stack migrate`
+```
+
+An axis `descriptions` says when to pick each option: `stack init` shows it in its prompts and, without a terminal, prints it as the list of choices to make (for an agent to relay to the user). A stack `defaults` overrides the default of an inherited axis; when several stacks of a project set one, the last stack listed wins (for example a `web` stack proposing a different linter than a mobile-only project gets).
+
+Recipe folder names follow the rule names: `<axis>.<option>` records that choice, `feature.<name>` adds the feature, and `init` (one per stack) runs on `stack init`, bases first. Applying a recipe for another option of an axis the project already chose is refused: switching options is a migration. Recipes are idempotent: identical files are skipped, differing files are kept unless `--force`, and JSON merges only add what is missing (objects merge, arrays gain missing items, values are replaced).
+
+Migrations run in name order (use a date prefix) across the stack chain; each required migration's `set` is applied before the next `when` is evaluated, and required migrations can only be applied in that order. Packages are changed with the project's package manager (from the nearest lockfile or `packageManager` field). In a project that depends on `expo`, runtime packages are added with `expo install`, so their versions match the SDK. On Windows, npm, pnpm and yarn run through the shell, so keep package specs to exact or `~` versions there.
+
+`stack doctor` fails on: problems in the stacks or choices, axes with no recorded option, required migrations pending, packages of a chosen recipe that are missing, and packages that belong to another option of a chosen axis.
+
+JSON Schemas for the manifest, `stack.json`, `recipe.json` and `migration.json` ship in `schema/`.
+
+#### Agents
+
+`padosoft agents setup` makes coding agents load `padosoft stack context --if-present` at session start, in their user-level configuration (never in a project): a SessionStart hook in Claude Code's `settings.json`, and a marked instruction block in Codex's `AGENTS.md` and Gemini CLI's `GEMINI.md`. Without `--agents` it sets up the agents whose configuration folder exists; with `--source` the source is baked into the command. Running it again replaces its own hook or block and keeps everything else. Outside a stack project the command prints nothing; if loading fails it prints a note for the agent instead of failing. `padosoft` must be on every agent's PATH (`bun add -g @padosoft/cli`).
+
+---
+
 ## Multi-repo patterns
 
 `sync editor` is designed to be re-run whenever `@padosoft/config` updates its editor settings, keeping all repos in sync:

@@ -1,0 +1,79 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"description": {
+			"type": "string"
+		},
+		"extends": {
+			"default": [],
+			"description": "Stacks whose axes, rules, skills and migrations this one inherits",
+			"type": "array",
+			"items": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			}
+		},
+		"axes": {
+			"default": {},
+			"description": "Decision axes this stack introduces",
+			"type": "object",
+			"propertyNames": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			},
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"description": {
+						"type": "string"
+					},
+					"options": {
+						"minItems": 1,
+						"type": "array",
+						"items": {
+							"type": "string",
+							"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+						}
+					},
+					"descriptions": {
+						"default": {},
+						"description": "When to pick each option, keyed by option",
+						"type": "object",
+						"propertyNames": {
+							"type": "string",
+							"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+						},
+						"additionalProperties": {
+							"type": "string"
+						}
+					},
+					"default": {
+						"description": "Option proposed for new projects; never applied to existing ones",
+						"type": "string",
+						"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+					}
+				},
+				"required": ["options"],
+				"additionalProperties": false
+			}
+		},
+		"defaults": {
+			"default": {},
+			"description": "Defaults for inherited axes; when several stacks of a project set one, the last stack wins",
+			"type": "object",
+			"propertyNames": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			},
+			"additionalProperties": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			}
+		}
+	},
+	"additionalProperties": false
+}
