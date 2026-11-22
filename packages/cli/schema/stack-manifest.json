@@ -1,0 +1,50 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"stacks": {
+			"minItems": 1,
+			"type": "array",
+			"items": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			},
+			"description": "Stacks this project uses"
+		},
+		"choices": {
+			"default": {},
+			"description": "Selected option for each axis",
+			"type": "object",
+			"propertyNames": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			},
+			"additionalProperties": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			}
+		},
+		"features": {
+			"default": [],
+			"description": "Features added to the project",
+			"type": "array",
+			"items": {
+				"type": "string",
+				"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+			}
+		},
+		"applied": {
+			"default": [],
+			"description": "Migrations already applied, as <stack>/<migration>",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		}
+	},
+	"required": ["stacks"],
+	"additionalProperties": false
+}

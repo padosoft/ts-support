@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import sade from "sade";
+import { agentsSetup } from "./commands/agents-setup";
 import { buildBump } from "./commands/build-bump";
 import { buildCheck } from "./commands/build-check";
 import { buildReset } from "./commands/build-reset";
@@ -13,6 +14,21 @@ import { initTsconfig } from "./commands/init-tsconfig";
 import { initTsdown } from "./commands/init-tsdown";
 import { newPackage } from "./commands/new-package";
 import { releaseApps } from "./commands/release-apps";
+import {
+	stackContext,
+	stackPlan,
+	stackSkill,
+	stackStatus,
+	stackValidate,
+} from "./commands/stack";
+import {
+	stackApply,
+	stackDoctor,
+	stackInit,
+	stackMark,
+	stackMigrate,
+	stackVerify,
+} from "./commands/stack-change";
 import { syncEditor } from "./commands/sync-editor";
 import { withErrorHandling } from "./utils/errors";
 
@@ -238,6 +254,187 @@ cli
 	.example("release apps --dry-run")
 	.example("release apps")
 	.action(withErrorHandling(releaseApps));
+
+// ── stack ────────────────────────────────────────────────────────────────────
+// Every stack command reads the stacks source from --source or
+// $PADOSOFT_STACKS_SOURCE: a local folder, or a git URL cached under
+// ~/.cache/padosoft/stacks and refreshed when older than 6 hours.
+
+const SOURCE_FLAG =
+	"Stacks source: local folder or git URL (default $PADOSOFT_STACKS_SOURCE)";
+const REFRESH_FLAG = "Fetch the stacks source now, whatever the cache age";
+const OFFLINE_FLAG = "Use the cached stacks source without fetching";
+
+cli
+	.command("stack status")
+	.describe(
+		"Show the project's stacks, choices and pending migrations from .padosoft/stack.json",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.option("--json", "Print as JSON", false)
+	.example("stack status")
+	.example("stack status --json --offline")
+	.action(withErrorHandling(stackStatus));
+
+cli
+	.command("stack context")
+	.describe(
+		"Print the rules and skills index that apply to this project, for a coding agent",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.option(
+		"--if-present",
+		"For session hooks: print nothing outside a stack project, never fail",
+		false,
+	)
+	.example("stack context")
+	.example("stack context --if-present")
+	.action(withErrorHandling(stackContext));
+
+cli
+	.command("stack skill <name>")
+	.describe("Print one skill of the project's stacks")
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.example("stack skill add-otel")
+	.action(withErrorHandling(stackSkill));
+
+cli
+	.command("stack plan")
+	.describe(
+		"List the migrations pending for this project, in the order to apply them",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.option("--json", "Print as JSON", false)
+	.example("stack plan")
+	.action(withErrorHandling(stackPlan));
+
+cli
+	.command("stack migrate <id>")
+	.describe(
+		"Run a pending migration's package changes and codemod, then print its manual steps",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.example("stack migrate mobile/2026.12-flashlist-to-legend-list")
+	.action(withErrorHandling(stackMigrate));
+
+cli
+	.command("stack verify <id>")
+	.describe("Run a pending migration's verify commands")
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.example("stack verify mobile/2026.12-flashlist-to-legend-list")
+	.action(withErrorHandling(stackVerify));
+
+cli
+	.command("stack mark <id>")
+	.describe(
+		"Run a migration's verify commands, then record it as applied with the choices it sets",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.example("stack mark mobile/2026.12-flashlist-to-legend-list")
+	.action(withErrorHandling(stackMark));
+
+cli
+	.command("stack apply <recipe>")
+	.describe(
+		"Apply a recipe (packages, files, JSON merges) and record the choice or feature it stands for",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.option(
+		"--force, -f",
+		"Overwrite project files that differ from the recipe's",
+		false,
+	)
+	.example("stack apply feature/otel")
+	.example("stack apply styling/uniwind")
+	.action(withErrorHandling(stackApply));
+
+cli
+	.command("stack init")
+	.describe(
+		"Create .padosoft/stack.json here and apply the init, choice and feature recipes",
+	)
+	.option("--stack, -s", "Stack id (repeat or comma-separate for several)")
+	.option(
+		"--choice, -c",
+		"axis=option (repeat or comma-separate); asked for on a TTY when missing",
+	)
+	.option("--feature", "Feature to add (repeat or comma-separate)")
+	.option(
+		"--defaults",
+		"Use each axis default for choices not given (non-interactive)",
+		false,
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.option(
+		"--force, -f",
+		"Overwrite project files that differ from the recipes'",
+		false,
+	)
+	.example("stack init --stack mobile")
+	.example(
+		"stack init --stack mobile --choice styling=uniwind,lint=biome --feature otel",
+	)
+	.example("stack init --stack api --defaults")
+	.action(withErrorHandling(stackInit));
+
+cli
+	.command("stack doctor")
+	.describe(
+		"Fail when the project drifted from its stacks: problems, unset axes, pending migrations, packages (for CI)",
+	)
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.option("--json", "Print as JSON", false)
+	.example("stack doctor")
+	.action(withErrorHandling(stackDoctor));
+
+cli
+	.command("stack validate")
+	.describe("Check a whole stacks source (for its authors and CI)")
+	.option("--source", SOURCE_FLAG)
+	.option("--refresh", REFRESH_FLAG, false)
+	.option("--offline", OFFLINE_FLAG, false)
+	.example("stack validate --source .")
+	.action(withErrorHandling(stackValidate));
+
+// ── agents ───────────────────────────────────────────────────────────────────
+
+cli
+	.command("agents setup")
+	.describe(
+		"Make coding agents on this machine load `padosoft stack context` at session start",
+	)
+	.option(
+		"--agents, -a",
+		"Comma-separated: claude, codex, gemini (default: those installed)",
+	)
+	.option(
+		"--source",
+		"Stacks source baked into the command (otherwise $PADOSOFT_STACKS_SOURCE)",
+	)
+	.option("--dry-run, -d", "Show what would change", false)
+	.example("agents setup --source git@github.com:acme/stacks.git")
+	.example("agents setup --agents claude,codex --dry-run")
+	.action(withErrorHandling(agentsSetup));
 
 // ── i18n ─────────────────────────────────────────────────────────────────────
 
