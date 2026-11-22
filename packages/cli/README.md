@@ -343,7 +343,7 @@ Rules and recipes are grouped the same way: at the top level they always apply (
 
 Migrations run in name order (use a date prefix) across the stack chain; each required migration's `set` is applied before the next `when` is evaluated, and required migrations can only be applied in that order. Packages are changed with the project's package manager (from the nearest lockfile or `packageManager` field). In a project that depends on `expo`, runtime packages are added with `expo install`, so their versions match the SDK. On Windows, npm, pnpm and yarn run through the shell, so keep package specs to exact or `~` versions there.
 
-`stack doctor` fails on: problems in the stacks or choices, axes with no recorded option, required migrations pending, packages of a chosen recipe that are missing, and packages that belong to another option of a chosen axis.
+`stack doctor` fails on: problems in the stacks or choices, axes with no recorded option, required migrations pending, packages of an `init` recipe or a chosen recipe that are missing, and packages that belong to another option of a chosen axis.
 
 JSON Schemas for the manifest, `stack.json`, `recipe.json` and `migration.json` ship in `schema/`.
 

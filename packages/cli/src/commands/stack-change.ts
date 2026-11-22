@@ -329,8 +329,8 @@ export async function stackInit(options: InitOptions): Promise<void> {
 // ── doctor ───────────────────────────────────────────────────────────────────
 
 /**
- * Packages a recipe owns: present when its choice or feature is recorded,
- * absent when another option of the same axis is chosen.
+ * Packages a recipe owns: present when it is an `init` recipe or its choice or
+ * feature is recorded, absent when another option of the same axis is chosen.
  */
 function dependencyFindings(project: Project): string[] {
 	const findings: string[] = [];
@@ -343,6 +343,7 @@ function dependencyFindings(project: Project): string[] {
 	for (const entry of listRecipes(project.chain)) {
 		const { target } = entry;
 		const active =
+			target.kind === "always" ||
 			(target.kind === "choice" && choices[target.axis] === target.option) ||
 			(target.kind === "feature" && features.includes(target.feature));
 		if (!active) continue;
