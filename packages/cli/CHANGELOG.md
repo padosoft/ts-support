@@ -1,5 +1,24 @@
 # @padosoft/cli
 
+## 1.6.0
+
+### Minor Changes
+
+- [#79](https://github.com/padosoft/ts-support/pull/79) [`a8c70c1`](https://github.com/padosoft/ts-support/commit/a8c70c1463a972e440567f765810fdc4ea18d652) Thanks [@47PADO47](https://github.com/47PADO47)! - Add `padosoft stack` and `padosoft agents setup`: keep projects on a shared stack read from a separate stacks source (local folder or cached git clone), with only the project's state in `.padosoft/stack.json`.
+  
+  - `stack status | context | skill | plan` read the project's stacks, rules, skills and pending migrations; `stack context --if-present` is meant for agent session hooks.
+  - `stack init | apply` create a project and apply recipes (packages, files, JSON merges), recording the choices and features they stand for.
+  - `stack migrate | verify | mark` run migrations: package changes and a codemod, the agent's manual steps, verify commands, then the manifest update.
+  - `stack doctor` fails on drift (for CI); `stack validate` checks a whole stacks source.
+  - `agents setup` wires the context into Claude Code (SessionStart hook), Codex and Gemini CLI (global instructions).
+  - Axes can describe when to pick each option (shown by `stack init`), and stacks can override inherited defaults (last stack wins). In Expo projects, runtime packages are added with `expo install`.
+  - JSON Schemas for the manifest, `stack.json`, `recipe.json` and `migration.json` ship in `schema/`.
+
+### Patch Changes
+
+- Updated dependencies [[`7e6df57`](https://github.com/padosoft/ts-support/commit/7e6df571fe59ae797504cb4bb9dac8668ee8a710)]:
+  - @padosoft/utilities@1.13.0
+
 ## 1.5.0
 
 ### Minor Changes

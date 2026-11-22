@@ -1,5 +1,13 @@
 # @padosoft/utilities
 
+## 1.13.0
+
+### Minor Changes
+
+- [#77](https://github.com/padosoft/ts-support/pull/77) [`7e6df57`](https://github.com/padosoft/ts-support/commit/7e6df571fe59ae797504cb4bb9dac8668ee8a710) Thanks [@47PADO47](https://github.com/47PADO47)! - New `resolveModuleInterop` helper in `@padosoft/utilities/lib/module-interop`. It resolves the real API of a CommonJS module imported through an ESM interop layer, checking the namespace, `ns.default` and `ns.default.default` (bounded depth, cycle-safe) and returning the first level that exposes every required key as a function (or that satisfies a type guard). If no level matches it throws an `Error` naming the missing keys and the shapes it inspected.
+  
+  Motivating incident: `@padosoft/apple-targets` 2.10.1 called `plist.parse` on a default import equal to the whole `module.exports` of `@expo/plist`, failing at runtime with `a.default.parse is not a function`. Use this helper instead of hand-written unwrapping.
+
 ## 1.12.0
 
 ### Minor Changes
