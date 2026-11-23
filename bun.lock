@@ -17,7 +17,7 @@
     },
     "packages/cli": {
       "name": "@padosoft/cli",
-      "version": "1.6.0",
+      "version": "1.7.0",
       "bin": {
         "padosoft": "./dist/index.mjs",
       },
