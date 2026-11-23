@@ -14,6 +14,8 @@ import { initTsconfig } from "./commands/init-tsconfig";
 import { initTsdown } from "./commands/init-tsdown";
 import { newPackage } from "./commands/new-package";
 import { releaseApps } from "./commands/release-apps";
+import { releaseCheckTag } from "./commands/release-check-tag";
+import { releaseTag } from "./commands/release-tag";
 import {
 	stackContext,
 	stackPlan,
@@ -247,13 +249,61 @@ cli
 cli
 	.command("release apps")
 	.describe(
-		"Tag every app as <name>@<version> and publish a GitHub Release from its CHANGELOG (idempotent)",
+		"Tag the apps (v<version> when they share one, else <name>@<version>) and publish a GitHub Release from the CHANGELOG (idempotent)",
 	)
 	.option("--dry-run, -d", "Print what would be tagged/released", false)
 	.option("--apps-dir", "Directory containing the apps", "apps")
+	.option(
+		"--tag-format",
+		"auto (v<version> when the apps share one version) | version | name (<name>@<version>)",
+		"auto",
+	)
 	.example("release apps --dry-run")
 	.example("release apps")
+	.example("release apps --tag-format name")
 	.action(withErrorHandling(releaseApps));
+
+cli
+	.command("release tag [bump]")
+	.describe(
+		"Push a release tag: bump (patch|minor|major), commit and tag vX.Y.Z, or tag vX.Y.Z-preview.N with --preview",
+	)
+	.option(
+		"--preview, -p",
+		"Tag the next version's -preview.N, without changing package.json",
+		false,
+	)
+	.option(
+		"--apps, -a",
+		"Comma-separated app folders: tag <app>@v… for each instead of the plain tag",
+	)
+	.option("--apps-dir", "Directory containing the apps", "apps")
+	.option(
+		"--dry-run, -d",
+		"Print what would be bumped, committed and tagged",
+		false,
+	)
+	.example("release tag minor")
+	.example("release tag")
+	.example("release tag --preview")
+	.example("release tag patch --apps gescat --dry-run")
+	.action(withErrorHandling(releaseTag));
+
+cli
+	.command("release check-tag <tag>")
+	.describe(
+		"Release workflow guard: check a tag's branch and version, print profile=, version=, apps= (for $GITHUB_OUTPUT)",
+	)
+	.option("--prod-branch", "Branch production tags must be on", "main")
+	.option(
+		"--preview-branch",
+		"Branch preview tags must be on (default: any branch)",
+	)
+	.option("--apps-dir", "Directory containing the apps", "apps")
+	.option("--app", "Check only this app folder (for a plain tag)")
+	.example("release check-tag v1.4.0")
+	.example("release check-tag gescat@v1.4.0-preview.2 --preview-branch develop")
+	.action(withErrorHandling(releaseCheckTag));
 
 // ── stack ────────────────────────────────────────────────────────────────────
 // Every stack command reads the stacks source from --source or

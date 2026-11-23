@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
+import { run } from "@padosoft/utilities/lib/process";
 import type { MigrationEntry, RecipeEntry } from "../stack/catalog";
 import { loadCatalog } from "../stack/catalog";
 import {
@@ -19,6 +20,7 @@ import {
 	copyFiles,
 	installedPackages,
 	mergeJsonFiles,
+	packageManagerFindings,
 	packageName,
 	readSteps,
 	runCodemod,
@@ -369,6 +371,12 @@ function dependencyFindings(project: Project): string[] {
 	return findings;
 }
 
+/** The git repository's top folder, or `dir` outside one. */
+const repoRoot = (dir: string): string => {
+	const result = run("git", ["rev-parse", "--show-toplevel"], { cwd: dir });
+	return result.status === 0 ? result.stdout.trim() : dir;
+};
+
 /** Fails when the project has drifted from its stacks; meant for CI. */
 export async function stackDoctor(
 	options: SourceOptions & { json?: boolean },
@@ -379,6 +387,7 @@ export async function stackDoctor(
 		...project.unset.map((axis) => `no option recorded for axis "${axis}"`),
 		...project.plan.required.map((m) => `required migration pending: ${m.id}`),
 		...dependencyFindings(project),
+		...packageManagerFindings(project.dir, repoRoot(project.dir)),
 	];
 	if (options.json) {
 		console.log(

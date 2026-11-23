@@ -26,10 +26,15 @@ import {
 import { renderContext } from "../src/stack/context";
 import { renderSchemas } from "../src/stack/json-schemas";
 import {
+	CODEMOD_CLI,
+	codemodRunArgs,
+	codemodTransforms,
 	copyFiles,
 	deepMerge,
 	depCommands,
+	isCodemodPackage,
 	mergeJsonFiles,
+	packageManagerFindings,
 	runVerify,
 } from "../src/stack/project";
 import {
@@ -606,5 +611,119 @@ describe("package commands", () => {
 			{ command: "npx", args: ["expo", "install", "a@1.0.0"] },
 			{ command: "npm", args: ["install", "--save-dev", "b"] },
 		]);
+	});
+});
+
+describe("Codemod packages", () => {
+	const dir = mkdtempSync(join(tmpdir(), "padosoft-codemod-"));
+	afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+	test("a workflow.yaml makes a Codemod package; its js-ast-grep transforms are listed once", () => {
+		expect(isCodemodPackage(dir)).toBe(false);
+		writeFileSync(
+			join(dir, "workflow.yaml"),
+			[
+				'version: "1"',
+				"nodes:",
+				"  - id: a",
+				"    steps:",
+				"      - name: shell",
+				"        run: echo hi",
+				"      - js-ast-grep:",
+				"          js_file: scripts/rename.ts",
+				"          language: tsx",
+				"  - id: b",
+				"    steps:",
+				"      - js-ast-grep:",
+				"          js_file: scripts/rename.ts",
+				"          language: tsx",
+				"      - js-ast-grep:",
+				"          js_file: scripts/other.ts",
+			].join("\n"),
+		);
+		expect(isCodemodPackage(dir)).toBe(true);
+		expect(codemodTransforms(dir)).toEqual([
+			{ file: "scripts/rename.ts", language: "tsx" },
+			{ file: "scripts/other.ts", language: undefined },
+		]);
+	});
+
+	test("the workflow runs on the project with the pinned CLI and analytics off", () => {
+		expect(CODEMOD_CLI).toMatch(/^codemod@\d+\.\d+\.\d+$/);
+		expect(codemodRunArgs("/m", "/p")).toEqual([
+			CODEMOD_CLI,
+			"workflow",
+			"run",
+			"-w",
+			"/m",
+			"-t",
+			"/p",
+			"--no-interactive",
+			"--allow-dirty",
+			"--disable-analytics",
+		]);
+	});
+});
+
+describe("packageManagerFindings", () => {
+	const make = (files: Record<string, string>): string => {
+		const dir = mkdtempSync(join(tmpdir(), "padosoft-pm-"));
+		for (const [path, content] of Object.entries(files)) {
+			mkdirSync(dirname(join(dir, path)), { recursive: true });
+			writeFileSync(join(dir, path), content);
+		}
+		return dir;
+	};
+	const dirs: string[] = [];
+	afterAll(() => {
+		for (const dir of dirs) rmSync(dir, { recursive: true, force: true });
+	});
+	const findings = (files: Record<string, string>, sub = ""): string[] => {
+		const root = make(files);
+		dirs.push(root);
+		return packageManagerFindings(join(root, sub), root);
+	};
+
+	test("a bun project passes", () => {
+		expect(
+			findings({
+				"package.json": JSON.stringify({ packageManager: "bun@1.4.4" }),
+				"bun.lock": "",
+			}),
+		).toEqual([]);
+	});
+
+	test("no package.json: not a JS project, nothing to check", () => {
+		expect(findings({ "composer.json": "{}", "yarn.lock": "" })).toEqual([]);
+	});
+
+	test("foreign lockfiles and a missing or foreign packageManager fail", () => {
+		const missing = findings({
+			"package.json": "{}",
+			"package-lock.json": "",
+			"npm-shrinkwrap.json": "",
+		});
+		expect(missing.join("\n")).toContain("not package-lock.json");
+		expect(missing.join("\n")).toContain("not npm-shrinkwrap.json");
+		expect(missing.join("\n")).toContain("it is missing");
+		expect(
+			findings({
+				"package.json": JSON.stringify({ packageManager: "pnpm@9.0.0" }),
+				"pnpm-lock.yaml": "",
+			}).join("\n"),
+		).toContain('not "pnpm@9.0.0"');
+	});
+
+	test("in a monorepo package, the root package.json and both folders' lockfiles count", () => {
+		const result = findings(
+			{
+				"package.json": JSON.stringify({ packageManager: "bun@1.4.4" }),
+				"apps/web/package.json": "{}",
+				"apps/web/yarn.lock": "",
+			},
+			"apps/web",
+		);
+		expect(result).toHaveLength(1);
+		expect(result[0]).toContain("not yarn.lock");
 	});
 });

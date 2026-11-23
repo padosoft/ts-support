@@ -25,7 +25,8 @@ import {
  * stacks/<stack>/recipes/<name>/recipe.json         (+ files/, steps.md)
  * stacks/<stack>/recipes/<axis>/<option>/recipe.json
  * stacks/<stack>/recipes/feature/<name>/recipe.json
- * stacks/<stack>/migrations/<name>/migration.json (+ codemod.{mjs,js,ts}, steps.md)
+ * stacks/<stack>/migrations/<name>/migration.json (+ steps.md, and a Codemod
+ *   package (workflow.yaml, codemod.yaml, tests/) or codemod.{mjs,js,ts})
  * ```
  *
  * Rule files and recipe folders share one naming scheme, see {@link parseCondition}.
