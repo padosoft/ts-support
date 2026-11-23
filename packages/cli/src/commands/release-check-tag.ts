@@ -2,6 +2,7 @@ import {
 	appNames,
 	isOnAnyBranch,
 	isOnBranch,
+	releaseLocation,
 	requireReleaseApps,
 	tagCommit,
 } from "../utils/release";
@@ -19,15 +20,22 @@ interface CheckTagOptions {
  * production tags sit on the production branch and match the apps' version;
  * preview tags sit on the preview branch (or any branch). Prints
  * `profile=`, `version=` and `apps=` lines, ready for `$GITHUB_OUTPUT`; exits
- * non-zero with the reason otherwise.
+ * non-zero with the reason otherwise. Works from any folder of the repo; run
+ * inside `<apps-dir>/<app>`, it checks only that app.
  */
 export function releaseCheckTag(input: string, opts: CheckTagOptions): void {
 	const tag = parseReleaseTag(input);
 	const name = formatReleaseTag(tag);
-	if (tag.app !== undefined && opts.app && opts.app !== tag.app) {
-		throw new Error(`Tag ${name} is for app "${tag.app}", not "${opts.app}"`);
+	// The app this checks: the tag's, else --app, else the app folder it runs in.
+	const scope = opts.app || releaseLocation(opts["apps-dir"]).cwdApp;
+	if (tag.app !== undefined && scope && scope !== tag.app) {
+		throw new Error(
+			opts.app
+				? `Tag ${name} is for app "${tag.app}", not "${opts.app}"`
+				: `Tag ${name} is for app "${tag.app}", but this runs in the folder of app "${scope}"`,
+		);
 	}
-	const app = tag.app ?? opts.app;
+	const app = tag.app ?? scope;
 	const apps = requireReleaseApps(
 		opts["apps-dir"],
 		app === undefined ? [] : [app],

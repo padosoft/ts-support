@@ -1,6 +1,6 @@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, relative } from "node:path";
+import { join } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
 import { remoteTagExists } from "@padosoft/utilities/lib/git";
 import { readJSONFile, writeJSONFile } from "@padosoft/utilities/lib/json-file";
@@ -10,12 +10,13 @@ import type {
 	WorkspacePackage,
 } from "@padosoft/utilities/lib/workspace";
 import {
-	changesetDir,
 	git,
 	listTags,
 	localTagExists,
+	releaseLocation,
 	requireReleaseApps,
 	splitList,
+	usesChangesets,
 } from "../utils/release";
 import {
 	BUMPS,
@@ -42,11 +43,14 @@ interface ChangesetStatus {
 /** The highest version `changeset status` would give the packages, if it releases any of them. */
 function changesetNextVersion(
 	packages: WorkspacePackage[],
+	root: string,
 ): string | undefined {
 	const dir = mkdtempSync(join(tmpdir(), "padosoft-changeset-status-"));
 	try {
 		const output = join(dir, "status.json");
-		runOrThrow("bunx", ["changeset", "status", "--output", output]);
+		runOrThrow("bunx", ["changeset", "status", "--output", output], {
+			cwd: root,
+		});
 		const status: ChangesetStatus = JSON.parse(readFileSync(output, "utf8"));
 		const names = new Set(packages.map((p) => p.name));
 		return maxVersion(
@@ -89,17 +93,19 @@ function releaseVersion(
 	packages: WorkspacePackage[],
 	bump: Bump | undefined,
 	preview: boolean,
-	changesets: boolean,
+	changesetsRoot: string | undefined,
 ): string {
 	const base = baseVersion(packages);
 	if (bump !== undefined) return bumpVersion(base, bump);
 	if (preview) {
 		return (
-			(changesets ? changesetNextVersion(packages) : undefined) ??
+			(changesetsRoot === undefined
+				? undefined
+				: changesetNextVersion(packages, changesetsRoot)) ??
 			bumpVersion(base, "patch")
 		);
 	}
-	if (changesets) return currentVersion(packages);
+	if (changesetsRoot !== undefined) return currentVersion(packages);
 	throw new Error(
 		`Pass ${BUMPS.join(", ")}: there is no .changeset/ folder whose version to release`,
 	);
@@ -114,7 +120,7 @@ async function writeVersion(
 		if (pkg.version === version) continue;
 		const file = await readJSONFile<PackageManifest>(pkg.manifestPath);
 		await writeJSONFile({ ...file, data: { ...file.data, version } });
-		changed.push(relative(process.cwd(), pkg.manifestPath));
+		changed.push(pkg.manifestPath);
 	}
 	return changed;
 }
@@ -124,7 +130,8 @@ async function writeVersion(
  * Production bumps the apps (fixed version), commits and tags; with
  * changesets and no bump it tags the version `changeset version` already set.
  * `--preview` tags the next version's `-preview.N` without touching
- * package.json. `--apps` tags `<app>@v…` per app instead of the plain tag.
+ * package.json. `--apps` tags `<app>@v…` per app instead of the plain tag;
+ * run inside `<apps-dir>/<app>` without `--apps`, it releases only that app.
  */
 export async function releaseTag(
 	bumpArg: string | undefined,
@@ -135,11 +142,18 @@ export async function releaseTag(
 	}
 	const dryRun = opts["dry-run"] ?? false;
 	const preview = opts.preview ?? false;
-	const names = splitList(opts.apps);
-	const { packages } = requireReleaseApps(opts["apps-dir"], names);
-	const changesets = changesetDir() !== undefined;
+	const listed = splitList(opts.apps);
+	const { cwdApp } = releaseLocation(opts["apps-dir"]);
+	const names =
+		listed.length > 0 ? listed : cwdApp === undefined ? [] : [cwdApp];
+	const { packages, root } = requireReleaseApps(opts["apps-dir"], names);
 
-	const version = releaseVersion(packages, bumpArg, preview, changesets);
+	const version = releaseVersion(
+		packages,
+		bumpArg,
+		preview,
+		usesChangesets(root) ? root : undefined,
+	);
 	const tagApps: (string | undefined)[] =
 		names.length > 0 ? packages.map((p) => p.dirName) : [undefined];
 	const previewNumber = preview
@@ -184,14 +198,15 @@ export async function releaseTag(
 		if (branch.length === 0)
 			throw new Error("HEAD is detached: check out the branch to release");
 		const files = await writeVersion(bumped, version);
-		if (existsSync("bun.lock")) {
+		const lockfile = join(root, "bun.lock");
+		if (existsSync(lockfile)) {
 			// Workspace versions are recorded in bun.lock.
-			await runCommand("bun", [
-				"install",
-				"--lockfile-only",
-				"--ignore-scripts",
-			]);
-			files.push("bun.lock");
+			await runCommand(
+				"bun",
+				["install", "--lockfile-only", "--ignore-scripts"],
+				{ cwd: root },
+			);
+			files.push(lockfile);
 		}
 		git(["add", "--", ...files]);
 		git(["commit", "-m", message]);

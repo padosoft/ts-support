@@ -447,3 +447,77 @@ describe("release apps --dry-run", () => {
 		expect(out.stdout).toContain("would tag HEAD as v1.2.0");
 	});
 });
+
+describe("from inside an app folder of a monorepo", () => {
+	// b is behind on purpose: a plain tag run in apps/a must check only a.
+	const AHEAD = {
+		...MONO,
+		"apps/b/package.json": { name: "@acme/b", version: "1.0.0" },
+	};
+
+	test("check-tag from the root still checks every app", () => {
+		const { repo } = makeRepo(MONO);
+		git(repo, "tag", "v2.0.0");
+		const out = cli(repo, "release", "check-tag", "v2.0.0");
+		expect(out.stdout).toBe("profile=production\nversion=2.0.0\napps=a,b\n");
+	});
+
+	test("check-tag in apps/a: plain tag and a@ tag check a; b@ tag fails", () => {
+		const { repo } = makeRepo(AHEAD);
+		git(repo, "tag", "v2.0.0");
+		git(repo, "tag", "a@v2.0.0");
+		git(repo, "tag", "b@v1.0.0");
+		const appDir = join(repo, "apps", "a");
+
+		const plain = cli(appDir, "release", "check-tag", "v2.0.0");
+		expect(plain.stderr).toBe("");
+		expect(plain.stdout).toBe("profile=production\nversion=2.0.0\napps=a\n");
+
+		const own = cli(appDir, "release", "check-tag", "a@v2.0.0");
+		expect(own.stdout).toBe("profile=production\nversion=2.0.0\napps=a\n");
+
+		const other = cli(appDir, "release", "check-tag", "b@v1.0.0");
+		expect(other.status).toBe(1);
+		expect(other.stdout).toBe("");
+		expect(other.stderr).toContain(
+			'is for app "b", but this runs in the folder of app "a"',
+		);
+	});
+
+	test("check-tag in a subfolder of apps/a with a custom --apps-dir", () => {
+		const { repo } = makeRepo({
+			"package.json": { name: "root", private: true },
+			"mobile/a/package.json": { name: "@acme/a", version: "2.0.0" },
+			"mobile/a/src/.keep": {},
+		});
+		git(repo, "tag", "v2.0.0");
+		const out = cli(
+			join(repo, "mobile", "a", "src"),
+			"release",
+			"check-tag",
+			"v2.0.0",
+			"--apps-dir",
+			"mobile",
+		);
+		expect(out.stdout).toBe("profile=production\nversion=2.0.0\napps=a\n");
+	});
+
+	test("release tag in apps/a bumps and tags only a", () => {
+		const { repo, origin } = makeRepo(AHEAD);
+		const out = cli(join(repo, "apps", "a"), "release", "tag", "patch");
+		expect(out.stderr).toBe("");
+		expect(out.status).toBe(0);
+		expect(readVersion(join(repo, "apps/a/package.json"))).toBe("2.0.1");
+		expect(readVersion(join(repo, "apps/b/package.json"))).toBe("1.0.0");
+		expect(git(origin, "tag", "--list")).toBe("a@v2.0.1");
+		expect(git(repo, "status", "--porcelain")).toBe("");
+	});
+
+	test("release tag --preview in apps/a tags a@…-preview.N", () => {
+		const { repo, origin } = makeRepo(AHEAD);
+		expect(
+			cli(join(repo, "apps", "a"), "release", "tag", "--preview").status,
+		).toBe(0);
+		expect(git(origin, "tag", "--list")).toBe("a@v2.0.1-preview.1");
+	});
+});

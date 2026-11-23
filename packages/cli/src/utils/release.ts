@@ -1,5 +1,5 @@
-import { existsSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, readFileSync, realpathSync } from "node:fs";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
 import { extractChangelogSection } from "@padosoft/utilities/lib/changelog";
 import {
@@ -17,39 +17,77 @@ import {
 	readWorkspacePackages,
 	type WorkspacePackage,
 } from "@padosoft/utilities/lib/workspace";
-import { resolveAppsDir } from "./app-build-config";
 
 // ── apps ─────────────────────────────────────────────────────────────────────
 
-export interface ReleaseApps {
+export interface ReleaseLocation {
+	/** The git repository's top folder (the current folder outside a repo). */
+	root: string;
+	/** The apps dir, relative to `root`. */
+	appsDir: string;
+	/** The app whose folder (`<appsDir>/<app>/…`) the command runs in, if any. */
+	cwdApp: string | undefined;
+}
+
+export interface ReleaseApps extends ReleaseLocation {
 	/** The apps to release; the root package for a single-app repo; empty when neither. */
 	packages: WorkspacePackage[];
 	/** Whether the packages are apps under the apps dir (false: the repo root). */
 	monorepo: boolean;
-	appsDir: string;
 }
 
-const rootPackage = (): WorkspacePackage | undefined => {
-	const dir = process.cwd();
-	const manifestPath = join(dir, "package.json");
+const DEFAULT_APPS_DIR = "apps";
+
+/**
+ * Where a release command runs: the repo root (so `--apps-dir` and the root
+ * `package.json` resolve the same from any subfolder, e.g. the Expo project
+ * folder a release workflow runs in) and the app folder it runs in, if any.
+ */
+export function releaseLocation(
+	appsDirOption: string | undefined,
+): ReleaseLocation {
+	const top = run("git", ["rev-parse", "--show-toplevel"]);
+	const root = realpathSync.native(
+		top.status === 0 ? top.stdout.trim() : process.cwd(),
+	);
+	const appsDir = resolve(root, appsDirOption ?? DEFAULT_APPS_DIR);
+	const rel = relative(appsDir, realpathSync.native(process.cwd()));
+	const [first] = rel.split(sep);
+	const cwdApp =
+		rel === "" || isAbsolute(rel) || first === undefined || first === ".."
+			? undefined
+			: first;
+	return {
+		root,
+		appsDir,
+		cwdApp: readWorkspacePackages(appsDir).some((p) => p.dirName === cwdApp)
+			? cwdApp
+			: undefined,
+	};
+}
+
+const rootPackage = (root: string): WorkspacePackage | undefined => {
+	const manifestPath = join(root, "package.json");
 	if (!existsSync(manifestPath)) return undefined;
 	const manifest: PackageManifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
 	);
 	const { name, version } = manifest;
 	if (typeof name !== "string" || typeof version !== "string") return undefined;
-	return { dirName: ".", dir, manifestPath, manifest, name, version };
+	return { dirName: ".", dir: root, manifestPath, manifest, name, version };
 };
 
 /**
  * The apps a release covers: the named folders under the apps dir, else every
- * app there, else the root `package.json` (a single-app repo).
+ * app there, else the root `package.json` (a single-app repo). Paths resolve
+ * from the repo root, whatever the current folder.
  */
 export function resolveReleaseApps(
 	appsDirOption: string | undefined,
 	names: string[] = [],
 ): ReleaseApps {
-	const appsDir = resolveAppsDir(appsDirOption);
+	const location = releaseLocation(appsDirOption);
+	const { appsDir, root } = location;
 	const all = readWorkspacePackages(appsDir);
 	if (names.length > 0) {
 		const packages = names.map((name) => {
@@ -61,11 +99,11 @@ export function resolveReleaseApps(
 			}
 			return app;
 		});
-		return { packages, monorepo: true, appsDir };
+		return { ...location, packages, monorepo: true };
 	}
-	if (all.length > 0) return { packages: all, monorepo: true, appsDir };
-	const root = rootPackage();
-	return { packages: root ? [root] : [], monorepo: false, appsDir };
+	if (all.length > 0) return { ...location, packages: all, monorepo: true };
+	const single = rootPackage(root);
+	return { ...location, packages: single ? [single] : [], monorepo: false };
 }
 
 /** Like {@link resolveReleaseApps}, but throws when there is nothing to release. */
@@ -76,7 +114,7 @@ export function requireReleaseApps(
 	const apps = resolveReleaseApps(appsDirOption, names);
 	if (apps.packages.length === 0) {
 		throw new Error(
-			`No apps with name + version in ${apps.appsDir}, and no name + version in ./package.json`,
+			`No apps with name + version in ${apps.appsDir}, and no name + version in ${join(apps.root, "package.json")}`,
 		);
 	}
 	return apps;
@@ -93,11 +131,9 @@ export const splitList = (value: string | undefined): string[] =>
 		.map((item) => item.trim())
 		.filter((item) => item.length > 0);
 
-/** Absolute path of the repo's `.changeset` folder, when there is one. */
-export const changesetDir = (): string | undefined => {
-	const dir = resolve(".changeset");
-	return existsSync(dir) ? dir : undefined;
-};
+/** Whether the repo at `root` uses changesets (has a `.changeset` folder). */
+export const usesChangesets = (root: string): boolean =>
+	existsSync(join(root, ".changeset"));
 
 // ── git ──────────────────────────────────────────────────────────────────────
 

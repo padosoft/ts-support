@@ -232,7 +232,7 @@ Pushing a tag is what releases an app: the release workflows (EAS workflows) lis
 | `<app>@vX.Y.Z` | `production` | `apps/<app>` only |
 | `<app>@vX.Y.Z-preview.N` | `preview` | `apps/<app>` only |
 
-`<app>` is the app's folder name under `apps/`. A repo is a monorepo when `apps/` (or `--apps-dir`) holds packages with a `name` and `version`; otherwise the app is the root `package.json`.
+`<app>` is the app's folder name under `apps/`. A repo is a monorepo when `apps/` (or `--apps-dir`) holds packages with a `name` and `version`; otherwise the app is the root `package.json`. Both commands work from any folder of the repo: `--apps-dir` and the root `package.json` resolve from the git root (`git rev-parse --show-toplevel`). Run inside `<apps-dir>/<app>` (as an EAS workflow does, from the Expo project's folder), they default to that app: `check-tag` checks a plain tag against that app only and rejects another app's `<other>@v…` tag, and `release tag` bumps and tags only that app (`<app>@v…`). An explicit `--app` / `--apps` wins.
 
 ```
 padosoft release tag [patch|minor|major] [--preview] [--apps a,b] [--apps-dir apps] [--dry-run]
