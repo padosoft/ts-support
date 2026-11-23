@@ -7,10 +7,11 @@ import {
 	readFile,
 	writeFile,
 } from "node:fs/promises";
-import { dirname, join, relative } from "node:path";
+import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import { chalk } from "@padosoft/utilities/lib/chalk";
 import { detectIndent } from "@padosoft/utilities/lib/json-file";
 import { runCommand, WINDOWS_SHELL } from "@padosoft/utilities/lib/process";
+import { parse as parseYaml } from "yaml";
 import { parsePackageSpec } from "../utils/workspace";
 import type { Deps } from "./schemas";
 
@@ -268,14 +269,56 @@ export async function mergeJsonFiles(
 const CODEMODS = ["codemod.mjs", "codemod.js", "codemod.ts"];
 
 /**
- * Runs `codemod.{mjs,js,ts}` from `dir` with the current runtime (Node 22.18+
- * and Bun both run TypeScript), in the project folder. The codemod may import
- * the stacks source's own dependencies.
+ * The Codemod CLI (https://docs.codemod.com) that runs and tests migrations
+ * packaged as Codemod packages, pinned. Its analytics stay off: through
+ * `--disable-analytics` and `DISABLE_ANALYTICS=1`.
+ */
+export const CODEMOD_CLI = "codemod@1.18.7";
+
+const codemodEnv = (projectDir?: string): NodeJS.ProcessEnv => ({
+	...process.env,
+	DISABLE_ANALYTICS: "1",
+	...(projectDir === undefined ? {} : { PADOSOFT_PROJECT_DIR: projectDir }),
+});
+
+/** Whether `dir` is a Codemod package: it has a `workflow.yaml`. */
+export const isCodemodPackage = (dir: string): boolean =>
+	existsSync(join(dir, "workflow.yaml"));
+
+/** The `bunx` args that run a Codemod package's workflow on `projectDir`. */
+export const codemodRunArgs = (dir: string, projectDir: string): string[] => [
+	CODEMOD_CLI,
+	"workflow",
+	"run",
+	"-w",
+	dir,
+	"-t",
+	projectDir,
+	"--no-interactive",
+	"--allow-dirty",
+	"--disable-analytics",
+];
+
+/**
+ * Runs the migration's codemod in the project folder: a Codemod package's
+ * workflow (`workflow.yaml`) through the pinned Codemod CLI, else
+ * `codemod.{mjs,js,ts}` with the current runtime (Node 22.18+ and Bun both run
+ * TypeScript), which may import the stacks source's own dependencies. The
+ * workflow runs with `--allow-dirty`: the migration's package changes come
+ * first, so the tree is never clean by then.
  */
 export async function runCodemod(
 	dir: string,
 	projectDir: string,
 ): Promise<boolean> {
+	if (isCodemodPackage(dir)) {
+		log("codemod", `${basename(dir)} (${CODEMOD_CLI})`, chalk.cyan);
+		await runCommand("bunx", codemodRunArgs(dir, projectDir), {
+			cwd: projectDir,
+			env: codemodEnv(projectDir),
+		});
+		return true;
+	}
 	const file = CODEMODS.map((name) => join(dir, name)).find(existsSync);
 	if (file === undefined) return false;
 	log("codemod", relative(dirname(dir), file), chalk.cyan);
@@ -284,6 +327,141 @@ export async function runCodemod(
 		env: { ...process.env, PADOSOFT_PROJECT_DIR: projectDir },
 	});
 	return true;
+}
+
+export interface CodemodTransform {
+	/** The `js_file` of a `js-ast-grep` step, relative to the package. */
+	file: string;
+	language: string | undefined;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const listOf = (value: unknown, key: string): unknown[] => {
+	const list = isRecord(value) ? value[key] : undefined;
+	return Array.isArray(list) ? list : [];
+};
+
+/** Every `js-ast-grep` transform of a Codemod package's `workflow.yaml`, once each. */
+export function codemodTransforms(dir: string): CodemodTransform[] {
+	const workflow: unknown = parseYaml(
+		readFileSync(join(dir, "workflow.yaml"), "utf8"),
+	);
+	const transforms = new Map<string, CodemodTransform>();
+	for (const node of listOf(workflow, "nodes")) {
+		for (const step of listOf(node, "steps")) {
+			const jssg = isRecord(step) ? step["js-ast-grep"] : undefined;
+			if (!isRecord(jssg)) continue;
+			const { js_file: file, language } = jssg;
+			if (typeof file !== "string") continue;
+			transforms.set(file, {
+				file,
+				language: typeof language === "string" ? language : undefined,
+			});
+		}
+	}
+	return [...transforms.values()];
+}
+
+/**
+ * The transforms of the Codemod package in `dir` that have tests, with their
+ * test folder: `tests/<transform file name>` (`scripts/eas-json.ts` →
+ * `tests/eas-json`), or the whole `tests` when the package has a single
+ * transform. Transforms without one are skipped.
+ */
+export function codemodTests(
+	dir: string,
+): (CodemodTransform & { tests: string })[] {
+	const transforms = codemodTransforms(dir);
+	return transforms.flatMap((transform) => {
+		const own = join(
+			"tests",
+			basename(transform.file, extname(transform.file)),
+		);
+		if (existsSync(join(dir, own))) return [{ ...transform, tests: own }];
+		if (transforms.length === 1 && existsSync(join(dir, "tests")))
+			return [{ ...transform, tests: "tests" }];
+		return [];
+	});
+}
+
+/**
+ * Runs `codemod jssg test` for each transform of the Codemod package in `dir`
+ * that has tests (see {@link codemodTests}). Returns the problems.
+ */
+export async function testCodemod(dir: string): Promise<string[]> {
+	const problems: string[] = [];
+	for (const { file, language, tests } of codemodTests(dir)) {
+		if (language === undefined) {
+			problems.push(`${file}: its js-ast-grep step has no language`);
+			continue;
+		}
+		log("test", `${basename(dir)}/${file} on ${tests}`, chalk.cyan);
+		try {
+			await runCommand(
+				"bunx",
+				[
+					CODEMOD_CLI,
+					"jssg",
+					"test",
+					"-l",
+					language,
+					file,
+					tests,
+					"--disable-analytics",
+				],
+				{ cwd: dir, env: codemodEnv() },
+			);
+		} catch {
+			problems.push(`${file}: codemod jssg test failed`);
+		}
+	}
+	return problems;
+}
+
+// ── package manager ──────────────────────────────────────────────────────────
+
+const FOREIGN_LOCKFILES = [
+	"package-lock.json",
+	"npm-shrinkwrap.json",
+	"yarn.lock",
+	"pnpm-lock.yaml",
+];
+
+/**
+ * Bun-only findings for a JS project: npm, yarn or pnpm lockfiles in the repo
+ * root or the project folder, and a root `package.json` (the first of the two
+ * that has one) whose `packageManager` is missing or not `bun@…`. Empty when
+ * neither folder has a `package.json`.
+ */
+export function packageManagerFindings(
+	projectDir: string,
+	rootDir: string,
+): string[] {
+	const dirs = [...new Set([resolve(rootDir), resolve(projectDir)])];
+	const manifestDir = dirs.find((dir) => existsSync(join(dir, "package.json")));
+	if (manifestDir === undefined) return [];
+	const findings: string[] = [];
+	for (const dir of dirs) {
+		for (const file of FOREIGN_LOCKFILES) {
+			if (existsSync(join(dir, file)))
+				findings.push(`${join(dir, file)}: use bun (bun.lock), not ${file}`);
+		}
+	}
+	const manifestPath = join(manifestDir, "package.json");
+	const { packageManager }: { packageManager?: unknown } = JSON.parse(
+		readFileSync(manifestPath, "utf8"),
+	);
+	if (
+		typeof packageManager !== "string" ||
+		!packageManager.startsWith("bun@")
+	) {
+		findings.push(
+			`${manifestPath}: "packageManager" must be "bun@<version>"${typeof packageManager === "string" ? `, not "${packageManager}"` : ", it is missing"}`,
+		);
+	}
+	return findings;
 }
 
 /** Runs each command through the shell in `dir`; returns the first that failed. */

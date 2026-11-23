@@ -11,6 +11,7 @@ import {
 	warn,
 } from "../stack/load";
 import { findManifest } from "../stack/manifest";
+import { isCodemodPackage, testCodemod } from "../stack/project";
 import {
 	listSkills,
 	resolveChain,
@@ -245,7 +246,10 @@ export async function stackPlan(options: CommonOptions): Promise<void> {
 
 // ── validate ─────────────────────────────────────────────────────────────────
 
-/** Checks a whole stacks source; meant for its authors and its CI. */
+/**
+ * Checks a whole stacks source; meant for its authors and its CI. Migrations
+ * that are Codemod packages with a `tests/` folder get their transforms tested.
+ */
 export async function stackValidate(options: SourceOptions): Promise<void> {
 	const source = resolveSource(options, warn);
 	const catalog = await loadCatalog(source.root);
@@ -257,6 +261,14 @@ export async function stackValidate(options: SourceOptions): Promise<void> {
 			problems.push(
 				`${id}: ${error instanceof Error ? error.message : String(error)}`,
 			);
+		}
+	}
+	for (const stack of catalog.stacks.values()) {
+		for (const entry of stack.migrations) {
+			if (!isCodemodPackage(entry.dir) || !existsSync(join(entry.dir, "tests")))
+				continue;
+			for (const problem of await testCodemod(entry.dir))
+				problems.push(`${entry.id}: ${problem}`);
 		}
 	}
 	const unique = [...new Set(problems)];

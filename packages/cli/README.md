@@ -187,6 +187,8 @@ In CI or when stdin is not a TTY there is no prompt and `latest` is used.
 
 Manage the `buildNumber` of Expo apps living in `apps/<app>/` (versionCode math from `@padosoft/utilities/lib/build-number`) (iOS build number / Android versionCode), for monorepos that keep `version` + `buildNumber` in each app's `package.json`.
 
+> **Only for projects with `"appVersionSource": "local"` in `eas.json`.** New projects use EAS remote versioning (`"appVersionSource": "remote"` with `autoIncrement` on the build profiles): EAS owns the build number, and these commands are not needed. Releases are cut with [`release tag`](#release-tag) instead.
+
 ```
 padosoft build bump <app>  [--format <f>] [--apps-dir apps]
 padosoft build check <app> [--auto-increment] [--platform ios|android] [--format <f>] [--apps-dir apps]
@@ -219,15 +221,73 @@ The format is resolved from, in order: `--format`, a `buildCodeFormat` field in 
 
 ---
 
-### `release apps`
+### `release` — tag-driven app releases
 
-Tags every app in `apps/*` at its current version as `<name>@<version>`, pushes the tag and creates the matching GitHub Release, with that version's section of `apps/<app>/CHANGELOG.md` as notes. Run it after the changesets "version packages" PR merges.
+Pushing a tag is what releases an app: the release workflows (EAS workflows) listen to tags and call `release check-tag` as their guard.
+
+| Tag | Profile | Apps |
+|---|---|---|
+| `vX.Y.Z` | `production` | every app (or the single app of the repo) |
+| `vX.Y.Z-preview.N` | `preview` | every app |
+| `<app>@vX.Y.Z` | `production` | `apps/<app>` only |
+| `<app>@vX.Y.Z-preview.N` | `preview` | `apps/<app>` only |
+
+`<app>` is the app's folder name under `apps/`. A repo is a monorepo when `apps/` (or `--apps-dir`) holds packages with a `name` and `version`; otherwise the app is the root `package.json`. Both commands work from any folder of the repo: `--apps-dir` and the root `package.json` resolve from the git root (`git rev-parse --show-toplevel`). Run inside `<apps-dir>/<app>` (as an EAS workflow does, from the Expo project's folder), they default to that app: `check-tag` checks a plain tag against that app only and rejects another app's `<other>@v…` tag, and `release tag` bumps and tags only that app (`<app>@v…`). An explicit `--app` / `--apps` wins.
 
 ```
-padosoft release apps [--dry-run] [--apps-dir apps]
+padosoft release tag [patch|minor|major] [--preview] [--apps a,b] [--apps-dir apps] [--dry-run]
+padosoft release check-tag <tag> [--prod-branch main] [--preview-branch <name>] [--apps-dir apps] [--app <name>]
+padosoft release apps [--tag-format auto|version|name] [--dry-run] [--apps-dir apps]
 ```
+
+#### `release tag`
+
+Cuts a release from the current branch by pushing its tag(s).
+
+- **Production, without changesets**: `release tag patch|minor|major` bumps the version of the apps (all of them, or those in `--apps`) to one fixed version, starting from the highest of them, commits `chore(release): vX.Y.Z` (with `bun.lock`, refreshed when present), tags and pushes the branch and the tags atomically. A bump is required.
+- **Production, with a `.changeset/` folder and no bump**: tags the version the apps already have (the one `changeset version` set); they must share it. A bump argument still bumps as above.
+- **`--preview`**: tags `vX.Y.Z-preview.N` and never changes `package.json`. The version is the next one `changeset status` reports for the apps when there are changesets, else the current version + patch (a bump argument picks it instead). `N` is 1 + the highest existing `-preview.N` for that version (from `git tag --list`, after fetching the tags), the same for every tag of the release.
+- **`--apps a,b`**: tags `<app>@vX.Y.Z[-preview.N]` for each app instead of the plain tag, so only those apps release.
+
+It refuses a tag that already exists and a working tree with uncommitted changes. `--dry-run` prints the bumps, commit and tags without touching anything.
+
+```bash
+padosoft release tag minor              # v1.4.0 on main → production
+padosoft release tag --preview          # v1.4.1-preview.1 → preview
+padosoft release tag patch --apps shop  # shop@v1.4.1 → production of apps/shop only
+```
+
+#### `release check-tag`
+
+The guard the release workflows run first. It fails (exit 1, reason on stderr) unless:
+
+- the tag is one of the four formats above;
+- a production tag's commit is on `origin/<prod-branch>` (default `main`), and a preview tag's on `origin/<preview-branch>` when given, else on any branch of `origin` (`git merge-base --is-ancestor`; a missing branch or tag is fetched first, so a shallow tag checkout works as long as the history reaches the branch);
+- for production, the tag version equals `version` in `package.json`: the root (single-app repo), `apps/<app>` for an `<app>@` tag or `--app`, every app under `apps/` for a plain tag in a monorepo.
+
+On success it prints only these lines, ready for `$GITHUB_OUTPUT`:
+
+```
+profile=production
+version=1.4.0
+apps=shop,admin
+```
+
+`version` has no `v` and no prerelease; `apps` is empty in a single-app repo.
+
+```bash
+padosoft release check-tag "$TAG" --preview-branch develop >> "$GITHUB_OUTPUT"
+```
+
+#### `release apps`
+
+Tags the apps at their current version, pushes the tag and creates the matching GitHub Release, with that version's section of each app's `CHANGELOG.md` as notes. Run it after the changesets "version packages" PR merges.
+
+The tag is `v<version>` when the repo has one app or all apps share one version (a changesets `fixed` group): one tag and one release, the notes with a section per app. When the versions differ it falls back to `<name>@<version>` per app. `--tag-format name` always uses `<name>@<version>` (the format before the release workflows); `--tag-format version` fails unless the versions match.
 
 Idempotent: a tag already on `origin` is never moved and an existing release is never recreated. Requires `git` with an `origin` remote and an authenticated `gh` CLI.
+
+> Tags pushed from a GitHub Actions job with the default `GITHUB_TOKEN` do not trigger other GitHub Actions workflows (GitHub's rule against recursive runs). If a GitHub Actions workflow must run on the tag, push it with a GitHub App token or a PAT.
 
 ---
 
@@ -296,7 +356,7 @@ padosoft stack mark <id>                  # verify, then record it as applied wi
 
 # checking
 padosoft stack doctor   [--json]          # exit 1 on drift: for CI
-padosoft stack validate                   # check a whole stacks source: for its authors and CI
+padosoft stack validate                   # check a whole stacks source and test its codemods: for its authors and CI
 
 # once per machine
 padosoft agents setup [--agents claude,codex,gemini] [--source <spec>] [--dry-run]
@@ -333,7 +393,8 @@ stacks/<stack>/recipes/<recipe>/files/**          copied into the project
 stacks/<stack>/recipes/<recipe>/steps.md          printed for the agent after applying
                                                   <recipe> = init | <axis>/<option> | feature/<name>
 stacks/<stack>/migrations/<name>/migration.json   { "title", "kind", "when", "set", "deps", "verify" }
-stacks/<stack>/migrations/<name>/codemod.{mjs,js,ts}   run in the project folder ($PADOSOFT_PROJECT_DIR)
+stacks/<stack>/migrations/<name>/workflow.yaml    a Codemod package (+ codemod.yaml, scripts/, tests/): run on the project
+stacks/<stack>/migrations/<name>/codemod.{mjs,js,ts}   otherwise: run in the project folder ($PADOSOFT_PROJECT_DIR)
 stacks/<stack>/migrations/<name>/steps.md         printed by `stack migrate`
 ```
 
@@ -343,7 +404,9 @@ Rules and recipes are grouped the same way: at the top level they always apply (
 
 Migrations run in name order (use a date prefix) across the stack chain; each required migration's `set` is applied before the next `when` is evaluated, and required migrations can only be applied in that order. Packages are changed with the project's package manager (from the nearest lockfile or `packageManager` field). In a project that depends on `expo`, runtime packages are added with `expo install`, so their versions match the SDK. On Windows, npm, pnpm and yarn run through the shell, so keep package specs to exact or `~` versions there.
 
-`stack doctor` fails on: problems in the stacks or choices, axes with no recorded option, required migrations pending, packages of an `init` recipe or a chosen recipe that are missing, and packages that belong to another option of a chosen axis.
+A migration's codemod is preferably a [Codemod](https://docs.codemod.com) package: a migration folder with a `workflow.yaml` is run by `stack migrate` as `bunx codemod@<pinned> workflow run -w <migration> -t "$PADOSOFT_PROJECT_DIR" --no-interactive --allow-dirty --disable-analytics`, with `DISABLE_ANALYTICS=1` in its environment (telemetry stays off; `--allow-dirty` because the package changes come first). The pinned version is `CODEMOD_CLI` in `src/stack/project.ts`. Without a `workflow.yaml`, `codemod.{mjs,js,ts}` is run with the current runtime as before. `stack validate` runs `codemod jssg test -l <language> <js_file> <tests>` (same pin, analytics off) for every `js-ast-grep` step of a Codemod package that has tests: one `tests/<transform>/<case>/{input,expected}.<ext>` folder per `scripts/<transform>.ts` (the language is the step's `language`). A package with a single transform may instead put its cases straight under `tests/`; transforms without tests are skipped.
+
+`stack doctor` fails on: problems in the stacks or choices, axes with no recorded option, required migrations pending, packages of an `init` recipe or a chosen recipe that are missing, packages that belong to another option of a chosen axis, and (in JS projects, those with a `package.json`) anything but bun: a `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock` or `pnpm-lock.yaml` in the repo root or the project folder, or a root `package.json` whose `packageManager` is missing or not `bun@…`.
 
 JSON Schemas for the manifest, `stack.json`, `recipe.json` and `migration.json` ship in `schema/`.
 
