@@ -28,6 +28,7 @@ import { renderSchemas } from "../src/stack/json-schemas";
 import {
 	CODEMOD_CLI,
 	codemodRunArgs,
+	codemodTests,
 	codemodTransforms,
 	copyFiles,
 	deepMerge,
@@ -646,6 +647,35 @@ describe("Codemod packages", () => {
 			{ file: "scripts/rename.ts", language: "tsx" },
 			{ file: "scripts/other.ts", language: undefined },
 		]);
+	});
+
+	test("each transform is tested on tests/<transform>; others are skipped", () => {
+		expect(codemodTests(dir)).toEqual([]);
+		mkdirSync(join(dir, "tests", "rename", "case"), { recursive: true });
+		expect(codemodTests(dir)).toEqual([
+			{
+				file: "scripts/rename.ts",
+				language: "tsx",
+				tests: join("tests", "rename"),
+			},
+		]);
+	});
+
+	test("a single transform may use the whole tests folder", () => {
+		const single = mkdtempSync(join(tmpdir(), "padosoft-codemod-single-"));
+		try {
+			writeFileSync(
+				join(single, "workflow.yaml"),
+				"nodes:\n  - steps:\n      - js-ast-grep:\n          js_file: scripts/codemod.ts\n          language: typescript\n",
+			);
+			expect(codemodTests(single)).toEqual([]);
+			mkdirSync(join(single, "tests", "fixtures"), { recursive: true });
+			expect(codemodTests(single)).toEqual([
+				{ file: "scripts/codemod.ts", language: "typescript", tests: "tests" },
+			]);
+		} finally {
+			rmSync(single, { recursive: true, force: true });
+		}
 	});
 
 	test("the workflow runs on the project with the pinned CLI and analytics off", () => {

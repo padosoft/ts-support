@@ -365,19 +365,38 @@ export function codemodTransforms(dir: string): CodemodTransform[] {
 }
 
 /**
- * Runs `codemod jssg test` for each transform of the Codemod package in `dir`,
- * on `tests/<transform file name>` when that folder exists, else `tests`.
- * Returns the problems.
+ * The transforms of the Codemod package in `dir` that have tests, with their
+ * test folder: `tests/<transform file name>` (`scripts/eas-json.ts` →
+ * `tests/eas-json`), or the whole `tests` when the package has a single
+ * transform. Transforms without one are skipped.
+ */
+export function codemodTests(
+	dir: string,
+): (CodemodTransform & { tests: string })[] {
+	const transforms = codemodTransforms(dir);
+	return transforms.flatMap((transform) => {
+		const own = join(
+			"tests",
+			basename(transform.file, extname(transform.file)),
+		);
+		if (existsSync(join(dir, own))) return [{ ...transform, tests: own }];
+		if (transforms.length === 1 && existsSync(join(dir, "tests")))
+			return [{ ...transform, tests: "tests" }];
+		return [];
+	});
+}
+
+/**
+ * Runs `codemod jssg test` for each transform of the Codemod package in `dir`
+ * that has tests (see {@link codemodTests}). Returns the problems.
  */
 export async function testCodemod(dir: string): Promise<string[]> {
 	const problems: string[] = [];
-	for (const { file, language } of codemodTransforms(dir)) {
+	for (const { file, language, tests } of codemodTests(dir)) {
 		if (language === undefined) {
 			problems.push(`${file}: its js-ast-grep step has no language`);
 			continue;
 		}
-		const own = join("tests", basename(file, extname(file)));
-		const tests = existsSync(join(dir, own)) ? own : "tests";
 		log("test", `${basename(dir)}/${file} on ${tests}`, chalk.cyan);
 		try {
 			await runCommand(
