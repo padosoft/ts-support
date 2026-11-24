@@ -1,5 +1,11 @@
 # @padosoft/config
 
+## 1.5.2
+
+### Patch Changes
+
+- [#82](https://github.com/padosoft/ts-support/pull/82) [`d286075`](https://github.com/padosoft/ts-support/commit/d2860756416914869c534f8b1fefa1a730d993f1) Thanks [@47PADO47](https://github.com/47PADO47)! - Exclude `.changeset/*.md` from the shared Biome preset (`@padosoft/config/tools/biome`). Biome 2.6 formats Markdown and rewrote changeset frontmatter (`"@pkg": minor` followed by `---`) into a setext heading (`## "@pkg": minor`), which broke `changeset version` with "could not parse changeset - missing or invalid frontmatter".
+
 ## 1.5.1
 
 ### Patch Changes
