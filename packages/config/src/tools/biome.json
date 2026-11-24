@@ -12,7 +12,12 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!**/bindings.d.ts", "!**/node_modules"]
+		"includes": [
+			"**",
+			"!**/bindings.d.ts",
+			"!**/node_modules",
+			"!**/.changeset/*.md"
+		]
 	},
 	"formatter": {
 		"enabled": true,
